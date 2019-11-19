@@ -5,6 +5,7 @@ Usage of graph neural networks to solve SATisfiability problems.
 
 ```bash
 chmod +x scripts/setup.sh
+./scripts/setup.sh
 ```
 
 # Generate Data
