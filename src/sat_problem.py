@@ -1,3 +1,4 @@
+import torch
 class SATProblem:
     def __init__(self, clauses, is_sat):
         self.n_vars = max(abs(min(clauses)), max(clauses))
