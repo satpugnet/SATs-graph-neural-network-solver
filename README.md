@@ -14,7 +14,7 @@ chmod +x scripts/setup.sh
 python3 src/generate_data.py
 ```
 
-# Organisation
+# Folder organisation
 
 *out/*: Contain the outputted data.
 *scripts/*: Contains the basic scripts.
