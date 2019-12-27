@@ -29,9 +29,8 @@ class DimacsGenerator:
 
         i = 0
         while i < number_dimacs:
-            print("Generation of SATs problem at: " + str(int(i / number_dimacs * 100)) + "%")
-            print(number_sat_required)
-            print(number_unsat_required)
+            print("Generation of SATs problem at: " + str(int(i / number_dimacs * 100)) + "% (" + str(number_sat_required)
+                  + " SAT left and " + str(number_unsat_required) + " UNSAT left)")
             n_vars, n_clause, clauses, is_sat = self.__gen_clause()
 
             if((is_sat and number_sat_required == 0) or (not is_sat and number_unsat_required == 0)):
@@ -46,7 +45,10 @@ class DimacsGenerator:
             self.__save_sat_problem_to(out_filename, n_vars, clauses)
 
     def delete_all(self):
-        shutil.rmtree(self.out_dir)
+        try:
+            shutil.rmtree(self.out_dir)
+        except FileNotFoundError as e:
+            pass
 
     def __gen_clause(self):
         n_vars = random.randint(self.min_n_vars, self.max_n_vars)

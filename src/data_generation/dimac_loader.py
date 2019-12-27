@@ -1,13 +1,13 @@
 import os
 import re
 
-from sat_problem import SATProblem
+from SAT_problem import SATProblem
 
 
 class DimacLoader:
 
     def __init__(self, dir_path=None):
-        self.dir_path = dir_path if dir_path else os.getcwd() + "/../out/"
+        self.dir_path = dir_path if dir_path else os.getcwd() + "/../data_generated/"
 
     def load_sat_problems(self):
         print("Loading sat problems...")
