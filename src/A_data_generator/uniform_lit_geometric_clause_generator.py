@@ -6,13 +6,15 @@ import time
 import numpy as np
 import random
 
+from A_data_generator.abstract_data_generator import AbstractDataGenerator
 from A_data_generator.deterministic_solvers.PyMiniSolvers import minisolvers
 
 
-class DimacsGenerator:
+class UniformLitGeometricClauseGenerator(AbstractDataGenerator):
 
     def __init__(self, out_dir, percentage_sat=0.50, seed=None, min_n_vars=1, max_n_vars=5, min_n_clause=2,
                  max_n_clause=5, lit_distr_p=0.4):
+        super().__init__()
         self.seed = seed if seed is not None else time.time_ns() % 100000
         random.seed(self.seed)
         np.random.seed(self.seed)

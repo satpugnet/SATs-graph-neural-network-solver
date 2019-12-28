@@ -1,0 +1,2 @@
+generator,number_generated_data,percentage_sat_in_data,min_n_vars,max_n_vars,min_n_clause,max_n_clause,list_distr_p,seed,SAT_to_graph_converter,percentage_training_set,train_batch_size,test_batch_size,max_clause_length,gnn,trainer,number_of_epochs,learning_rate,weight_decay,test_loss,train_loss,accuracy,graph_filename,"confusion_matrix (TP, FP, TN, FN)"
+UniformLitGeometricClauseGenerator,10,0.500,10,30,30,60,0.400,,VariableToVariableGraph,0.750,4,4,65,BasicGNN,AdamTrainer,10,0.001,0.001,0.261,0.268,0.667,18.png,"(2, 1, 0, 0)"

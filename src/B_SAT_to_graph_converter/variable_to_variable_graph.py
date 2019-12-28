@@ -1,10 +1,13 @@
 import torch
 from torch_geometric.data import Data
 
+from B_SAT_to_graph_converter.abstract_SAT_to_graph_converter import AbstractSATToGraphConverter
 
-class SATToGraphConverter:
+
+class VariableToVariableGraph(AbstractSATToGraphConverter):
 
     def __init__(self, max_clause_length):
+        super().__init__()
         self.max_clause_length = max_clause_length
 
     def convert_all(self, SAT_problems):

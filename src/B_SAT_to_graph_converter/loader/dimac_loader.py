@@ -1,7 +1,7 @@
 import os
 import re
 
-from B_SAT_to_graph_converter.SAT_problem import SATProblem
+from B_SAT_to_graph_converter.wrapper.SAT_problem import SATProblem
 
 
 class DimacLoader:

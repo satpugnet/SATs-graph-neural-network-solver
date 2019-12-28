@@ -8,13 +8,14 @@ class ModelEvaluator:
         self.test_loader = test_loader
         self.device = device
 
-    def eval(self, model, train_loss=None, do_print=True):
+    def eval(self, model, train_loss=None, do_print=True, time=None):
         all_pred, all_truth, accuracy, test_loss = self.__eval_model(model)
+        confusion_matrix = self.__confusion_matrix(all_pred, all_truth)
 
         if do_print:
-            self.__perform_printing(accuracy, test_loss, train_loss, self.__confusion_matrix(all_pred, all_truth))
+            self.__perform_printing(accuracy, test_loss, train_loss, confusion_matrix, time)
 
-        return test_loss, accuracy
+        return test_loss, accuracy, confusion_matrix
 
     def __eval_model(self, model):
         all_pred = torch.tensor([])
@@ -23,10 +24,6 @@ class ModelEvaluator:
         test_error = 0
         correct = 0
         for batch in self.test_loader:
-            # print(pred)
-            # print(batch.y.view(-1, 1))
-            # print(correct)
-
             batch = batch.to(self.device)
             pred = model(batch)
             test_error += F.mse_loss(pred, batch.y.view(-1, 1))
@@ -53,7 +50,9 @@ class ModelEvaluator:
 
         return true_positives, false_positives, true_negatives, false_negatives
 
-    def __perform_printing(self, accuracy, test_loss, train_loss, confusion_matrix):
-        text_start = 'train loss: {:.4f}, '.format(train_loss) if train_loss else ""
-        print(text_start + 'test error: {:.4f}, '.format(test_loss) + 'accuracy: {:.4f}'.format(accuracy) +
+    def __perform_printing(self, accuracy, test_loss, train_loss, confusion_matrix, time):
+        train_loss_text = 'train loss: {:.4f}, '.format(train_loss) if train_loss is not None else ""
+        time_text = 'time: {:.1f}, '.format(time) if time is not None else ""
+
+        print(time_text + train_loss_text + 'test error: {:.4f}, '.format(test_loss) + 'accuracy: {:.4f}'.format(accuracy) +
               ", confusion matrix (TP, FP, TN, FN): " + str(confusion_matrix))
