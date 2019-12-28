@@ -5,7 +5,8 @@ import time
 
 import numpy as np
 import random
-import deterministic_solvers.PyMiniSolvers.minisolvers as minisolvers
+
+from A_data_generator.deterministic_solvers.PyMiniSolvers import minisolvers
 
 
 class DimacsGenerator:

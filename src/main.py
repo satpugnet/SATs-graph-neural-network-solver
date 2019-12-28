@@ -1,14 +1,11 @@
 import torch
 from torch_geometric.data import DataLoader
 
-from GNNs.basic_gnn import BasicGNN
-from SAT_to_graph_converter.SAT_to_graph_converter import SATToGraphConverter
-from data_generation.dimac_loader import DimacLoader
-from data_generation.dimacs_generators import DimacsGenerator
+from A_data_generator.dimacs_generators import DimacsGenerator
+from B_SAT_to_graph_converter.dimac_loader import DimacLoader
+from C_GNNs.basic_gnn import BasicGNN
+from B_SAT_to_graph_converter.SAT_to_graph_converter import SATToGraphConverter
 
-from eval.model_evaluator import ModelEvaluator
-from training.model_trainer import ModelTrainer
-from visualisation_handler.visualiser import Visualiser
 
 
 #################################################
@@ -18,7 +15,11 @@ from visualisation_handler.visualiser import Visualiser
 #################################################
 
 # Generate data
-NUMBER_GENERATED_DATA = 10
+from D_trainer.model_trainer import ModelTrainer
+from E_visualiser.visualiser import Visualiser
+from F_evaluator.model_evaluator import ModelEvaluator
+
+NUMBER_GENERATED_DATA = 1000
 PERCENTAGE_SAT_IN_DATA = 0.5
 
 # Load SATs and converting to graph data

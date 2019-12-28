@@ -9,12 +9,24 @@ class ModelEvaluator:
         self.device = device
 
     def eval(self, model, train_loss=None, do_print=True):
-        test_error = 0
-        correct = 0
+        all_pred, all_truth, accuracy, test_loss = self.__eval_model(model)
 
+        if do_print:
+            self.__perform_printing(accuracy, test_loss, train_loss, self.__confusion_matrix(all_pred, all_truth))
+
+        return test_loss, accuracy
+
+    def __eval_model(self, model):
         all_pred = torch.tensor([])
         all_truth = torch.tensor([])
+
+        test_error = 0
+        correct = 0
         for batch in self.test_loader:
+            # print(pred)
+            # print(batch.y.view(-1, 1))
+            # print(correct)
+
             batch = batch.to(self.device)
             pred = model(batch)
             test_error += F.mse_loss(pred, batch.y.view(-1, 1))
@@ -22,19 +34,14 @@ class ModelEvaluator:
             pred_adjusted = (pred > 0.5).float()
             truth = batch.y.view(-1, 1)
             correct += (pred_adjusted == truth).sum().item()
-            # print(pred)
-            # print(batch.y.view(-1, 1))
-            # print(correct)
+
             all_pred = torch.cat([all_pred, pred_adjusted]) if all_pred is not None else pred_adjusted
             all_truth = torch.cat([all_truth, truth]) if all_truth is not None else truth
 
         test_loss = test_error / len(self.test_loader)
         accuracy = correct / len(self.test_loader.dataset)
 
-        if do_print:
-            self.__perform_printing(accuracy, test_loss, train_loss, self.__confusion_matrix(all_pred, all_truth))
-
-        return test_loss, accuracy
+        return all_pred, all_truth, accuracy, test_loss
 
     def __confusion_matrix(self, prediction, truth):
         confusion_vector = prediction / truth

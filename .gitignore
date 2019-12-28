@@ -3,4 +3,4 @@ venv/*
 .idea/*
 .DS_Store
 data_generated/*
-src/deterministic_solvers/PyMiniSolvers/*
+src/A_data_generator/deterministic_solvers/PyMiniSolvers/*
