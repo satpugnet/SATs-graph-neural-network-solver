@@ -34,7 +34,7 @@ class SaveHandler(AbstractSaveHandler):
 
     def compute_headers(self):
         if os.stat(self._filename).st_size == 0:
-            return self._all_data.keys()
+            return self._all_data.keys(), []
 
         with open(self._filename) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')

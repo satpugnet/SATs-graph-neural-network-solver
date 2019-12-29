@@ -9,7 +9,7 @@ class Visualiser:
     def __init__(self):
         pass
 
-    def visualise(self, train_loss, test_loss, accuracy, dirname):
+    def visualise(self, train_loss, test_loss, accuracy, dirname, save=True):
         fig, ax1 = plt.subplots()
 
         ax1.set_xlabel('Epoch')
@@ -26,9 +26,11 @@ class Visualiser:
 
         ax2.legend(loc='lower center')
 
-        self.__create_if_not_exist(dirname)
-        filename = self.__compute_file_name(dirname)
-        plt.savefig(dirname + "/" + filename)
+        filename = ""
+        if save:
+            self.__create_if_not_exist(dirname)
+            filename = self.__compute_file_name(dirname)
+            plt.savefig(dirname + "/" + filename)
 
         fig.tight_layout()
         plt.show()

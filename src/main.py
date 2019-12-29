@@ -6,8 +6,8 @@ from B_SAT_to_graph_converter.loader.dimac_loader import DimacLoader
 from B_SAT_to_graph_converter.variable_to_variable_graph import VariableToVariableGraph
 from C_GNNs.basic_gnn import GCN2LayerLinear1LayerGNN
 from D_trainer.adam_trainer import AdamTrainer
-from E_visualiser.visualiser import Visualiser
-from F_evaluator.model_evaluator import ModelEvaluator
+from F_visualiser.visualiser import Visualiser
+from E_evaluator.model_evaluator import ModelEvaluator
 from G_save.save_handler import SaveHandler
 from collections import OrderedDict
 
@@ -49,12 +49,12 @@ experiment_configs = OrderedDict([
         learning_rate=0.001,
         weight_decay=5e-4
     )),
-    ("number_of_epochs", 10),
-
-    # Visualise
-
+    ("number_of_epochs", 5),
 
     # Eval
+
+
+    # Visualise
 
 
     # Save
@@ -74,11 +74,11 @@ other_configs = {
 # Train
 
 
-# Visualise
-"graph_directory_name": "../graphs",
-
 # Eval
 
+
+# Visualise
+"graph_directory_name": "../graphs",
 
 # Save
 "save_handler": SaveHandler,
@@ -159,22 +159,6 @@ train_loss, test_loss, accuracy = experiment_configs["trainer"].train(
 
 #################################################
 #
-# VISUALISE
-#
-#################################################
-
-print("\nVISUALISE")
-
-graph_filename = Visualiser().visualise(
-    train_loss,
-    test_loss,
-    accuracy,
-    other_configs["graph_directory_name"]
-)
-
-
-#################################################
-#
 # EVAL
 #
 #################################################
@@ -187,17 +171,40 @@ final_test_loss, final_accuracy, final_confusion_matrix = model_evaluator.eval(m
 
 #################################################
 #
+# VISUALISE
+#
+#################################################
+
+print("\nVISUALISE")
+
+save_user_input = ""
+while save_user_input != "y" and save_user_input != "n":
+    save_user_input = input("Save the results? (y or n)\n")
+save_result = save_user_input == "y"
+
+graph_filename = Visualiser().visualise(
+    train_loss,
+    test_loss,
+    accuracy,
+    other_configs["graph_directory_name"],
+    save=save_result
+)
+
+
+#################################################
+#
 # SAVE
 #
 #################################################
 
 print("\nSAVING")
 
-experiment_results = OrderedDict([
-    ("test_loss", final_test_loss.item()),
-    ("train_loss", train_loss[-1].item()),
-    ("accuracy", final_accuracy),
-    ("confusion_matrix", final_confusion_matrix),
-    ("graph_filename", graph_filename)
-])
-other_configs["save_handler"](experiment_configs, experiment_results, other_configs["save_filename"]).save()
+if save_result:
+    experiment_results = OrderedDict([
+        ("test_loss", final_test_loss.item()),
+        ("train_loss", train_loss[-1].item()),
+        ("accuracy", final_accuracy),
+        ("confusion_matrix", final_confusion_matrix),
+        ("graph_filename", graph_filename)
+    ])
+    other_configs["save_handler"](experiment_configs, experiment_results, other_configs["save_filename"]).save()
