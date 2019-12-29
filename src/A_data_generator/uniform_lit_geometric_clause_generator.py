@@ -27,7 +27,7 @@ class UniformLitGeometricClauseGenerator(AbstractDataGenerator):
         self._max_n_clause = max_n_clause
         self._lit_distr_p = lit_distr_p
 
-    def __str__(self):
+    def __repr__(self):
         return "{}(out_dir({}), percentage_sat({:.2f}), seed({}), min_n_vars({}), max_n_vars({}), min_n_clause({}), " \
                "max_n_clause({}), lit_distr_p({:.2f}))".format(self.__class__.__name__, self._out_dir,
                                                                self._percentage_sat, self._seed,

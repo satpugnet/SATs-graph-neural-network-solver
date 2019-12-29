@@ -10,7 +10,7 @@ class AbstractTrainer(ABC):
         self._learning_rate = learning_rate
         self._weight_decay = weight_decay
 
-    def __str__(self):
+    def __repr__(self):
         return "{}(learning_rate({}), weight_decay({}))".format(
             self.__class__.__name__,
             self._learning_rate,
@@ -54,6 +54,7 @@ class AbstractTrainer(ABC):
             optimizer.zero_grad()
 
             out = model(batch)
+
             loss = F.mse_loss(out, batch.y.view(-1, 1))  # F.nll_loss(out, batch.y)
             train_error += loss
 

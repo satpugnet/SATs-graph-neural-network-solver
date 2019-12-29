@@ -1,6 +1,7 @@
 import collections
 import csv
 import os
+import types
 from collections import OrderedDict
 
 from G_save.abstract_save_handler import AbstractSaveHandler

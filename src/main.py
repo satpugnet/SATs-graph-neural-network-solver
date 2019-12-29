@@ -4,7 +4,9 @@ from torch_geometric.data import DataLoader
 from A_data_generator.uniform_lit_geometric_clause_generator import UniformLitGeometricClauseGenerator
 from B_SAT_to_graph_converter.loader.dimac_loader import DimacLoader
 from B_SAT_to_graph_converter.variable_to_variable_graph import VariableToVariableGraph
-from C_GNNs.basic_gnn import GCN2LayerLinear1LayerGNN
+from C_GNNs.gcn_2_layer_linear_1_layer_gnn import GCN2LayerLinear1LayerGNN
+
+from C_GNNs.nnconv_gnn import NNConvGNN
 from D_trainer.adam_trainer import AdamTrainer
 from F_visualiser.visualiser import Visualiser
 from E_evaluator.model_evaluator import ModelEvaluator
@@ -25,13 +27,13 @@ experiment_configs = OrderedDict([
         out_dir="../data_generated",
         percentage_sat=0.5,
         seed=None,
-        min_n_vars=10,
-        max_n_vars=30,
-        min_n_clause=30,
-        max_n_clause=60,
+        min_n_vars=1,
+        max_n_vars=5,
+        min_n_clause=1,
+        max_n_clause=5,
         lit_distr_p=0.4
     )),
-    ("number_generated_data", 10),
+    ("number_generated_data", 1000),
 
     # Load SATs and converting to graph data
     ("SAT_to_graph_converter", VariableToVariableGraph(
@@ -42,14 +44,19 @@ experiment_configs = OrderedDict([
     ("test_batch_size", 4),
 
     # Graph neural network structure
-    ("gnn", GCN2LayerLinear1LayerGNN),
+    ("gnn", GCN2LayerLinear1LayerGNN(
+        sigmoid_output=True
+    )),
+    # ("gnn", NNConvGNN(
+    #     sigmoid_output=True
+    # )),
 
     # Train
     ("trainer", AdamTrainer(
         learning_rate=0.001,
         weight_decay=5e-4
     )),
-    ("number_of_epochs", 5),
+    ("number_of_epochs", 100),
 
     # Eval
 
@@ -132,10 +139,12 @@ test_loader = DataLoader(
 print("\nCREATING GRAPH NEURAL NETWORK STRUCTURE")
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-experiment_configs["gnn"] = experiment_configs["gnn"](
+experiment_configs["gnn"].initialise_channels(
     next(iter(train_loader)).num_node_features,
-    len(next(iter(train_loader)).y)
+    len(next(iter(train_loader)).y),
+    next(iter(train_loader)).num_edge_features
 )
+
 model = experiment_configs["gnn"].to(device)
 
 
@@ -177,6 +186,7 @@ final_test_loss, final_accuracy, final_confusion_matrix = model_evaluator.eval(m
 
 print("\nVISUALISE")
 
+# Ask the user to save or not the results
 save_user_input = ""
 while save_user_input != "y" and save_user_input != "n":
     save_user_input = input("Save the results? (y or n)\n")

@@ -10,7 +10,7 @@ class VariableToVariableGraph(AbstractSATToGraphConverter):
         super().__init__()
         self._max_clause_length = max_clause_length
 
-    def __str__(self):
+    def __repr__(self):
         return "{}(max_clause_length({}))".format(self.__class__.__name__, self._max_clause_length)
 
     def convert_all(self, SAT_problems):
@@ -29,7 +29,7 @@ class VariableToVariableGraph(AbstractSATToGraphConverter):
 
         edge_index_raw, edge_attr_raw = self.__compute_edges(SAT_problem.clauses, SAT_problem.n_vars)
         edge_index = torch.tensor(edge_index_raw, dtype=torch.long)
-        edge_attr = torch.tensor(edge_attr_raw, dtype=torch.long)
+        edge_attr = torch.tensor(edge_attr_raw, dtype=torch.float)
 
         # x = torch.tensor([[2, 3, 4], [4, 7, 5], [4, 7, 5]], dtype=torch.float)
         # y = torch.tensor([1], dtype=torch.long)
