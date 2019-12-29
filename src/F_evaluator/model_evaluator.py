@@ -54,5 +54,5 @@ class ModelEvaluator:
         train_loss_text = 'train loss: {:.4f}, '.format(train_loss) if train_loss is not None else ""
         time_text = 'time: {:.1f}, '.format(time) if time is not None else ""
 
-        print(time_text + train_loss_text + 'test error: {:.4f}, '.format(test_loss) + 'accuracy: {:.4f}'.format(accuracy) +
+        print(time_text + train_loss_text + 'test loss: {:.4f}, '.format(test_loss) + 'accuracy: {:.4f}'.format(accuracy) +
               ", confusion matrix (TP, FP, TN, FN): " + str(confusion_matrix))

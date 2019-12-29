@@ -1,17 +1,17 @@
+import collections
 import csv
-import inspect
 import os
+from collections import OrderedDict
 
 from G_save.abstract_save_handler import AbstractSaveHandler
-
-FILENAME = "experiments.csv"
 
 
 class SaveHandler(AbstractSaveHandler):
 
-    def __init__(self, config, experiment_results):
+    def __init__(self, config, experiment_results, filename):
         super().__init__(config)
-        self._all_data = dict(list(experiment_results.items()) + list(config.items()))
+        self._all_data = collections.OrderedDict(list(experiment_results.items()) + list(config.items()))
+        self._filename = filename
 
     def save(self):
         self.__save_result()
@@ -22,7 +22,7 @@ class SaveHandler(AbstractSaveHandler):
 
         fieldnames = self.__set_headers()
 
-        with open(FILENAME, mode='a') as csv_file:
+        with open(self._filename, mode='a') as csv_file:
             writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
             writer.writerow(self._all_data)
 
@@ -33,11 +33,16 @@ class SaveHandler(AbstractSaveHandler):
         return field_names
 
     def compute_headers(self):
-        with open(FILENAME) as csv_file:
-            empty_file = os.stat(FILENAME).st_size == 0
+        if os.stat(self._filename).st_size == 0:
+            return self._all_data.keys()
+
+        with open(self._filename) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
-            field_names = next(csv_reader) if not empty_file else []
-            old_rows = [row for row in csv_reader] if not empty_file else []
+            field_names = next(csv_reader)
+
+        with open(self._filename) as csv_file:
+            csv_reader = csv.DictReader(csv_file, delimiter=',')
+            old_rows = [row for row in csv_reader]
 
         new_field_names = list(self._all_data.keys())
         for key in field_names:
@@ -47,26 +52,29 @@ class SaveHandler(AbstractSaveHandler):
         return new_field_names, old_rows
 
     def __rewrite_headers(self, field_names, old_rows):
-        print(field_names)
-        with open(FILENAME, 'w') as csv_file:
+        with open(self._filename, 'w') as csv_file:
             w = csv.writer(csv_file)
             w.writerow(field_names)
+            w = csv.DictWriter(csv_file, field_names)
 
             for row in old_rows:
                 w.writerow(row)
 
     def __create_if_not_exist(self):
-        if not os.path.exists(FILENAME):
-            with open(FILENAME, 'w'): pass
+        if not os.path.exists(self._filename):
+            with open(self._filename, 'w'): pass
 
     def __curate_data(self):
         confusion_matrix_str = "confusion_matrix"
+        new_dict = OrderedDict()
+
         for key, value in self._all_data.items():
-            if inspect.isclass(value):
-                self._all_data[key] = value.__name__
-            elif isinstance(value, float):
-                self._all_data[key] = '%.3f' % (value)
+            if isinstance(value, float):
+                new_dict[key] = '%.3f' % (value)
             elif key == confusion_matrix_str:
-                self._all_data[confusion_matrix_str + " (TP, FP, TN, FN)"] = value
-                self._all_data.pop(confusion_matrix_str)
+                new_dict[confusion_matrix_str + " (TP, FP, TN, FN)"] = value
+            else:
+                new_dict[key] = value
+
+        self._all_data = new_dict
 

@@ -6,5 +6,5 @@ class AbstractDataGenerator(ABC):
         pass
 
     @abstractmethod
-    def generate(self):
+    def generate(self, number_dimacs):
         pass

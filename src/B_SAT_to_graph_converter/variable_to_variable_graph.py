@@ -8,7 +8,10 @@ class VariableToVariableGraph(AbstractSATToGraphConverter):
 
     def __init__(self, max_clause_length):
         super().__init__()
-        self.max_clause_length = max_clause_length
+        self._max_clause_length = max_clause_length
+
+    def __str__(self):
+        return "{}(max_clause_length({}))".format(self.__class__.__name__, self._max_clause_length)
 
     def convert_all(self, SAT_problems):
         print("Converting SAT problems to graphs")
@@ -49,7 +52,7 @@ class VariableToVariableGraph(AbstractSATToGraphConverter):
                         if (j, k) in edges:
                             edge_attr = edges[(j, k)]
                         else:
-                            edge_attr = [0] + [0] * self.max_clause_length
+                            edge_attr = [0] + [0] * self._max_clause_length
 
                         edge_attr[i + 1] = 1
                         edges[(j, k)] = edge_attr
@@ -74,7 +77,7 @@ class VariableToVariableGraph(AbstractSATToGraphConverter):
                 edge_attr = edges[(i, i + n_vars)]
 
             else:
-                edge_attr = [0] + [0] * self.max_clause_length
+                edge_attr = [0] + [0] * self._max_clause_length
 
             edge_attr[0] = 1
             edges[(i, i + n_vars)] = edge_attr
