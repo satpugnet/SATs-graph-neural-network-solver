@@ -10,7 +10,7 @@ class AbstractSATToGraphConverter(ABC):
         pass
 
     def __repr__(self):
-        return "{}(max_clause_length({}))".format(self.__class__.__name__, self._max_clause_length)
+        return "{}()".format(self.__class__.__name__)
 
     def convert_all(self, SAT_problems):
         print("Converting SAT problems to graphs")
