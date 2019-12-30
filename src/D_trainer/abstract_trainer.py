@@ -6,9 +6,10 @@ import torch.nn.functional as F
 
 
 class AbstractTrainer(ABC):
-    def __init__(self, learning_rate, weight_decay):
+    def __init__(self, learning_rate, weight_decay, device):
         self._learning_rate = learning_rate
         self._weight_decay = weight_decay
+        self._device = device
 
     def __repr__(self):
         return "{}(learning_rate({}), weight_decay({}))".format(
@@ -21,7 +22,7 @@ class AbstractTrainer(ABC):
     def _create_optimizer(self, parameters, learning_rate, weight_decay):
         pass
 
-    def train(self, number_of_epochs, model, train_loader, device, model_evaluator):
+    def train(self, number_of_epochs, model, train_loader, model_evaluator):
         optimizer = self._create_optimizer(model.parameters(), self._learning_rate, self._weight_decay)
 
         train_loss = []
@@ -35,7 +36,7 @@ class AbstractTrainer(ABC):
 
             self._set_learning_rate(epoch, self._learning_rate, optimizer)
 
-            current_train_loss = self.training_step(model, train_loader, device, optimizer)
+            current_train_loss = self.training_step(model, train_loader, optimizer)
             train_loss.append(current_train_loss)
 
             current_test_loss, current_accuracy, _ = self.testing_step(model_evaluator, current_train_loss,
@@ -45,11 +46,11 @@ class AbstractTrainer(ABC):
 
         return train_loss, test_loss, accuracy, time.time() - start_time
 
-    def training_step(self, model, train_loader, device, optimizer):
+    def training_step(self, model, train_loader, optimizer):
         train_error = 0
 
         for batch in train_loader:
-            batch = batch.to(device)
+            batch = batch.to(self._device)
 
             optimizer.zero_grad()
 

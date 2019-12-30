@@ -1,15 +1,26 @@
 import torch
 import torch.nn.functional as F
 
+from E_evaluator.abstract_evaluator import AbstractEvaluator
 
-class ModelEvaluator:
 
-    def __init__(self, test_loader, device):
-        self.test_loader = test_loader
-        self.device = device
+class DefaultEvaluator(AbstractEvaluator):
+
+    def __init__(self, device):
+        super().__init__(device)
+        self.test_loader = None
+        self._device = device
+
+    @property
+    def test_loader(self):
+        return self.test_loader
+    
+    @test_loader.setter
+    def test_loader(self, new_test_loader):
+        self.test_loader = new_test_loader
 
     def eval(self, model, train_loss=None, do_print=True, time=None):
-        all_pred, all_truth, accuracy, test_loss = self.__eval_model(model)
+        all_pred, all_truth, accuracy, test_loss = self.__eval_model( model)
         confusion_matrix = self.__confusion_matrix(all_pred, all_truth)
 
         if do_print:
@@ -24,7 +35,7 @@ class ModelEvaluator:
         test_error = 0
         correct = 0
         for batch in self.test_loader:
-            batch = batch.to(self.device)
+            batch = batch.to(self._device)
             pred = model(batch)
             test_error += F.mse_loss(pred, batch.y.view(-1, 1))
 

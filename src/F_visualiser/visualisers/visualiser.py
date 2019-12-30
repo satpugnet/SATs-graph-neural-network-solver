@@ -5,7 +5,7 @@ import re
 import matplotlib.pyplot as plt
 
 
-class Visualiser:
+class DefaultVisualiser:
     def __init__(self):
         pass
 

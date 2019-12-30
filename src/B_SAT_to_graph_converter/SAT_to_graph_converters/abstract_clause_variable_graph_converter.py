@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from B_SAT_to_graph_converter.abstract_SAT_to_graph_converter import AbstractSATToGraphConverter
 
 
-class AbstractClauseVarGraphConverter(AbstractSATToGraphConverter, ABC):
+class AbstractClauseVariableGraphConverter(AbstractSATToGraphConverter, ABC):
 
     def __init__(self):
         super().__init__()

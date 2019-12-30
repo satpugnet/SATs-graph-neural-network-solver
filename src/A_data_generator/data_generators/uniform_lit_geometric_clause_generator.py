@@ -6,6 +6,7 @@ import time
 
 import numpy as np
 import random
+from random import shuffle
 
 from A_data_generator.abstract_data_generator import AbstractDataGenerator
 from A_data_generator.deterministic_solvers.PyMiniSolvers import minisolvers
@@ -14,7 +15,7 @@ from A_data_generator.deterministic_solvers.PyMiniSolvers import minisolvers
 class UniformLitGeometricClauseGenerator(AbstractDataGenerator):
 
     def __init__(self, out_dir="../data_generated", percentage_sat=0.50, seed=None, min_n_vars=1, max_n_vars=5,
-                 min_n_clause=2, max_n_clause=5, lit_distr_p=0.4):
+                 min_n_clause=2, max_n_clause=5, lit_distr_p=0.4, include_trivial_clause=False):
         super().__init__()
         self._seed = seed if seed is not None else time.time_ns() % 100000
         random.seed(self._seed)
@@ -26,12 +27,13 @@ class UniformLitGeometricClauseGenerator(AbstractDataGenerator):
         self._min_n_clause = min_n_clause
         self._max_n_clause = max_n_clause
         self._lit_distr_p = lit_distr_p
+        self._include_trivial_clause = include_trivial_clause
 
     def __repr__(self):
         return "{}(percentage_sat({:.2f}), seed({}), min_n_vars({}), max_n_vars({}), min_n_clause({}), " \
-               "max_n_clause({}), lit_distr_p({:.2f}))".format(self.__class__.__name__, self._percentage_sat, self._seed,
-                                                               self._min_n_vars, self._max_n_vars, self._min_n_clause,
-                                                               self._max_n_clause, self._lit_distr_p)
+               "max_n_clause({}), lit_distr_p({:.2f}), self._include_trivial_clause({}))"\
+            .format(self.__class__.__name__, self._percentage_sat, self._seed, self._min_n_vars, self._max_n_vars,
+                    self._min_n_clause, self._max_n_clause, self._lit_distr_p, self._include_trivial_clause)
 
     def generate(self, number_dimacs):
         number_sat_required = number_dimacs * self._percentage_sat
@@ -41,7 +43,7 @@ class UniformLitGeometricClauseGenerator(AbstractDataGenerator):
         while i < number_dimacs:
             print("Generation of SATs problem at: " + str(int(i / number_dimacs * 100)) + "% (" + str(number_sat_required)
                   + " SAT left and " + str(number_unsat_required) + " UNSAT left)")
-            n_vars, n_clause, clauses, is_sat = self.__gen_clause()
+            n_vars, n_clause, clauses, is_sat = self.__gen_clause(self._include_trivial_clause)
 
             if((is_sat and number_sat_required == 0) or (not is_sat and number_unsat_required == 0)):
                 continue
@@ -60,7 +62,7 @@ class UniformLitGeometricClauseGenerator(AbstractDataGenerator):
         except FileNotFoundError as e:
             pass
 
-    def __gen_clause(self):
+    def __gen_clause(self, include_trivial_clause):
         n_vars = random.randint(self._min_n_vars, self._max_n_vars)
         n_clause = random.randint(self._min_n_clause, self._max_n_clause)
         solver = minisolvers.MinisatSolver()
@@ -72,7 +74,7 @@ class UniformLitGeometricClauseGenerator(AbstractDataGenerator):
             lit_to_draw_from_geom = np.random.geometric(self._lit_distr_p) + 1
             max_n_lit = max(n_vars, 1)
             current_clause_n_lit = min(lit_to_draw_from_geom, max_n_lit)
-            current_clause = self.__generate_clause(n_vars, current_clause_n_lit)
+            current_clause = self.__generate_clause(n_vars, int(current_clause_n_lit), include_trivial_clause)
             clauses.append(current_clause)
             solver.add_clause(current_clause)
 
@@ -80,14 +82,19 @@ class UniformLitGeometricClauseGenerator(AbstractDataGenerator):
 
         return n_vars, n_clause, clauses, is_sat
 
-    def __generate_clause(self, n_lits, n_lit_drawn):
+    def __generate_clause(self, n_vars, n_lit_drawn, include_trivial_clause):
         ''' This does not generate trivial unsatisfiable clauses such with a var and its negation'''
-        # TODO: make it so it can generate (x and not x)
+        min_lit = -n_vars if include_trivial_clause else 1
+        lits_to_pick_from = list(range(min_lit, n_vars + 1))
+        lits_to_pick_from.remove(0)
+        shuffle(lits_to_pick_from)
 
-        lits = [i + 1 for i in range(n_lits)]
-        lits_drawn = np.random.choice(lits, size=int(n_lit_drawn), replace=False)
+        lits_picked = lits_to_pick_from[:n_lit_drawn]
+        # Randomly negate the lits in the clause
+        if not include_trivial_clause:
+            lits_picked = [lit if random.random() < 0.5 else -lit for lit in lits_picked]
 
-        return [lit if random.random() < 0.5 else -lit for lit in lits_drawn]
+        return lits_picked
 
     def __make_filename(self, out_dir, n_vars, n_clause, is_sat, iter_num):
         return "%s/sat=%i_n_vars=%.3d_n_clause=%.3d_lit_distr_p=%.2f_seed=%d-%i.sat" % \
@@ -110,3 +117,8 @@ class UniformLitGeometricClauseGenerator(AbstractDataGenerator):
                 file.write("\n")
 
             file.close()
+
+n_vars = 2
+a = list(range(-n_vars, n_vars + 1))
+a.remove(0)
+print(a[:2])

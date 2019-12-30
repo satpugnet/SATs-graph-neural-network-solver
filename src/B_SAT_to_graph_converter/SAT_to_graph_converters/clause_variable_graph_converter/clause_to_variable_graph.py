@@ -1,4 +1,4 @@
-from B_SAT_to_graph_converter.abstract_clause_var_graph_converter import AbstractClauseVarGraphConverter
+from B_SAT_to_graph_converter.SAT_to_graph_converters.abstract_clause_var_graph_converter import AbstractClauseVarGraphConverter
 
 
 class ClauseToVariableGraph(AbstractClauseVarGraphConverter):

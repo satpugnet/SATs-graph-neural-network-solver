@@ -1,18 +1,17 @@
+from collections import OrderedDict
+
 import torch
 from torch_geometric.data import DataLoader
 
-from A_data_generator.uniform_lit_geometric_clause_generator import UniformLitGeometricClauseGenerator
-from B_SAT_to_graph_converter.clause_to_variable_graph import ClauseToVariableGraph
-from B_SAT_to_graph_converter.loader.dimac_loader import DimacLoader
-from B_SAT_to_graph_converter.variable_to_variable_graph import VariableToVariableGraph
-from C_GNNs.gcn_2_layer_linear_1_layer_gnn import GCN2LayerLinear1LayerGNN
-
-from C_GNNs.nnconv_gnn import NNConvGNN
-from D_trainer.adam_trainer import AdamTrainer
-from F_visualiser.visualiser import Visualiser
-from E_evaluator.model_evaluator import ModelEvaluator
-from G_save.save_handler import SaveHandler
-from collections import OrderedDict
+from A_data_generator.data_generators.uniform_lit_geometric_clause_generator import UniformLitGeometricClauseGenerator
+from B_SAT_to_graph_converter.SAT_to_graph_converters.clause_variable_graph_converter.clause_to_variable_graph import \
+    ClauseToVariableGraph
+from C_GNNs.gnns.nnconv_gnn import NNConvGNN
+from D_trainer.trainers.adam_trainer import AdamTrainer
+from E_evaluator.evaluators.default_evaluator import DefaultEvaluator
+from F_visualiser.visualisers.visualiser import DefaultVisualiser
+from G_save.save_handlers.save_handler import SaveHandler
+from utils.dimac_loader import DimacLoader
 
 #################################################
 #
@@ -22,6 +21,9 @@ from collections import OrderedDict
 
 print("Starting the experiment")
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+# These configs will be saved to file
 experiment_configs = OrderedDict([
     # Generate data
     ("generator", UniformLitGeometricClauseGenerator(
@@ -60,12 +62,15 @@ experiment_configs = OrderedDict([
     # Train
     ("trainer", AdamTrainer(
         learning_rate=0.001,
-        weight_decay=5e-4
+        weight_decay=5e-4,
+        device=device
     )),
     ("number_of_epochs", 100),
 
     # Eval
-
+    ("evaluator", DefaultEvaluator(
+        device=device
+    )),
 
     # Visualise
 
@@ -74,6 +79,7 @@ experiment_configs = OrderedDict([
 
 ])
 
+# These configs will not be saved to file
 other_configs = {
 # Generate data
 "data_generated_folder_location": "../data_generated",
@@ -91,6 +97,7 @@ other_configs = {
 
 
 # Visualise
+"visualiser": DefaultVisualiser(),
 "graph_directory_name": "../graphs",
 
 # Save
@@ -144,7 +151,6 @@ test_loader = DataLoader(
 
 print("\nCREATING GRAPH NEURAL NETWORK STRUCTURE")
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 experiment_configs["gnn"].initialise_channels(
     next(iter(train_loader)).num_node_features,
     len(next(iter(train_loader)).y),
@@ -162,13 +168,12 @@ model = experiment_configs["gnn"].to(device)
 
 print("\nTRAINING")
 
-model_evaluator = ModelEvaluator(test_loader, device)
+experiment_configs["evaluator"].test_loader = test_loader
 train_loss, test_loss, accuracy, final_time = experiment_configs["trainer"].train(
     experiment_configs["number_of_epochs"],
     model,
     train_loader,
-    device,
-    model_evaluator
+    experiment_configs["evaluator"]
 )
 
 
@@ -181,7 +186,7 @@ train_loss, test_loss, accuracy, final_time = experiment_configs["trainer"].trai
 print("\nEVALUATING")
 
 model.eval()
-final_test_loss, final_accuracy, final_confusion_matrix = model_evaluator.eval(model, do_print=True)
+final_test_loss, final_accuracy, final_confusion_matrix = experiment_configs["evaluator"].eval(model, do_print=True)
 
 
 #################################################
@@ -198,7 +203,7 @@ while save_user_input != "y" and save_user_input != "n":
     save_user_input = input("Save the results? (y or n)\n")
 save_result = save_user_input == "y"
 
-graph_filename = Visualiser().visualise(
+graph_filename = other_configs["visualiser"].visualise(
     train_loss,
     test_loss,
     accuracy,
