@@ -13,6 +13,8 @@ from F_visualiser.visualisers.visualiser import DefaultVisualiser
 from G_save.save_handlers.save_handler import SaveHandler
 from utils.dimac_loader import DimacLoader
 
+
+# TODO: put this section in a different file
 #################################################
 #
 # CONSTANTS
@@ -34,9 +36,10 @@ experiment_configs = OrderedDict([
         max_n_vars=60,
         min_n_clause=80,
         max_n_clause=140,
-        lit_distr_p=0.4
+        lit_distr_p=0.4,
+        include_trivial_clause=False
     )),
-    ("number_generated_data", 10000),
+    ("number_generated_data", 10),
 
     # Load SATs and converting to graph data
     # ("SAT_to_graph_converter", VariableToVariableGraph(
@@ -65,7 +68,7 @@ experiment_configs = OrderedDict([
         weight_decay=5e-4,
         device=device
     )),
-    ("number_of_epochs", 100),
+    ("number_of_epochs", 2),
 
     # Eval
     ("evaluator", DefaultEvaluator(
@@ -81,29 +84,28 @@ experiment_configs = OrderedDict([
 
 # These configs will not be saved to file
 other_configs = {
-# Generate data
-"data_generated_folder_location": "../data_generated",
+    # Generate data
+    "data_generated_folder_location": "../data_generated",
 
-# Load SATs and converting to graph data
-
-
-# Graph neural network structure
+    # Load SATs and converting to graph data
 
 
-# Train
+    # Graph neural network structure
 
 
-# Eval
+    # Train
 
 
-# Visualise
-"visualiser": DefaultVisualiser(),
-"graph_directory_name": "../graphs",
+    # Eval
 
-# Save
-"save_handler": SaveHandler,
-"save_filename": "experiments.csv"
 
+    # Visualise
+    "visualiser": DefaultVisualiser(),
+    "graph_directory_name": "../graphs",
+
+    # Save
+    "save_handler": SaveHandler,
+    "save_filename": "experiments.csv"
 }
 
 

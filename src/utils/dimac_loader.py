@@ -4,6 +4,7 @@ import re
 from B_SAT_to_graph_converter.wrapper.SAT_problem import SATProblem
 
 
+#TODO: generate real dimac (with 0\n at the end instead of just \n)
 class DimacLoader:
 
     def __init__(self, dir_path=None):

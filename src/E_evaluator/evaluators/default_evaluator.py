@@ -8,16 +8,16 @@ class DefaultEvaluator(AbstractEvaluator):
 
     def __init__(self, device):
         super().__init__(device)
-        self.test_loader = None
+        self._test_loader = None
         self._device = device
 
     @property
     def test_loader(self):
-        return self.test_loader
-    
+        return self._test_loader
+
     @test_loader.setter
     def test_loader(self, new_test_loader):
-        self.test_loader = new_test_loader
+        self._test_loader = new_test_loader
 
     def eval(self, model, train_loss=None, do_print=True, time=None):
         all_pred, all_truth, accuracy, test_loss = self.__eval_model( model)

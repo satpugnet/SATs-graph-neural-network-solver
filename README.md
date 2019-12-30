@@ -22,6 +22,10 @@ python3 src/generate_data.py
 **src/experiments/**: Contains the file for messy experimentation of the GNN.  
 **src/PyMiniSolvers/**: Contains an old fashion SATs solver.  
 
+# Contribution
+
+Please contribute to the code by sending pull requests.
+
 # Citation
 
 Please cite the repo with the following if it is used:
@@ -34,3 +38,5 @@ Please cite the repo with the following if it is used:
   howpublished = {\url{https://github.com/saturnin13/SATs-graph-neural-network-solver}},  
   commit = {last}  
 }
+
+Copyright 2020 © Saturnin Pugnet (saturnin.13@hotmail.fr or spugnet@caltech.edu)

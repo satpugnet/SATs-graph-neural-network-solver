@@ -86,7 +86,8 @@ class UniformLitGeometricClauseGenerator(AbstractDataGenerator):
         ''' This does not generate trivial unsatisfiable clauses such with a var and its negation'''
         min_lit = -n_vars if include_trivial_clause else 1
         lits_to_pick_from = list(range(min_lit, n_vars + 1))
-        lits_to_pick_from.remove(0)
+        if 0 in lits_to_pick_from:
+            lits_to_pick_from.remove(0)
         shuffle(lits_to_pick_from)
 
         lits_picked = lits_to_pick_from[:n_lit_drawn]
@@ -117,8 +118,3 @@ class UniformLitGeometricClauseGenerator(AbstractDataGenerator):
                 file.write("\n")
 
             file.close()
-
-n_vars = 2
-a = list(range(-n_vars, n_vars + 1))
-a.remove(0)
-print(a[:2])
