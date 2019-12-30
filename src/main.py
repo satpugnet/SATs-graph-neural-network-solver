@@ -2,6 +2,7 @@ import torch
 from torch_geometric.data import DataLoader
 
 from A_data_generator.uniform_lit_geometric_clause_generator import UniformLitGeometricClauseGenerator
+from B_SAT_to_graph_converter.clause_to_variable_graph import ClauseToVariableGraph
 from B_SAT_to_graph_converter.loader.dimac_loader import DimacLoader
 from B_SAT_to_graph_converter.variable_to_variable_graph import VariableToVariableGraph
 from C_GNNs.gcn_2_layer_linear_1_layer_gnn import GCN2LayerLinear1LayerGNN
@@ -27,18 +28,19 @@ experiment_configs = OrderedDict([
         out_dir="../data_generated",
         percentage_sat=0.5,
         seed=None,
-        min_n_vars=30,
-        max_n_vars=40,
-        min_n_clause=100,
-        max_n_clause=130,
+        min_n_vars=1,
+        max_n_vars=10,
+        min_n_clause=10,
+        max_n_clause=20,
         lit_distr_p=0.4
     )),
-    ("number_generated_data", 10000),
+    ("number_generated_data", 2000),
 
     # Load SATs and converting to graph data
-    ("SAT_to_graph_converter", VariableToVariableGraph(
-        max_clause_length=135
-    )),
+    # ("SAT_to_graph_converter", VariableToVariableGraph(
+    #     max_clause_length=135
+    # )),
+    ("SAT_to_graph_converter", ClauseToVariableGraph()),
     ("percentage_training_set", 0.75),
     ("train_batch_size", 4),
     ("test_batch_size", 4),
@@ -59,7 +61,7 @@ experiment_configs = OrderedDict([
         learning_rate=0.001,
         weight_decay=5e-4
     )),
-    ("number_of_epochs", 10),
+    ("number_of_epochs", 100),
 
     # Eval
 

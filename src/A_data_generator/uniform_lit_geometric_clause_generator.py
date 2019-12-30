@@ -70,17 +70,21 @@ class UniformLitGeometricClauseGenerator(AbstractDataGenerator):
 
         clauses = []
         for i in range(n_clause):
-            lit_from_geom = np.random.geometric(self._lit_distr_p) + 1
+            lit_to_draw_from_geom = np.random.geometric(self._lit_distr_p) + 1
             max_n_lit = max(n_vars, 1)
-            current_clause_n_lit = min(lit_from_geom, max_n_lit)
+            current_clause_n_lit = min(lit_to_draw_from_geom, max_n_lit)
             current_clause = self.__generate_clause(n_vars, current_clause_n_lit)
             clauses.append(current_clause)
             solver.add_clause(current_clause)
+
         is_sat = solver.solve()
 
         return n_vars, n_clause, clauses, is_sat
 
     def __generate_clause(self, n_lits, n_lit_drawn):
+        ''' This does not generate trivial unsatisfiable clauses such with a var and its negation'''
+        # TODO: make it so it can generate (x and not x)
+
         lits = [i + 1 for i in range(n_lits)]
         lits_drawn = np.random.choice(lits, size=int(n_lit_drawn), replace=False)
 

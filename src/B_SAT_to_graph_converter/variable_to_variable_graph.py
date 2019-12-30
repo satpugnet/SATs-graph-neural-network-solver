@@ -1,11 +1,14 @@
 from B_SAT_to_graph_converter.abstract_SAT_to_graph_converter import AbstractSATToGraphConverter
 
-
+# TODO: Refactor with the changes in clause to variable
 class VariableToVariableGraph(AbstractSATToGraphConverter):
 
     def __init__(self, max_clause_length):
         super().__init__()
         self._max_clause_length = max_clause_length
+
+    def __repr__(self):
+        return "{}(max_clause_length({}))".format(self.__class__.__name__, self._max_clause_length)
 
     def _compute_x(self, SAT_problem):
         return [[1]] * SAT_problem.n_vars + [[-1]] * SAT_problem.n_vars

@@ -26,21 +26,38 @@ class AbstractSATToGraphConverter(ABC):
         x = torch.tensor(self._compute_x(SAT_problem), dtype=torch.float)
         y = torch.tensor([SAT_problem.is_sat], dtype=torch.float)
 
-        edge_index_raw, edge_attr_raw = self._compute_edges(SAT_problem)
+        edge_index_raw, edge_attr_raw = self.__convert_edges_from_dict(self._compute_edges(SAT_problem))
         edge_index = torch.tensor(edge_index_raw, dtype=torch.long)
         edge_attr = torch.tensor(edge_attr_raw, dtype=torch.float)
 
-        # x = torch.tensor([[2, 3, 4], [4, 7, 5], [4, 7, 5]], dtype=torch.float)
-        # y = torch.tensor([1], dtype=torch.long)
-        # edge_index = torch.tensor([[0, 1, 1], [0, 1, 0]], dtype=torch.long)
-        # edge_attr = torch.tensor([[4, 2], [3, 2], [1, 2]], dtype=torch.long)
-
         return Data(x=x, y=y, edge_index=edge_index, edge_attr=edge_attr)
+
+    def __convert_edges_from_dict(self, edges):
+        edge_start = []
+        edge_end = []
+        edge_attr = []
+
+        for key in edges:
+            edge_start.append(key[0])
+            edge_end.append(key[1])
+            edge_attr.append(edges[key])
+
+        return [edge_start, edge_end], edge_attr
 
     @abstractmethod
     def _compute_x(self, SAT_problem):
+        # Example x: [[2, 3, 4], [4, 7, 5], [4, 7, 5]]
         pass
 
     @abstractmethod
     def _compute_edges(self, SAT_problem):
+        # Example edge_index: [[0, 1, 1], [0, 1, 0]]
+        #         edge_attr:  [[4, 2], [3, 2], [1, 2]]
         pass
+
+    # TODO: make that this is done at the end if a flag is_undirected is activate, every edge is doubled instead of
+    # putting both in every time
+    def _add_undirected_edge_to_dict(self, edge_dict, edge_end1, edge_end2, value):
+        edge_dict[(edge_end1, edge_end2)] = value
+        edge_dict[(edge_end2, edge_end1)] = value
+        return edge_dict
