@@ -26,19 +26,19 @@ experiment_configs = OrderedDict([
     # Generate data
     ("generator", UniformLitGeometricClauseGenerator(
         out_dir="../data_generated",
-        percentage_sat=0.5,
+        percentage_sat=0.5, # TODO: create a testing set where the percentage sat is not used (completly random sat problem)
         seed=None,
-        min_n_vars=1,
-        max_n_vars=10,
-        min_n_clause=10,
-        max_n_clause=20,
+        min_n_vars=30,
+        max_n_vars=60,
+        min_n_clause=80,
+        max_n_clause=140,
         lit_distr_p=0.4
     )),
-    ("number_generated_data", 2000),
+    ("number_generated_data", 10000),
 
     # Load SATs and converting to graph data
     # ("SAT_to_graph_converter", VariableToVariableGraph(
-    #     max_clause_length=135
+    #     max_clause_length=65
     # )),
     ("SAT_to_graph_converter", ClauseToVariableGraph()),
     ("percentage_training_set", 0.75),
@@ -53,7 +53,8 @@ experiment_configs = OrderedDict([
     ("gnn", NNConvGNN(
         sigmoid_output=True,
         deep_nn=False,
-        dropout_prob=0.5
+        dropout_prob=0.5,
+        num_hidden_neurons=24
     )),
 
     # Train
@@ -162,7 +163,7 @@ model = experiment_configs["gnn"].to(device)
 print("\nTRAINING")
 
 model_evaluator = ModelEvaluator(test_loader, device)
-train_loss, test_loss, accuracy = experiment_configs["trainer"].train(
+train_loss, test_loss, accuracy, final_time = experiment_configs["trainer"].train(
     experiment_configs["number_of_epochs"],
     model,
     train_loader,
@@ -216,6 +217,7 @@ print("\nSAVING")
 
 if save_result:
     experiment_results = OrderedDict([
+        ("time_taken", final_time),
         ("test_loss", final_test_loss.item()),
         ("train_loss", train_loss[-1].item()),
         ("accuracy", final_accuracy),

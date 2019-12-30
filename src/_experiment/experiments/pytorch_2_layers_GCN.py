@@ -4,8 +4,8 @@ import torch.nn.functional as F
 from torch_geometric.nn import GCNConv
 
 dataset = Planetoid(root='/tmp/Cora', name='Cora')
-print(dataset[0])
-print(dataset.num_node_features)
+# print(dataset[0])
+# print(dataset.num_node_features)
 
 class Net(torch.nn.Module):
     def __init__(self):
@@ -30,7 +30,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
 model.train()
 for epoch in range(200):
-    print(epoch)
+    # print(epoch)
     optimizer.zero_grad()
     out = model(data)
     loss = F.nll_loss(out[data.train_mask], data.y[data.train_mask])
@@ -41,4 +41,4 @@ model.eval()
 _, pred = model(data).max(dim=1)
 correct = float(pred[data.test_mask].eq(data.y[data.test_mask]).sum().item())
 acc = correct / data.test_mask.sum().item()
-print('Accuracy: {:.4f}'.format(acc))
+# print('Accuracy: {:.4f}'.format(acc))

@@ -10,37 +10,36 @@ import torch.nn.functional as F
 
 class NNConvGNN(AbstractGNN, ABC):
 
-    def __init__(self, sigmoid_output=True, dropout_prob=0.5, deep_nn=True):
+    def __init__(self, sigmoid_output=True, dropout_prob=0.5, deep_nn=True, num_hidden_neurons=8):
         super().__init__(sigmoid_output, dropout_prob)
         self._deep_nn = deep_nn
+        self._num_hidden_neurons = num_hidden_neurons
 
     def initialise_channels(self, in_channels, out_channels, num_edge_features=None):
         super().initialise_channels(in_channels, out_channels, num_edge_features)
 
-        num_hidden_neurons = 8
+        if self._deep_nn:
+            self._nn1 = nn.Sequential(nn.Linear(num_edge_features, 16), nn.ReLU(), nn.Linear(16, in_channels * self._num_hidden_neurons))
+        else:
+            self._nn1 = nn.Linear(num_edge_features, in_channels * self._num_hidden_neurons)
+        self._conv1 = NNConv(in_channels, self._num_hidden_neurons, self._nn1, aggr='add')
 
         if self._deep_nn:
-            self._nn1 = nn.Sequential(nn.Linear(num_edge_features, 16), nn.ReLU(), nn.Linear(16, in_channels * num_hidden_neurons))
+            self._nn2 = nn.Sequential(nn.Linear(num_edge_features, 16), nn.ReLU(), nn.Linear(16, self._num_hidden_neurons * self._num_hidden_neurons))
         else:
-            self._nn1 = nn.Linear(num_edge_features, in_channels * num_hidden_neurons)
-        self._conv1 = NNConv(in_channels, num_hidden_neurons, self._nn1, aggr='add')
+            self._nn2 = nn.Linear(num_edge_features, self._num_hidden_neurons * self._num_hidden_neurons)
+        self._conv2 = NNConv(self._num_hidden_neurons, self._num_hidden_neurons, self._nn2, aggr='add')
 
         if self._deep_nn:
-            self._nn2 = nn.Sequential(nn.Linear(num_edge_features, 16), nn.ReLU(), nn.Linear(16, num_hidden_neurons * num_hidden_neurons))
+            self._nn3 = nn.Sequential(nn.Linear(num_edge_features, 16), nn.ReLU(), nn.Linear(16, self._num_hidden_neurons * self._num_hidden_neurons))
         else:
-            self._nn2 = nn.Linear(num_edge_features, num_hidden_neurons * num_hidden_neurons)
-        self._conv2 = NNConv(num_hidden_neurons, num_hidden_neurons, self._nn2, aggr='add')
-
-        if self._deep_nn:
-            self._nn3 = nn.Sequential(nn.Linear(num_edge_features, 16), nn.ReLU(), nn.Linear(16, num_hidden_neurons * num_hidden_neurons))
-        else:
-            self._nn3 = nn.Linear(num_edge_features, num_hidden_neurons * num_hidden_neurons)
-        self._conv3 = NNConv(num_hidden_neurons, num_hidden_neurons, self._nn3, aggr='add')
+            self._nn3 = nn.Linear(num_edge_features, self._num_hidden_neurons * self._num_hidden_neurons)
+        self._conv3 = NNConv(self._num_hidden_neurons, self._num_hidden_neurons, self._nn3, aggr='add')
 
         self._pooling = global_add_pool
 
-        self._fc1 = torch.nn.Linear(num_hidden_neurons, num_hidden_neurons)
-        self._fc2 = torch.nn.Linear(num_hidden_neurons, 1)
+        self._fc1 = torch.nn.Linear(self._num_hidden_neurons, self._num_hidden_neurons)
+        self._fc2 = torch.nn.Linear(self._num_hidden_neurons, 1)
 
     def __repr__(self):
         return "{}(nn1({}), conv1({}), dropout({}), nn2({}), conv2({}), dropout({}), nn3({}), conv3({}), pooling ({}), fc1({}), fc2({}), sigmoid_output({}))"\

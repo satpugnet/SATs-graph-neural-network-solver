@@ -5,7 +5,7 @@ from torch_geometric.datasets import ShapeNet
 
 dataset = ShapeNet(root='/tmp/ShapeNet', categories=['Airplane'], pre_transform=T.KNNGraph(k=6))
 
-print(dataset[0])
+# print(dataset[0])
 
 # edge_index = torch.tensor([[0, 1, 1],
 #                            [1, 0, 2]], dtype=torch.long)

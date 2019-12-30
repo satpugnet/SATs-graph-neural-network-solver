@@ -43,7 +43,7 @@ class AbstractTrainer(ABC):
             test_loss.append(current_test_loss)
             accuracy.append(current_accuracy)
 
-        return train_loss, test_loss, accuracy
+        return train_loss, test_loss, accuracy, time.time() - start_time
 
     def training_step(self, model, train_loader, device, optimizer):
         train_error = 0

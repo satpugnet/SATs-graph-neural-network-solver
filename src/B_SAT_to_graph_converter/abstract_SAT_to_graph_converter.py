@@ -29,7 +29,6 @@ class AbstractSATToGraphConverter(ABC):
         edge_index_raw, edge_attr_raw = self.__convert_edges_from_dict(self._compute_edges(SAT_problem))
         edge_index = torch.tensor(edge_index_raw, dtype=torch.long)
         edge_attr = torch.tensor(edge_attr_raw, dtype=torch.float)
-
         return Data(x=x, y=y, edge_index=edge_index, edge_attr=edge_attr)
 
     def __convert_edges_from_dict(self, edges):

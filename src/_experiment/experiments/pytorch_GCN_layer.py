@@ -40,4 +40,4 @@ class GCNConv(MessagePassing):
 conv = GCNConv(16, 32)
 x = conv(x, edge_index)
 
-print(x)
+# print(x)
