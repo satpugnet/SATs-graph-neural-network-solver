@@ -5,9 +5,10 @@ import torch
 
 class AbstractGNN(torch.nn.Module, ABC):
 
-    def __init__(self, sigmoid_output=True):
+    def __init__(self, sigmoid_output=True, dropout_prob=0.5):
         super(AbstractGNN, self).__init__()
         self._sigmoid_output = sigmoid_output
+        self._dropout_prob = dropout_prob
 
     # Initialise the dynamic part of the data later in a method so that we can build the object in the config, this
     # could be replaced by a constructor pattern

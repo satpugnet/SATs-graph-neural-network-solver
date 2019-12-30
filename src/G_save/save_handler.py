@@ -6,6 +6,9 @@ from collections import OrderedDict
 
 from G_save.abstract_save_handler import AbstractSaveHandler
 
+DOUBLE_SPACE = '  '
+SINGLE_SPACE = ' '
+NEWLINE = '\n'
 
 class SaveHandler(AbstractSaveHandler):
 
@@ -70,12 +73,18 @@ class SaveHandler(AbstractSaveHandler):
         new_dict = OrderedDict()
 
         for key, value in self._all_data.items():
-            if isinstance(value, float):
-                new_dict[key] = '%.3f' % (value)
+            new_key = key
+            new_value = value
+
+            if isinstance(new_value, float):
+                new_value = '%.3f' % (new_value)
             elif key == confusion_matrix_str:
-                new_dict[confusion_matrix_str + " (TP, FP, TN, FN)"] = value
-            else:
-                new_dict[key] = value
+                new_key = confusion_matrix_str + " (TP, FP, TN, FN)"
+
+            new_value = str(new_value).replace(NEWLINE, SINGLE_SPACE)
+            while DOUBLE_SPACE in new_value:
+                new_value = str(new_value).replace(DOUBLE_SPACE, SINGLE_SPACE)
+
+            new_dict[new_key] = new_value
 
         self._all_data = new_dict
-

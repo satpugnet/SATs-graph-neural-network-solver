@@ -27,36 +27,39 @@ experiment_configs = OrderedDict([
         out_dir="../data_generated",
         percentage_sat=0.5,
         seed=None,
-        min_n_vars=1,
-        max_n_vars=5,
-        min_n_clause=1,
-        max_n_clause=5,
+        min_n_vars=30,
+        max_n_vars=40,
+        min_n_clause=100,
+        max_n_clause=130,
         lit_distr_p=0.4
     )),
-    ("number_generated_data", 1000),
+    ("number_generated_data", 10000),
 
     # Load SATs and converting to graph data
     ("SAT_to_graph_converter", VariableToVariableGraph(
-        max_clause_length=65
+        max_clause_length=135
     )),
     ("percentage_training_set", 0.75),
     ("train_batch_size", 4),
     ("test_batch_size", 4),
 
     # Graph neural network structure
-    ("gnn", GCN2LayerLinear1LayerGNN(
-        sigmoid_output=True
-    )),
-    # ("gnn", NNConvGNN(
-    #     sigmoid_output=True
+    # ("gnn", GCN2LayerLinear1LayerGNN(
+    #     sigmoid_output=True,
+    #     dropout_prob=0.5
     # )),
+    ("gnn", NNConvGNN(
+        sigmoid_output=True,
+        deep_nn=False,
+        dropout_prob=0.5
+    )),
 
     # Train
     ("trainer", AdamTrainer(
         learning_rate=0.001,
         weight_decay=5e-4
     )),
-    ("number_of_epochs", 100),
+    ("number_of_epochs", 10),
 
     # Eval
 

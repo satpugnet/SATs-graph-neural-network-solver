@@ -9,8 +9,8 @@ from C_GNNs.abstract_gnn import AbstractGNN
 
 class GCN2LayerLinear1LayerGNN(AbstractGNN):
 
-    def __init__(self, sigmoid_output=True):
-        super(GCN2LayerLinear1LayerGNN, self).__init__(sigmoid_output)
+    def __init__(self, sigmoid_output=True, dropout_prob=0.5):
+        super(GCN2LayerLinear1LayerGNN, self).__init__(sigmoid_output, dropout_prob)
 
     def initialise_channels(self, in_channels, out_channels, num_edge_features=None):
         super().initialise_channels(in_channels, out_channels, num_edge_features)
@@ -20,11 +20,13 @@ class GCN2LayerLinear1LayerGNN(AbstractGNN):
         self._fc2 = nn.Linear(out_channels, 1)
 
     def __repr__(self):
-        return "{}(conv1({}), conv2({}), fc2({}))".format(self.__class__.__name__, self._conv1, self._conv2, self._fc2)
+        return "{}(conv1({}), dropout({}), conv2({}), fc2({}))".format(self.__class__.__name__,
+                                                                       self._conv1, self._dropout_prob,
+                                                                       self.self._conv2, self._fc2)
 
     def _perform_pre_pooling(self, x, edge_index, edge_attr):
         x = F.relu(self._conv1(x, edge_index))
-        x = F.dropout(x, training=self.training)  # TODO: uncomment or remove
+        x = F.dropout(x, p=self._dropout_prob, training=self.training)
         x = F.relu(self._conv2(x, edge_index))
 
         return x
