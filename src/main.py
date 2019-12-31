@@ -57,7 +57,7 @@ experiment_configs = OrderedDict([
     #     min_n_holes=1,
     #     max_n_holes=10
     # )),
-    ("number_generated_data", 4000),
+    ("number_generated_data", 100),
 
     # Load SATs and converting to graph data
     # ("SAT_to_graph_converter", VariableToVariableGraph(
@@ -69,30 +69,31 @@ experiment_configs = OrderedDict([
     ("test_batch_size", 8),
 
     # Graph neural network structure
-    # ("gnn", GCN2LayerLinear1LayerGNN(
-    #     sigmoid_output=True,
-    #     dropout_prob=0.5
-    # )),
+    ("gnn", GCN2LayerLinear1LayerGNN(
+        sigmoid_output=True,
+        dropout_prob=0.5
+    )),
     # ("gnn", NNConvGNN(
     #     sigmoid_output=True,
     #     deep_nn=False,
     #     dropout_prob=0.5,
     #     num_hidden_neurons=24
     # )),
-    ("gnn", RepeatingNNConvGNN(
-        sigmoid_output=True,
-        dropout_prob=0,
-        deep_nn=False,
-        num_hidden_neurons=8,
-        conv_repetition=10,
-        ratio_test_train_rep=1
-    )),
+    # ("gnn", RepeatingNNConvGNN(
+    #     sigmoid_output=True,
+    #     dropout_prob=0,
+    #     deep_nn=False,
+    #     num_hidden_neurons=8,
+    #     conv_repetition=10,
+    #     ratio_test_train_rep=1
+    # )),
 
     # Train
     ("trainer", AdamTrainer(
         learning_rate=0.001,
         weight_decay=5e-4,
-        device=device
+        device=device,
+        num_epoch_before_halving_lr=10
     )),
     ("number_of_epochs", 100),
 
