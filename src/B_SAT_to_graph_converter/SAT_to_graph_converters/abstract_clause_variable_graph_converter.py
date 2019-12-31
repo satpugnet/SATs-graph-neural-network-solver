@@ -43,9 +43,9 @@ class AbstractClauseVariableGraphConverter(AbstractSATToGraphConverter, ABC):
     def _get_lit_node_index(self, lit, n_clauses, n_vars):
         pass
 
-    def _compute_edges(self, SAT_problem):
-        neg_edges = self.__compute_opposite_edges(SAT_problem.n_clauses, SAT_problem.n_vars)
-        other_edges = self._compute_edges(SAT_problem.clauses, SAT_problem.n_vars)
+    def _compute_edges(self, clauses, n_vars):
+        neg_edges = self.__compute_opposite_edges(len(clauses), n_vars)
+        other_edges = self._compute_edges(clauses, n_vars)
 
         return self._sum_edges([neg_edges, other_edges])
 

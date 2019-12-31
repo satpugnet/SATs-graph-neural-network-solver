@@ -26,9 +26,10 @@ class AbstractSATToGraphConverter(ABC):
         x = torch.tensor(self._compute_x(SAT_problem), dtype=torch.float)
         y = torch.tensor([SAT_problem.is_sat], dtype=torch.float)
 
-        edge_index_raw, edge_attr_raw = self.__convert_edges_from_dict(self._compute_edges(SAT_problem))
+        edge_index_raw, edge_attr_raw = self.__convert_edges_from_dict(self._compute_edges(SAT_problem.clauses, SAT_problem.n_vars))
         edge_index = torch.tensor(edge_index_raw, dtype=torch.long)
         edge_attr = torch.tensor(edge_attr_raw, dtype=torch.float)
+
         return Data(x=x, y=y, edge_index=edge_index, edge_attr=edge_attr)
 
     def __convert_edges_from_dict(self, edges):
@@ -49,7 +50,7 @@ class AbstractSATToGraphConverter(ABC):
         pass
 
     @abstractmethod
-    def _compute_edges(self, SAT_problem):
+    def _compute_edges(self, clauses, n_vars):
         # Example edge_index: [[0, 1, 1], [0, 1, 0]]
         #         edge_attr:  [[4, 2], [3, 2], [1, 2]]
         pass

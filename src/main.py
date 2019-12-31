@@ -11,6 +11,7 @@ from B_SAT_to_graph_converter.SAT_to_graph_converters.clause_variable_graph_conv
     VariableToVariableGraph
 from C_GNNs.gnns.gcn_2_layer_linear_1_layer_gnn import GCN2LayerLinear1LayerGNN
 from C_GNNs.gnns.nnconv_gnn import NNConvGNN
+from C_GNNs.gnns.repeating_nnconv_gnn import RepeatingNNConvGNN
 from D_trainer.trainers.adam_trainer import AdamTrainer
 from E_evaluator.evaluators.default_evaluator import DefaultEvaluator
 from F_visualiser.visualisers.visualiser import DefaultVisualiser
@@ -36,10 +37,10 @@ experiment_configs = OrderedDict([
         out_dir="../data_generated",
         percentage_sat=0.5, # TODO: create a testing set where the percentage sat is not used (completly random sat problem)
         seed=None,
-        min_n_vars=5,
-        max_n_vars=10,
-        min_n_clause=5,
-        max_n_clause=20,
+        min_n_vars=60,
+        max_n_vars=80,
+        min_n_clause=140,
+        max_n_clause=180,
         lit_distr_p=0.4,
         include_trivial_clause=False
     )),
@@ -56,7 +57,7 @@ experiment_configs = OrderedDict([
     #     min_n_holes=1,
     #     max_n_holes=10
     # )),
-    ("number_generated_data", 1000),
+    ("number_generated_data", 4000),
 
     # Load SATs and converting to graph data
     # ("SAT_to_graph_converter", VariableToVariableGraph(
@@ -64,20 +65,28 @@ experiment_configs = OrderedDict([
     # )),
     ("SAT_to_graph_converter", ClauseToVariableGraph()),
     ("percentage_training_set", 0.75),
-    ("train_batch_size", 4),
-    ("test_batch_size", 4),
+    ("train_batch_size", 8),
+    ("test_batch_size", 8),
 
     # Graph neural network structure
-    ("gnn", GCN2LayerLinear1LayerGNN(
-        sigmoid_output=True,
-        dropout_prob=0.5
-    )),
+    # ("gnn", GCN2LayerLinear1LayerGNN(
+    #     sigmoid_output=True,
+    #     dropout_prob=0.5
+    # )),
     # ("gnn", NNConvGNN(
     #     sigmoid_output=True,
     #     deep_nn=False,
     #     dropout_prob=0.5,
     #     num_hidden_neurons=24
     # )),
+    ("gnn", RepeatingNNConvGNN(
+        sigmoid_output=True,
+        dropout_prob=0,
+        deep_nn=False,
+        num_hidden_neurons=8,
+        conv_repetition=10,
+        ratio_test_train_rep=1
+    )),
 
     # Train
     ("trainer", AdamTrainer(
@@ -85,7 +94,7 @@ experiment_configs = OrderedDict([
         weight_decay=5e-4,
         device=device
     )),
-    ("number_of_epochs", 20),
+    ("number_of_epochs", 100),
 
     # Eval
     ("evaluator", DefaultEvaluator(

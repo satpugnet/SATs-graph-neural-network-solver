@@ -30,8 +30,8 @@ class AbstractTrainer(ABC):
         accuracy = []
         start_time = time.time()
 
-        model.train()
         for epoch in range(number_of_epochs):
+            model.train()
             print("Epoch: " + str(epoch))
 
             self._set_learning_rate(epoch, self._learning_rate, optimizer)
@@ -39,6 +39,7 @@ class AbstractTrainer(ABC):
             current_train_loss = self.training_step(model, train_loader, optimizer)
             train_loss.append(current_train_loss)
 
+            model.eval()
             current_test_loss, current_accuracy, _ = self.testing_step(model_evaluator, current_train_loss,
                                                                     time.time() - start_time, model)
             test_loss.append(current_test_loss)
