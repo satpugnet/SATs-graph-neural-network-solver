@@ -4,12 +4,14 @@ import re
 
 import matplotlib.pyplot as plt
 
+from F_visualiser.abstract_visualiser import AbstractVisualiser
 
-class DefaultVisualiser:
+
+class DefaultVisualiser(AbstractVisualiser):
     def __init__(self):
-        pass
+        super().__init__()
 
-    def visualise(self, train_loss, test_loss, accuracy, dirname, save=True):
+    def _perform_visualisation(self, train_loss, test_loss, accuracy, dirname, save=True):
         fig, ax1 = plt.subplots()
 
         ax1.set_xlabel('Epoch')

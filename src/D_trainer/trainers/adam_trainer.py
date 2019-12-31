@@ -1,6 +1,7 @@
 import torch
 
 from D_trainer.abstract_trainer import AbstractTrainer
+from utils import logger
 
 
 class AdamTrainer(AbstractTrainer):
@@ -21,7 +22,7 @@ class AdamTrainer(AbstractTrainer):
         return torch.optim.Adam(parameters, lr=learning_rate, weight_decay=weight_decay)
 
     def _set_learning_rate(self, epoch, learning_rate, optimizer):
-        if epoch % self._num_epoch_before_halving_lr == 0:
-            print("Epoch halving is " + str(epoch))
+        if epoch != 0 and epoch % self._num_epoch_before_halving_lr == 0:
+            logger.get().info("Halving the learning rate to " + str(learning_rate / 2))
             for param_group in optimizer.param_groups:
                 param_group['lr'] = learning_rate / 2

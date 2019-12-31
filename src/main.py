@@ -1,3 +1,4 @@
+import time
 from collections import OrderedDict
 
 import torch
@@ -16,8 +17,9 @@ from D_trainer.trainers.adam_trainer import AdamTrainer
 from E_evaluator.evaluators.default_evaluator import DefaultEvaluator
 from F_visualiser.visualisers.visualiser import DefaultVisualiser
 from G_save.save_handlers.save_handler import SaveHandler
+from utils import logger
 from utils.dimac_loader import DimacLoader
-
+import logging
 
 # TODO: put this section in a different file
 #################################################
@@ -25,8 +27,6 @@ from utils.dimac_loader import DimacLoader
 # CONSTANTS
 #
 #################################################
-
-print("Starting the experiment")
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -57,7 +57,7 @@ experiment_configs = OrderedDict([
     #     min_n_holes=1,
     #     max_n_holes=10
     # )),
-    ("number_generated_data", 100),
+    ("number_generated_data", 10),
 
     # Load SATs and converting to graph data
     # ("SAT_to_graph_converter", VariableToVariableGraph(
@@ -93,7 +93,7 @@ experiment_configs = OrderedDict([
         learning_rate=0.001,
         weight_decay=5e-4,
         device=device,
-        num_epoch_before_halving_lr=10
+        num_epoch_before_halving_lr=50
     )),
     ("number_of_epochs", 100),
 
@@ -111,6 +111,8 @@ experiment_configs = OrderedDict([
 
 # These configs will not be saved to file
 other_configs = {
+    "debug": True,
+
     # Generate data
     "data_generated_folder_location": "../data_generated",
 
@@ -135,6 +137,8 @@ other_configs = {
     "save_filename": "experiments.csv"
 }
 
+logger.init(debug=other_configs["debug"], verbose=False)
+
 
 #################################################
 #
@@ -142,7 +146,8 @@ other_configs = {
 #
 #################################################
 
-print("\nGENERATING SATS DATA")
+logger.skip_line()
+logger.get().info("GENERATING SATS DATA")
 
 experiment_configs["generator"].delete_all()
 experiment_configs["generator"].generate(experiment_configs["number_generated_data"])
@@ -154,7 +159,8 @@ experiment_configs["generator"].generate(experiment_configs["number_generated_da
 #
 #################################################
 
-print("\nLOADING SATS AND CONVERTING TO GRAPH DATA")
+logger.skip_line()
+logger.get().info("LOADING SATS AND CONVERTING TO GRAPH DATA")
 
 SAT_problems = DimacLoader().load_sat_problems()
 dataset = experiment_configs["SAT_to_graph_converter"].convert_all(SAT_problems)
@@ -178,7 +184,8 @@ test_loader = DataLoader(
 #
 #################################################
 
-print("\nCREATING GRAPH NEURAL NETWORK STRUCTURE")
+logger.skip_line()
+logger.get().info("CREATING GRAPH NEURAL NETWORK STRUCTURE")
 
 experiment_configs["gnn"].initialise_channels(
     next(iter(train_loader)).num_node_features,
@@ -195,7 +202,8 @@ model = experiment_configs["gnn"].to(device)
 #
 #################################################
 
-print("\nTRAINING")
+logger.skip_line()
+logger.get().info("TRAINING")
 
 experiment_configs["evaluator"].test_loader = test_loader
 train_loss, test_loss, accuracy, final_time = experiment_configs["trainer"].train(
@@ -212,7 +220,8 @@ train_loss, test_loss, accuracy, final_time = experiment_configs["trainer"].trai
 #
 #################################################
 
-print("\nEVALUATING")
+logger.skip_line()
+logger.get().info("EVALUATING")
 
 model.eval()
 final_test_loss, final_accuracy, final_confusion_matrix = experiment_configs["evaluator"].eval(model, do_print=True)
@@ -224,11 +233,13 @@ final_test_loss, final_accuracy, final_confusion_matrix = experiment_configs["ev
 #
 #################################################
 
-print("\nVISUALISE")
+logger.skip_line()
+logger.get().info("VISUALISE")
 
 # Ask the user to save or not the results
 save_user_input = ""
 while save_user_input != "y" and save_user_input != "n":
+    time.sleep(0.01) # Prevents problems of race condition with the logger
     save_user_input = input("Save the results? (y or n)\n")
 save_result = save_user_input == "y"
 
@@ -247,7 +258,8 @@ graph_filename = other_configs["visualiser"].visualise(
 #
 #################################################
 
-print("\nSAVING")
+logger.skip_line()
+logger.get().info("SAVING")
 
 if save_result:
     experiment_results = OrderedDict([

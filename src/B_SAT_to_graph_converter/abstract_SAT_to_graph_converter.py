@@ -3,6 +3,8 @@ from abc import ABC, abstractmethod
 import torch
 from torch_geometric.data import Data
 
+from utils import logger
+
 
 class AbstractSATToGraphConverter(ABC):
 
@@ -13,13 +15,13 @@ class AbstractSATToGraphConverter(ABC):
         return "{}()".format(self.__class__.__name__)
 
     def convert_all(self, SAT_problems):
-        print("Converting SAT problems to graphs")
+        logger.get().info("Converting SAT problems to graphs")
         graphs_data = []
 
         for SAT_problem in SAT_problems:
             graphs_data.append(self.__convert(SAT_problem))
 
-        print("Finished to convert SAT problems to graphs")
+        logger.get().info("Convertion of SAT problems to graphs completed")
         return graphs_data
 
     def __convert(self, SAT_problem):

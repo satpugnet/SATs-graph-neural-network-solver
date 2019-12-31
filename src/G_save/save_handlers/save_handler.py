@@ -5,6 +5,7 @@ import types
 from collections import OrderedDict
 
 from G_save.abstract_save_handler import AbstractSaveHandler
+from utils import logger
 
 DOUBLE_SPACE = '  '
 SINGLE_SPACE = ' '
@@ -18,7 +19,11 @@ class SaveHandler(AbstractSaveHandler):
         self._filename = filename
 
     def save(self):
+        logger.get().info("Starting the saving")
+
         self.__save_result()
+
+        logger.get().info("Saving completed")
 
     def __save_result(self):
         self.__create_if_not_exist()

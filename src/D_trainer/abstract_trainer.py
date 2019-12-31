@@ -4,6 +4,8 @@ from abc import ABC, abstractmethod
 import torch
 import torch.nn.functional as F
 
+from utils import logger
+
 
 class AbstractTrainer(ABC):
     def __init__(self, learning_rate, weight_decay, device):
@@ -23,6 +25,8 @@ class AbstractTrainer(ABC):
         pass
 
     def train(self, number_of_epochs, model, train_loader, model_evaluator):
+        logger.get().info("Starting the training")
+
         optimizer = self._create_optimizer(model.parameters(), self._learning_rate, self._weight_decay)
 
         train_loss = []
@@ -32,7 +36,6 @@ class AbstractTrainer(ABC):
 
         for epoch in range(number_of_epochs):
             model.train()
-            print("Epoch: " + str(epoch))
 
             self._set_learning_rate(epoch, self._learning_rate, optimizer)
 
@@ -41,10 +44,11 @@ class AbstractTrainer(ABC):
 
             model.eval()
             current_test_loss, current_accuracy, _ = self.testing_step(model_evaluator, current_train_loss,
-                                                                    time.time() - start_time, model)
+                                                                    time.time() - start_time, model, epoch)
             test_loss.append(current_test_loss)
             accuracy.append(current_accuracy)
 
+        logger.get().info("Training completed")
         return train_loss, test_loss, accuracy, time.time() - start_time
 
     def training_step(self, model, train_loader, optimizer):
@@ -65,9 +69,9 @@ class AbstractTrainer(ABC):
 
         return train_error / len(train_loader)
 
-    def testing_step(self, model_evaluator, current_train_loss, time, model):
+    def testing_step(self, model_evaluator, current_train_loss, time, model, epoch):
         with torch.no_grad():
-            return model_evaluator.eval(model, current_train_loss, do_print=True, time=time)
+            return model_evaluator.eval(model, current_train_loss, do_print=True, time=time, epoch=epoch)
 
     @abstractmethod
     def _set_learning_rate(self, epoch, learning_rate, optimizer):

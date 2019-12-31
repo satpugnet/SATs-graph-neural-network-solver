@@ -4,11 +4,11 @@ import random
 import shutil
 import time
 from abc import ABC, abstractmethod
-from colorama import init, Fore, Back, Style
+
 import numpy as np
 
 from A_data_generator.deterministic_solvers.PyMiniSolvers import minisolvers
-from utils.color import Color
+from utils import logger
 
 
 class AbstractDataGenerator(ABC):
@@ -31,17 +31,17 @@ class AbstractDataGenerator(ABC):
 
         i = 0
         while i < number_dimacs:
-            print("Generation of SATs problem at: " + str(int(i / number_dimacs * 100)) + "% (" + str(number_sat_required)
+            logger.get().debug("Generation of SATs problem at: " + str(int(i / number_dimacs * 100)) + "% (" + str(number_sat_required)
                 + " SAT left and " + str(number_unsat_required) + " UNSAT left)")
             n_vars, clauses = self._generate_CNF()
 
             if not self._has_correct_num_var_and_clauses(n_vars, clauses):
-                print(Color.O + "Warning: the last clause has incorrect number of variable or clauses" + Color.W)
+                logger.get().warning("Warning: the last clause has incorrect number of variable or clauses")
                 continue
 
             is_sat = self._is_satisfiable(n_vars, clauses)
             if not self._has_correct_satisfiability(is_sat, number_sat_required, number_unsat_required):
-                print(Color.O + "Warning: the last clause has incorrect satisfiability according to the requested ratio of SAT to UNSAT" + Color.W)
+                logger.get().warning("Warning: the last clause has incorrect satisfiability according to the requested ratio of SAT to UNSAT")
                 continue
 
             if is_sat:

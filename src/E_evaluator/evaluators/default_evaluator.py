@@ -2,6 +2,7 @@ import torch
 import torch.nn.functional as F
 
 from E_evaluator.abstract_evaluator import AbstractEvaluator
+from utils import logger
 
 
 class DefaultEvaluator(AbstractEvaluator):
@@ -9,7 +10,6 @@ class DefaultEvaluator(AbstractEvaluator):
     def __init__(self, device):
         super().__init__(device)
         self._test_loader = None
-        self._device = device
 
     @property
     def test_loader(self):
@@ -19,12 +19,12 @@ class DefaultEvaluator(AbstractEvaluator):
     def test_loader(self, new_test_loader):
         self._test_loader = new_test_loader
 
-    def eval(self, model, train_loss=None, do_print=True, time=None):
+    def eval(self, model, train_loss=None, do_print=True, time=None, epoch=None):
         all_pred, all_truth, accuracy, test_loss = self.__eval_model( model)
         confusion_matrix = self.__confusion_matrix(all_pred, all_truth)
 
         if do_print:
-            self.__perform_printing(accuracy, test_loss, train_loss, confusion_matrix, time)
+            self.__perform_printing(accuracy, test_loss, train_loss, confusion_matrix, time, epoch)
 
         return test_loss, accuracy, confusion_matrix
 
@@ -61,9 +61,15 @@ class DefaultEvaluator(AbstractEvaluator):
 
         return true_positives, false_positives, true_negatives, false_negatives
 
-    def __perform_printing(self, accuracy, test_loss, train_loss, confusion_matrix, time):
-        train_loss_text = 'train loss: {:.4f}, '.format(train_loss) if train_loss is not None else ""
+    def __perform_printing(self, accuracy, test_loss, train_loss, confusion_matrix, time, epoch):
+        epoch_text = "epoch: {}, ".format(epoch) if epoch is not None else ""
         time_text = 'time: {:.1f}, '.format(time) if time is not None else ""
+        train_loss_text = 'train loss: {:.4f}, '.format(train_loss) if train_loss is not None else ""
 
-        print(time_text + train_loss_text + 'test loss: {:.4f}, '.format(test_loss) + 'accuracy: {:.4f}'.format(accuracy) +
-              ", confusion matrix (TP, FP, TN, FN): " + str(confusion_matrix))
+        text = epoch_text + time_text + train_loss_text + 'test loss: {:.4f}, '.format(test_loss) + \
+               'accuracy: {:.4f}'.format(accuracy) + ", confusion matrix (TP, FP, TN, FN): " + str(confusion_matrix)
+
+        if train_loss is None:
+            logger.get().info(text)
+        else:
+            logger.get().debug(text)
