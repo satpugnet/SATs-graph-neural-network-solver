@@ -45,7 +45,7 @@ class AbstractClauseVariableGraphConverter(AbstractSATToGraphConverter, ABC):
 
     def _compute_edges(self, SAT_problem):
         neg_edges = self.__compute_opposite_edges(SAT_problem.n_clauses, SAT_problem.n_vars)
-        other_edges = self._compute_other_edges(SAT_problem.clauses, SAT_problem.n_vars)
+        other_edges = self._compute_edges(SAT_problem.clauses, SAT_problem.n_vars)
 
         return self._sum_edges([neg_edges, other_edges])
 
@@ -60,7 +60,7 @@ class AbstractClauseVariableGraphConverter(AbstractSATToGraphConverter, ABC):
         return opposite_edges
 
     @abstractmethod
-    def _compute_other_edges(self, clauses, n_vars):
+    def _compute_edges(self, clauses, n_vars):
         pass
 
     def _sum_edges(self, edges_list):

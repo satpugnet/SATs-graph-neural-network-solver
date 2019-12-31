@@ -26,7 +26,7 @@ class ClauseToVariableGraph(AbstractClauseVariableGraphConverter):
         position_index = lit if lit > 0 else n_vars + abs(lit)
         return n_clauses - 1 + position_index
 
-    def _compute_other_edges(self, clauses, n_vars):
+    def _compute_edges(self, clauses, n_vars):
         return self._sum_edges([self.__compute_var_to_clause_edges(clauses, n_vars)])
 
     def __compute_var_to_clause_edges(self, clauses, n_vars):

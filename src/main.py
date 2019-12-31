@@ -3,9 +3,13 @@ from collections import OrderedDict
 import torch
 from torch_geometric.data import DataLoader
 
+from A_data_generator.data_generators.pigeon_hole_principle_generator import PigeonHolePrincipleGenerator
 from A_data_generator.data_generators.uniform_lit_geometric_clause_generator import UniformLitGeometricClauseGenerator
 from B_SAT_to_graph_converter.SAT_to_graph_converters.clause_variable_graph_converter.clause_to_variable_graph import \
     ClauseToVariableGraph
+from B_SAT_to_graph_converter.SAT_to_graph_converters.clause_variable_graph_converter.variable_to_variable_graph import \
+    VariableToVariableGraph
+from C_GNNs.gnns.gcn_2_layer_linear_1_layer_gnn import GCN2LayerLinear1LayerGNN
 from C_GNNs.gnns.nnconv_gnn import NNConvGNN
 from D_trainer.trainers.adam_trainer import AdamTrainer
 from E_evaluator.evaluators.default_evaluator import DefaultEvaluator
@@ -32,14 +36,27 @@ experiment_configs = OrderedDict([
         out_dir="../data_generated",
         percentage_sat=0.5, # TODO: create a testing set where the percentage sat is not used (completly random sat problem)
         seed=None,
-        min_n_vars=30,
-        max_n_vars=60,
-        min_n_clause=80,
-        max_n_clause=140,
+        min_n_vars=5,
+        max_n_vars=10,
+        min_n_clause=5,
+        max_n_clause=20,
         lit_distr_p=0.4,
         include_trivial_clause=False
     )),
-    ("number_generated_data", 10),
+    # ("generator", PigeonHolePrincipleGenerator(
+    #     out_dir="../data_generated",
+    #     percentage_sat=0.5,
+    #     seed=None,
+    #     min_n_vars=None,
+    #     max_n_vars=30,
+    #     min_n_clause=None,
+    #     max_n_clause=60,
+    #     min_n_pigeons=1,
+    #     max_n_pigeons=10,
+    #     min_n_holes=1,
+    #     max_n_holes=10
+    # )),
+    ("number_generated_data", 1000),
 
     # Load SATs and converting to graph data
     # ("SAT_to_graph_converter", VariableToVariableGraph(
@@ -51,16 +68,16 @@ experiment_configs = OrderedDict([
     ("test_batch_size", 4),
 
     # Graph neural network structure
-    # ("gnn", GCN2LayerLinear1LayerGNN(
-    #     sigmoid_output=True,
-    #     dropout_prob=0.5
-    # )),
-    ("gnn", NNConvGNN(
+    ("gnn", GCN2LayerLinear1LayerGNN(
         sigmoid_output=True,
-        deep_nn=False,
-        dropout_prob=0.5,
-        num_hidden_neurons=24
+        dropout_prob=0.5
     )),
+    # ("gnn", NNConvGNN(
+    #     sigmoid_output=True,
+    #     deep_nn=False,
+    #     dropout_prob=0.5,
+    #     num_hidden_neurons=24
+    # )),
 
     # Train
     ("trainer", AdamTrainer(
@@ -68,7 +85,7 @@ experiment_configs = OrderedDict([
         weight_decay=5e-4,
         device=device
     )),
-    ("number_of_epochs", 2),
+    ("number_of_epochs", 20),
 
     # Eval
     ("evaluator", DefaultEvaluator(

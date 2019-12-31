@@ -1,8 +1,8 @@
-# TODO: Refactor with the changes in clause to variable
-from B_SAT_to_graph_converter.SAT_to_graph_converters.abstract_clause_var_graph_converter import AbstractClauseVarGraphConverter
+from B_SAT_to_graph_converter.SAT_to_graph_converters.abstract_clause_variable_graph_converter import \
+    AbstractClauseVariableGraphConverter
 
 
-class VariableToVariableGraph(AbstractClauseVarGraphConverter):
+class VariableToVariableGraph(AbstractClauseVariableGraphConverter):
 
     def __init__(self, max_clause_length):
         super().__init__()
@@ -24,7 +24,7 @@ class VariableToVariableGraph(AbstractClauseVarGraphConverter):
     def _get_lit_node_index(self, lit, n_clauses, n_vars):
         return n_vars + abs(lit) - 1 if lit < 0 else lit - 1
 
-    def _compute_other_edges(self, clauses, n_vars):
+    def _compute_edges(self, clauses, n_vars):
         edges = {}
 
         for i in range(len(clauses)):
