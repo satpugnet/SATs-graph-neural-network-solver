@@ -3,25 +3,26 @@ import random
 from random import shuffle
 
 from A_data_generator.abstract_data_generator import AbstractDataGenerator
+from utils import logger
 
 
 class UniformLitGeometricClauseGenerator(AbstractDataGenerator):
 
-    def __init__(self, max_n_vars, max_n_clause, out_dir="../data_generated", percentage_sat=0.50, seed=None, min_n_vars=1,
-                 min_n_clause=1, lit_distr_p=0.4, include_trivial_clause=False):
-        super().__init__(out_dir, percentage_sat, seed, min_n_vars, max_n_vars, min_n_clause, max_n_clause)
+    def __init__(self, percentage_sat=0.50, seed=None, min_max_n_vars=(1, 30),
+                 min_max_n_clause=(20, 30), lit_distr_p=0.4, include_trivial_clause=False):
+        super().__init__(percentage_sat, seed, min_max_n_vars, min_max_n_clause)
         self._lit_distr_p = lit_distr_p
         self._include_trivial_clause = include_trivial_clause
 
     def __repr__(self):
-        return "{}(percentage_sat({:.2f}), seed({}), min_n_vars({}), max_n_vars({}), min_n_clause({}), " \
-               "max_n_clause({}), lit_distr_p({:.2f}), self._include_trivial_clause({}))"\
-            .format(self.__class__.__name__, self._percentage_sat, self._seed, self._min_n_vars, self._max_n_vars,
-                    self._min_n_clause, self._max_n_clause, self._lit_distr_p, self._include_trivial_clause)
+        return "{}(percentage_sat({:.2f}), seed({}), min_max_n_vars({}), min_max_n_clause({}), " \
+               "lit_distr_p({:.2f}), self._include_trivial_clause({}))"\
+            .format(self.__class__.__name__, self._percentage_sat, self._seed, self._min_max_n_vars, self._min_max_n_clause,
+                    self._lit_distr_p, self._include_trivial_clause)
 
     def _generate_CNF(self):
-        n_vars = random.randint(self._min_n_vars, self._max_n_vars)
-        n_clause = random.randint(self._min_n_clause, self._max_n_clause)
+        n_vars = random.randint(self._min_max_n_vars[0], self._min_max_n_vars[1])
+        n_clause = random.randint(self._min_max_n_clause[0], self._min_max_n_clause[1])
 
         clauses = []
         for i in range(n_clause):

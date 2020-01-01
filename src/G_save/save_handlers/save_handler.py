@@ -21,11 +21,11 @@ class SaveHandler(AbstractSaveHandler):
     def save(self):
         logger.get().info("Starting the saving")
 
-        self.__save_result()
+        self.__save_result_to_file()
 
         logger.get().info("Saving completed")
 
-    def __save_result(self):
+    def __save_result_to_file(self):
         self.__create_if_not_exist()
         self.__curate_data()
 

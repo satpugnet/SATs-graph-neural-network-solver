@@ -11,7 +11,7 @@ from utils import logger
 class DimacLoader:
 
     def __init__(self, dir_path=None):
-        self.dir_path = dir_path if dir_path else os.getcwd() + "/../data_generated/"
+        self.dir_path = os.getcwd() + "/" + dir_path
 
     def load_sat_problems(self):
         logger.get().info("Loading sat problems...")

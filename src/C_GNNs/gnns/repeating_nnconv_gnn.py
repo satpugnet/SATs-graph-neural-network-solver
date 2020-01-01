@@ -54,13 +54,16 @@ class RepeatingNNConvGNN(AbstractGNN):
     def _perform_pre_pooling(self, x, edge_index, edge_attr):
         x = F.leaky_relu(self._conv1(x, edge_index, edge_attr))
 
+        self._iterate_nnconv(x, edge_index, edge_attr)
+
+        return x
+
+    def _iterate_nnconv(self, x, edge_index, edge_attr):
         iteration_number = self._conv_repetition if self.training else self._conv_repetition * self._ratio_test_train_rep
 
         for i in range(iteration_number):
             x = F.dropout(x, p=self._dropout_prob, training=self.training)
             x = F.leaky_relu(self._conv2(x, edge_index, edge_attr))
-
-        return x
 
     def _perform_pooling(self, x, batch):
         x = self._pooling(x, batch)

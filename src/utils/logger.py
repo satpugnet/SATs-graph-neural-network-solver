@@ -57,7 +57,6 @@ class CustomFormatter(logging.Formatter):
         return formatter.format(record)
 
 
-
 def init(debug, verbose=False):
     level = logging.DEBUG if debug else logging.INFO
     logging.getLogger().setLevel(level)
@@ -67,6 +66,12 @@ def init(debug, verbose=False):
     formatter = CustomFormatter(verbose)
     handler.setFormatter(formatter)
     logging.getLogger().addHandler(handler)
+
+
+def set_debug_min_level(debug):
+    level = logging.DEBUG if debug else logging.INFO
+    logging.getLogger().setLevel(level)
+
 
 def skip_line():
     logging.getLogger().debug("")

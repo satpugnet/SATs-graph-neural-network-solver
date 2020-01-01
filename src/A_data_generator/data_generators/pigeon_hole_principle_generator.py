@@ -1,31 +1,26 @@
 import random
-import time
 
 from cnfformula.families.pigeonhole import PigeonholePrinciple
 
 from A_data_generator.abstract_data_generator import AbstractDataGenerator
-from cnfformula.families.cliquecoloring import CliqueColoring
 
 
 class PigeonHolePrincipleGenerator(AbstractDataGenerator):
 
-    def __init__(self, out_dir="../data_generated", percentage_sat=0.50, min_n_vars=None, max_n_vars=None,
-                 min_n_clause=None, max_n_clause=None, seed=None, min_n_pigeons=1, max_n_pigeons=10,
-                 min_n_holes=1, max_n_holes=10):
-        super().__init__(out_dir, percentage_sat, seed, min_n_vars, max_n_vars, min_n_clause, max_n_clause)
-        self._min_n_pigeons = min_n_pigeons
-        self._max_n_pigeons = max_n_pigeons
-        self._min_n_holes = min_n_holes
-        self._max_n_holes = max_n_holes
+    def __init__(self,percentage_sat=0.50, min_max_n_vars=None, min_max_n_clause=None,
+                 seed=None, min_max_n_pigeons=(1, 10), min_max_n_holes=(1, 10)):
+        super().__init__(percentage_sat, seed, min_max_n_vars, min_max_n_clause)
+        self._min_max_n_pigeons = min_max_n_pigeons
+        self._min_max_n_holes = min_max_n_holes
 
     def __repr__(self):
-        return "{}(percentage_sat({:.2f}), seed({}), min_n_pigeon({}), max_n_pigeon({}), min_n_holes({}), max_n_holes({}))"\
+        return "{}(percentage_sat({:.2f}), seed({}), min_max_n_pigeon({}), min_max_n_holes({}))"\
             .format(self.__class__.__name__,  self._percentage_sat, self._seed,
-                    self._min_n_pigeons, self._max_n_pigeons, self._min_n_holes, self._max_n_holes)
+                    self._min_max_n_pigeons, self._min_max_n_holes)
 
     def _generate_CNF(self):
-        n_pigeons = random.randint(self._min_n_pigeons, self._max_n_pigeons)
-        n_holes = random.randint(self._min_n_holes, self._max_n_holes)
+        n_pigeons = random.randint(self._min_max_n_pigeons[0], self._min_max_n_pigeons[1])
+        n_holes = random.randint(self._min_max_n_holes[0], self._min_max_n_holes[1])
 
         cnf = PigeonholePrinciple(n_pigeons, n_holes)
         clauses = self._convert_from_dimac_to_list(cnf.dimacs())
