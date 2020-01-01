@@ -3,29 +3,59 @@ Usage of graph neural networks to solve SATisfiability problems.
 
 # Setup Command
 
-```bash
+`bash
 chmod +x scripts/setup.sh
 ./scripts/setup.sh
-```
-
-# Generate Data
-
-```bash
-python3 src/generate_data.py
-```
-# TODO: add clear instruction about how to use this package
+`
 
 # Folder organisation
 
-**out/**: Contain the outputted data.  
+**data_generated/**: Contain the data generated when running the experiments.  
 **scripts/**: Contains the basic scripts.  
 **src/**: Contains the code.  
-**src/experiments/**: Contains the file for messy experimentation of the GNN.  
-**src/PyMiniSolvers/**: Contains an old fashion SATs solver.  
+**src/experiments/**: Contains the list of experiment result that were saved.  
+**src/PyMiniSolvers/**: Contains an old fashion SATs solver used to generate the data. 
+
+# Instructions
+
+## Intro
+
+The codebase is divided into 7 parts each part of a pipeline for making an experiment with graph neural networks and SATs
+problem. Each part are in a folder contains a base class that can be extended to create new modules that can be used with
+the rest of the pipeline.
+
+## Config and Main
+
+The code is designed to be modulable and easily modifiable for the focus to be on experimenting with SATs problem and
+graph neural networks.
+
+In order to run a new experiment, you simply need to pick the configurations that you want in the `config.py` file and
+run the `main.py`. The `config.py` contains instructions on how to set its parameters. It contains a section for 
+each part of the pipeline.
+
+## Modules and Pipeline
+
+Each part is in a specific folder and has a base class that can be extended to create new class that can be used in the 
+`config.py` file.
+The different parts are the following:
+
+1 **Data generator** (in `A_data_generator`): Responsible for generating the SATs data in Dimac format and to put it in 
+the `data_generated` folder.
+1 **SAT to graph converter** (in `B_SAT_to_graph_converter`): Converts the generated SATs to a graph which can then be inputted
+to a graph neural network.
+1 **GNN** (in `C_GNN`): Creates the graph neural network architecture that will be used for the experiment.
+1 **trainer** (in `D_trainer`): Contains the approach to train the graph neural networks.
+1 **evaluator** (in `E_evaluator`): The way that we evaluate the results.
+1 **visualiser** (in `F_visualiser`): How we visualise the results, currently we display the graph with the loss and accuracy.
+1 **save** (in `G_save`): Finally, where and in what format we save the data. Currently, we save it in a file `experiments.csv`
+and we save the graph.
 
 # Contribution
 
-Please contribute to the code by sending pull requests.
+Please contribute to the code by sending pull requests, any help is appreciated, thanks in advance.
+
+The current state of the art algorithms in the field should also be implemented in this package so that everyone get access
+to them such as NeuroSAT...
 
 # Citation
 

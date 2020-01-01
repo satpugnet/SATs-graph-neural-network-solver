@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 from torch_geometric.nn import GCNConv, global_add_pool
 from torch import nn
-from C_GNNs.abstract_gnn import AbstractGNN
+from C_GNN.abstract_gnn import AbstractGNN
 
 
 class GCN2LayerLinear1LayerGNN(AbstractGNN):

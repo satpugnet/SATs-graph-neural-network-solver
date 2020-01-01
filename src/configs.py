@@ -12,10 +12,10 @@ from A_data_generator.data_generators.distr_based_generator.distr_based_generato
 from A_data_generator.data_generators.distr_generator import DistrBasedGenerator
 from B_SAT_to_graph_converter.SAT_to_graph_converters.clause_variable_graph_converter.clause_to_variable_graph import \
     ClauseToVariableGraph
-from C_GNNs.gnns.gcn_2_layer_linear_1_layer_gnn import GCN2LayerLinear1LayerGNN
-from C_GNNs.gnns.nnconv_gnn import NNConvGNN
-from C_GNNs.gnns.repeating_nnconv_gnn import RepeatingNNConvGNN
-from C_GNNs.gnns.variable_repeating_nnconv_gnn import VariableRepeatingNNConvGNN
+from C_GNN.gnns.gcn_2_layer_linear_1_layer_gnn import GCN2LayerLinear1LayerGNN
+from C_GNN.gnns.nnconv_gnn import NNConvGNN
+from C_GNN.gnns.repeating_nnconv_gnn import RepeatingNNConvGNN
+from C_GNN.gnns.variable_repeating_nnconv_gnn import VariableRepeatingNNConvGNN
 from D_trainer.trainers.adam_trainer import AdamTrainer
 from E_evaluator.evaluators.default_evaluator import DefaultEvaluator
 from F_visualiser.visualisers.visualiser import DefaultVisualiser
@@ -61,7 +61,7 @@ exp_configs = OrderedDict([
     #     lit_in_clause_distr_params=[0.4],
     #     include_trivial_clause=False
     # )),
-    ("num_gen_data", 8000),
+    ("num_gen_data", 100),
     ("percentage_training_set", 0.75),
 
 
@@ -89,7 +89,7 @@ exp_configs = OrderedDict([
         sigmoid_output=True,
         dropout_prob=0,
         deep_nn=False,
-        num_hidden_neurons=16,
+        num_hidden_neurons=128,
         conv_repetition=20,
         ratio_test_train_rep=1
     )),

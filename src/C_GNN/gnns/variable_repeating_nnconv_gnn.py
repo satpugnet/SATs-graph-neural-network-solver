@@ -1,6 +1,6 @@
 import random
 
-from C_GNNs.gnns.repeating_nnconv_gnn import RepeatingNNConvGNN
+from C_GNN.gnns.repeating_nnconv_gnn import RepeatingNNConvGNN
 import torch.nn.functional as F
 
 

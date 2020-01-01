@@ -3,7 +3,7 @@ from torch import nn
 from torch_geometric.nn import global_add_pool, NNConv
 import torch.nn.functional as F
 
-from C_GNNs.abstract_gnn import AbstractGNN
+from C_GNN.abstract_gnn import AbstractGNN
 
 
 class RepeatingNNConvGNN(AbstractGNN):

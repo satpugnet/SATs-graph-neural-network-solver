@@ -4,7 +4,7 @@ import torch
 from torch import nn
 from torch_geometric.nn import NNConv, global_add_pool
 
-from C_GNNs.abstract_gnn import AbstractGNN
+from C_GNN.abstract_gnn import AbstractGNN
 import torch.nn.functional as F
 
 
