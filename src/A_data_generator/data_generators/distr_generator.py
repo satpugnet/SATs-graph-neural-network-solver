@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 import random
 from random import shuffle
@@ -75,13 +77,22 @@ class DistrBasedGenerator(AbstractDataGenerator):
             if lower_bound <= value <= upper_bound:
                 return value
             else:
-                logger.get().warning("Generated a value outside of the range of value, trying again")
+                logger.get().warning("Generated a value (" + str(value) + ") outside of the range (" + str(lower_bound) + ", " +
+                                     str(upper_bound) + ") of value, trying again")
 
     def __generate_value_from_distr(self, distr, lower_bound, upper_bound, params):
         if distr == Distribution.UNIFORM:
             return random.randint(lower_bound, upper_bound)
         elif distr == Distribution.GEOMETRIC:
             return np.random.geometric(params[0])
+        elif distr == Distribution.POISSON:
+            return np.random.poisson(params[0]) + 1
+        elif distr == Distribution.BINOMIAL:
+            return np.random.binomial(params[0], params[1])
+        elif distr == Distribution.HYPERGEOMETRIC:
+            return np.random.hypergeometric(params[0], params[1], params[2]) + 1
+        elif distr == Distribution.NORMAL:
+            return int(np.random.normal(params[0], params[1]))
 
     def __generate_clause(self, n_vars, n_lit_drawn, include_trivial_clause):
         lits_to_pick_from = list(range(1, n_vars + 1))
@@ -99,4 +110,3 @@ class DistrBasedGenerator(AbstractDataGenerator):
     def _make_filename(self, n_vars, n_clause, is_sat, iter_num):
         return "sat=%i_n_vars=%.3d_n_clause=%.3d_seed=%d-%i.sat" % \
                (is_sat, n_vars, n_clause, self._seed, iter_num)
-
