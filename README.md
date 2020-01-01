@@ -13,6 +13,7 @@ chmod +x scripts/setup.sh
 ```bash
 python3 src/generate_data.py
 ```
+# TODO: add clear instruction about how to use this package
 
 # Folder organisation
 

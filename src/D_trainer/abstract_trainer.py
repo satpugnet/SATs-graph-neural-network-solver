@@ -3,8 +3,12 @@ from abc import ABC, abstractmethod
 
 import torch
 import torch.nn.functional as F
+from torch import nn
+from torch.nn import BCELoss
 
 from utils import logger
+import time
+from console_progressbar import ProgressBar
 
 
 class AbstractTrainer(ABC):
@@ -54,14 +58,20 @@ class AbstractTrainer(ABC):
     def training_step(self, model, train_loader, optimizer):
         train_error = 0
 
+        pb = ProgressBar(total=len(train_loader)) # TODO: add a loading bar
+        progress = 0
         for batch in train_loader:
+            progress += 1
+            pb.print_progress_bar(progress)
+
             batch = batch.to(self._device)
 
             optimizer.zero_grad()
 
             out = model(batch)
 
-            loss = F.mse_loss(out, batch.y.view(-1, 1))  # F.nll_loss(out, batch.y)
+            loss = nn.BCELoss()(out, batch.y.view(-1, 1))
+            # loss = F.mse_loss(out, batch.y.view(-1, 1))  # F.nll_loss(out, batch.y)
             train_error += loss
 
             loss.backward()

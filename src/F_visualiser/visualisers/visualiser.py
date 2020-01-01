@@ -19,6 +19,8 @@ class DefaultVisualiser(AbstractVisualiser):
         ax1.set_ylabel('Loss (mse)')
         ax1.plot(train_loss, label="train_loss")
         ax1.plot(test_loss, label="test_loss")
+        plt.ylim(top=1.0)
+        plt.ylim(bottom=0)
 
         ax1.legend(loc='lower left')
 

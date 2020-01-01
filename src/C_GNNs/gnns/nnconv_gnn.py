@@ -19,19 +19,19 @@ class NNConvGNN(AbstractGNN):
         super().initialise_channels(in_channels, out_channels, num_edge_features)
 
         if self._deep_nn:
-            self._nn1 = nn.Sequential(nn.Linear(num_edge_features, 16), nn.ReLU(), nn.Linear(16, in_channels * self._num_hidden_neurons))
+            self._nn1 = nn.Sequential(nn.Linear(num_edge_features, int(self._num_hidden_neurons / 4)), nn.ReLU(), nn.Linear(int(self._num_hidden_neurons / 4), in_channels * self._num_hidden_neurons))
         else:
             self._nn1 = nn.Linear(num_edge_features, in_channels * self._num_hidden_neurons)
         self._conv1 = NNConv(in_channels, self._num_hidden_neurons, self._nn1, aggr='add')
 
         if self._deep_nn:
-            self._nn2 = nn.Sequential(nn.Linear(num_edge_features, 16), nn.ReLU(), nn.Linear(16, self._num_hidden_neurons * self._num_hidden_neurons))
+            self._nn2 = nn.Sequential(nn.Linear(num_edge_features, int(self._num_hidden_neurons / 4)), nn.ReLU(), nn.Linear(int(self._num_hidden_neurons / 4), self._num_hidden_neurons * self._num_hidden_neurons))
         else:
             self._nn2 = nn.Linear(num_edge_features, self._num_hidden_neurons * self._num_hidden_neurons)
         self._conv2 = NNConv(self._num_hidden_neurons, self._num_hidden_neurons, self._nn2, aggr='add')
 
         if self._deep_nn:
-            self._nn3 = nn.Sequential(nn.Linear(num_edge_features, 16), nn.ReLU(), nn.Linear(16, self._num_hidden_neurons * self._num_hidden_neurons))
+            self._nn3 = nn.Sequential(nn.Linear(num_edge_features, int(self._num_hidden_neurons / 4)), nn.ReLU(), nn.Linear(int(self._num_hidden_neurons / 4), self._num_hidden_neurons * self._num_hidden_neurons))
         else:
             self._nn3 = nn.Linear(num_edge_features, self._num_hidden_neurons * self._num_hidden_neurons)
         self._conv3 = NNConv(self._num_hidden_neurons, self._num_hidden_neurons, self._nn3, aggr='add')

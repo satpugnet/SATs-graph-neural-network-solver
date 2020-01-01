@@ -67,7 +67,7 @@ class DistrBasedGenerator(AbstractDataGenerator):
         return self.__generate_value_from_distr_bounded(
             self._lit_in_clause_distr,
             1,
-            n_vars,
+            n_vars, # TODO: potentially you could have more than n_vars, you could have 2 * n_vars (total number of litteral) although it makes the problem trivial
             self._lit_in_clause_distr_params
         )
 

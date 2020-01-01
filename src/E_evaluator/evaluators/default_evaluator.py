@@ -1,5 +1,6 @@
 import torch
 import torch.nn.functional as F
+from torch import nn
 
 from E_evaluator.abstract_evaluator import AbstractEvaluator
 from utils import logger
@@ -10,6 +11,9 @@ class DefaultEvaluator(AbstractEvaluator):
     def __init__(self, device):
         super().__init__(device)
         self._test_loader = None
+
+    def __repr__(self):
+        return "{}()".format(self.__class__.__name__)
 
     @property
     def test_loader(self):
@@ -37,7 +41,8 @@ class DefaultEvaluator(AbstractEvaluator):
         for batch in self.test_loader:
             batch = batch.to(self._device)
             pred = model(batch)
-            test_error += F.mse_loss(pred, batch.y.view(-1, 1))
+
+            test_error += nn.BCELoss()(pred, batch.y.view(-1, 1))
 
             pred_adjusted = (pred > 0.5).float()
             truth = batch.y.view(-1, 1)

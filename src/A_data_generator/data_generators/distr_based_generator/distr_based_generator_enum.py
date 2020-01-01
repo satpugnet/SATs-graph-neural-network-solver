@@ -8,4 +8,3 @@ class Distribution(Enum):
     BINOMIAL = "binomial"
     HYPERGEOMETRIC = "hypergeometric"
     NORMAL = "normal"
-
