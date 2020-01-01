@@ -4,8 +4,9 @@ from collections import OrderedDict
 import torch
 from torch_geometric.data import DataLoader
 
+from A_data_generator.data_generators.distr_based_generator.distr_based_generator_enum import Distribution
+from A_data_generator.data_generators.distr_generator import DistrBasedGenerator
 from A_data_generator.data_generators.pigeon_hole_principle_generator import PigeonHolePrincipleGenerator
-from A_data_generator.data_generators.uniform_lit_geometric_clause_generator import UniformLitGeometricClauseGenerator
 from B_SAT_to_graph_converter.SAT_to_graph_converters.clause_variable_graph_converter.clause_to_variable_graph import \
     ClauseToVariableGraph
 from B_SAT_to_graph_converter.SAT_to_graph_converters.clause_variable_graph_converter.variable_to_variable_graph import \
@@ -34,28 +35,38 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # These configs will be saved to file
 exp_configs = OrderedDict([
     # Generate data # TODO: generate and test from different sources
-    ("generator", UniformLitGeometricClauseGenerator(
+    ("generator", DistrBasedGenerator(
         percentage_sat=0.5, # TODO: create a testing set where the percentage sat is not used (completly random sat problem)
         seed=None,
         min_max_n_vars=(10, 30),
-        min_max_n_clause=(30, 60),
-        lit_distr_p=0.4,
+        min_max_n_clauses=(30, 60),
+        var_num_distr=Distribution.UNIFORM,
+        var_num_distr_params=[],
+        clause_num_distr=Distribution.UNIFORM,
+        clause_num_distr_params=[],
+        lit_in_clause_distr=Distribution.GEOMETRIC,
+        lit_in_clause_distr_params=[0.4],
         include_trivial_clause=False
     )),
     # ("generator", PigeonHolePrincipleGenerator(
     #     percentage_sat=0.5,
     #     seed=None,
     #     min_max_n_vars=(None, 30),
-    #     min_max_n_clause=(None, 60),
+    #     min_max_n_clauses=(None, 60),
     #     min_max_n_pigeons=(1, 10),
     #     min_max_n_holes=(1, 10),
     # )),
-    ("test_generator", UniformLitGeometricClauseGenerator(
+    ("test_generator", DistrBasedGenerator(
         percentage_sat=0.5,
         seed=None,
-        min_max_n_vars=(40, 60),
-        min_max_n_clause=(80, 100),
-        lit_distr_p=0.4,
+        min_max_n_vars=(10, 30),
+        min_max_n_clauses=(30, 60),
+        var_num_distr=Distribution.UNIFORM,
+        var_num_distr_params=[],
+        clause_num_distr=Distribution.UNIFORM,
+        clause_num_distr_params=[],
+        lit_in_clause_distr=Distribution.GEOMETRIC,
+        lit_in_clause_distr_params=[0.4],
         include_trivial_clause=False
     )),
     ("num_gen_data", 2000),

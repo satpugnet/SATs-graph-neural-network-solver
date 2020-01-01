@@ -7,9 +7,9 @@ from A_data_generator.abstract_data_generator import AbstractDataGenerator
 
 class PigeonHolePrincipleGenerator(AbstractDataGenerator):
 
-    def __init__(self,percentage_sat=0.50, min_max_n_vars=None, min_max_n_clause=None,
+    def __init__(self,percentage_sat=0.50, min_max_n_vars=None, min_max_n_clauses=None,
                  seed=None, min_max_n_pigeons=(1, 10), min_max_n_holes=(1, 10)):
-        super().__init__(percentage_sat, seed, min_max_n_vars, min_max_n_clause)
+        super().__init__(percentage_sat, seed, min_max_n_vars, min_max_n_clauses)
         self._min_max_n_pigeons = min_max_n_pigeons
         self._min_max_n_holes = min_max_n_holes
 

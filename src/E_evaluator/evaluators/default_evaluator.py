@@ -69,7 +69,4 @@ class DefaultEvaluator(AbstractEvaluator):
         text = epoch_text + time_text + train_loss_text + 'test loss: {:.4f}, '.format(test_loss) + \
                'accuracy: {:.4f}'.format(accuracy) + ", confusion matrix (TP, FP, TN, FN): " + str(confusion_matrix)
 
-        if train_loss is None:
-            logger.get().info(text)
-        else:
-            logger.get().debug(text)
+        logger.get().info(text)

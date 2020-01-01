@@ -23,6 +23,6 @@ class AdamTrainer(AbstractTrainer):
 
     def _set_learning_rate(self, epoch, learning_rate, optimizer):
         if epoch != 0 and epoch % self._num_epoch_before_halving_lr == 0:
-            logger.get().info("Halving the learning rate to " + str(learning_rate / 2))
+            logger.get().warning("Halving the learning rate to " + str(learning_rate / 2))
             for param_group in optimizer.param_groups:
                 param_group['lr'] = learning_rate / 2

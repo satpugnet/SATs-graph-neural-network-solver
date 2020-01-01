@@ -13,7 +13,7 @@ from utils import logger
 
 class AbstractDataGenerator(ABC):
     def __init__(self, percentage_sat=0.50, seed=None, min_max_n_vars=(None, None),
-                 min_max_n_clause=(None, None)):
+                 min_max_n_clauses=(None, None)):
         self._seed = seed if seed is not None else time.time_ns() % 100000
         random.seed(self._seed)
         np.random.seed(self._seed)
@@ -21,7 +21,7 @@ class AbstractDataGenerator(ABC):
         self._percentage_sat = percentage_sat
 
         self._min_max_n_vars = min_max_n_vars
-        self._min_max_n_clause = min_max_n_clause
+        self._min_max_n_clauses = min_max_n_clauses
 
     def generate(self, number_dimacs, out_dir):
         number_sat_required = int(number_dimacs * self._percentage_sat)
@@ -29,17 +29,17 @@ class AbstractDataGenerator(ABC):
 
         i = 0
         while i < number_dimacs:
-            logger.get().debug("Generation of SATs problem at: " + str(int(i / number_dimacs * 100)) + "% (" + str(number_sat_required)
+            logger.get().info("Generation of SATs problem at: " + str(int(i / number_dimacs * 100)) + "% (" + str(number_sat_required)
                 + " SAT left and " + str(number_unsat_required) + " UNSAT left)")
             n_vars, clauses = self._generate_CNF()
 
             if not self._has_correct_num_var_and_clauses(n_vars, clauses):
-                logger.get().warning("Warning: the last generated SAT has incorrect number of variable or clauses")
+                logger.get().warning("Warning: the last generated SAT has incorrect number of variable or clauses, trying again")
                 continue
 
             is_sat = self._is_satisfiable(n_vars, clauses)
             if not self._has_correct_satisfiability(is_sat, number_sat_required, number_unsat_required):
-                logger.get().warning("Warning: the last generated SAT has incorrect satisfiability according to the requested ratio of SAT to UNSAT")
+                logger.get().warning("Warning: the last generated SAT has incorrect satisfiability according to the requested ratio of SAT to UNSAT, trying again")
                 continue
 
             if is_sat:
@@ -71,8 +71,8 @@ class AbstractDataGenerator(ABC):
         correct_n_vars = n_vars <= self._min_max_n_vars[1] if self._min_max_n_vars[1] is not None else True
         correct_n_vars &= n_vars >= self._min_max_n_vars[0] if self._min_max_n_vars[0] is not None else True
 
-        correct_n_clauses = len(clauses) <= self._min_max_n_clause[1] if self._min_max_n_clause[1] is not None else True
-        correct_n_clauses &= len(clauses) >= self._min_max_n_clause[0] if self._min_max_n_clause[0] is not None else True
+        correct_n_clauses = len(clauses) <= self._min_max_n_clauses[1] if self._min_max_n_clauses[1] is not None else True
+        correct_n_clauses &= len(clauses) >= self._min_max_n_clauses[0] if self._min_max_n_clauses[0] is not None else True
 
         return correct_n_vars and correct_n_clauses
 
