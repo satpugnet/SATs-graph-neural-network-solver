@@ -71,7 +71,7 @@ logger.get().info("CREATING GRAPH NEURAL NETWORK STRUCTURE")
 
 exp_configs["gnn"].initialise_channels(
     next(iter(train_loader)).num_node_features,
-    len(next(iter(train_loader)).y),
+    int(len(next(iter(train_loader)).y) / exp_configs["train_batch_size"]),
     next(iter(train_loader)).num_edge_features
 )
 

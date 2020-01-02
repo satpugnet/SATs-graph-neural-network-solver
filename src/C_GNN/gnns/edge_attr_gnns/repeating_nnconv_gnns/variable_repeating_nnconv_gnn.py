@@ -2,13 +2,15 @@ import random
 
 import torch.nn.functional as F
 
+from C_GNN.gnn_enums.pooling import Pooling
+from C_GNN.gnns.edge_atr_gnns_enums.aggr import Aggr
 from C_GNN.gnns.edge_attr_gnns.repeating_nnconv_gnn import RepeatingNNConvGNN
 
 
 class VariableRepeatingNNConvGNN(RepeatingNNConvGNN):
 
-    def __init__(self, sigmoid_output=True, dropout_prob=0.5, deep_nn=False, num_hidden_neurons=8,
-                 conv_min_max_rep=(10, 20), ratio_test_train_rep=4):
+    def __init__(self, sigmoid_output=True, dropout_prob=0.5, pooling=Pooling.GLOBAL_ADD, num_hidden_neurons=8, deep_nn=False,
+                 conv_min_max_rep=(10, 20), ratio_test_train_rep=4, aggr=Aggr.ADD):
         '''
         Defines a GNN architecture which uses NNConv and repeat a random number of time in the feedforward phase for training.
         :param sigmoid_output: Whether to output a sigmoid.
@@ -18,8 +20,8 @@ class VariableRepeatingNNConvGNN(RepeatingNNConvGNN):
         :param conv_min_max_rep: The range in which to uniformly pick for the number of repetition of the ConvGNN.
         :param ratio_test_train_rep: The ratio of the number of repetition of the ConvGNN for the testing and training.
         '''
-        super().__init__(sigmoid_output, dropout_prob, deep_nn, num_hidden_neurons, conv_min_max_rep[1],
-                         ratio_test_train_rep)
+        super().__init__(sigmoid_output, dropout_prob, pooling, num_hidden_neurons, deep_nn, conv_min_max_rep[1],
+                         ratio_test_train_rep, aggr)
         self._conv_min_max_rep = conv_min_max_rep
 
     def _get_fields_for_repr(self):

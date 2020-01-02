@@ -12,7 +12,12 @@ from A_data_generator.data_generators.distr_based_generators.distr_based_generat
 from A_data_generator.data_generators.distr_based_generator import DistrBasedGenerator
 from B_SAT_to_graph_converter.SAT_to_graph_converters.clause_variable_graph_converter.clause_to_variable_graph import \
     ClauseToVariableGraph
+from C_GNN.gnn_enums.pooling import Pooling
+from C_GNN.gnns.edge_atr_gnns_enums.aggr import Aggr
+from C_GNN.gnns.edge_attr_gnns.nnconv_gnn import NNConvGNN
+from C_GNN.gnns.edge_attr_gnns.repeating_nnconv_gnn import RepeatingNNConvGNN
 from C_GNN.gnns.edge_attr_gnns.repeating_nnconv_gnns.variable_repeating_nnconv_gnn import VariableRepeatingNNConvGNN
+from C_GNN.gnns.gcn_2_layer_linear_1_layer_gnn import GCN2LayerLinear1LayerGNN
 from D_trainer.trainers.adam_trainer import AdamTrainer
 from E_evaluator.evaluators.default_evaluator import DefaultEvaluator
 from F_visualiser.visualisers.visualiser import DefaultVisualiser
@@ -24,6 +29,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # TODO: add an option to put into a folder sample of (TP, FP, TN, FN) with the name similar to the graphs name for later visualisation
 # TODO: Fix the bug when printing epoch percentages and print percentage for the testing
 # TODO: replace this ordered dict by dict
+# TODO: remove all the optional param everywhere
 # These configs will be saved to a file when saving the experiment configurations, put important configs here
 exp_configs = OrderedDict([
     # GENERATE SATS DATA
@@ -77,29 +83,37 @@ exp_configs = OrderedDict([
     # GRAPH NEURAL NETWORK STRUCTURE
     # ("gnn", GCN2LayerLinear1LayerGNN(  # The GNN architecture to use
     #     sigmoid_output=True,  # Whether to output a sigmoid
-    #     dropout_prob=0.5  # The probability of dropout
+    #     dropout_prob=0.5,  # The probability of dropout
+    #     pooling=Pooling.GLOBAL_ADD,
+    #     num_hidden_neurons=8
     # )),
     # ("gnn", NNConvGNN(
     #     sigmoid_output=True,
     #     deep_nn=False,  # Whether to use a deep neural net of shallow one
+    #     pooling=Pooling.GLOBAL_ADD,
     #     dropout_prob=0.5,
-    #     num_hidden_neurons=8  # The number of hidden neurons in the hidden layers
+    #     num_hidden_neurons=8,  # The number of hidden neurons in the hidden layers
+    #     aggr=Aggr.ADD
     # )),
     # ("gnn", RepeatingNNConvGNN(
     #     sigmoid_output=True,
     #     dropout_prob=0,
+    #     pooling=Pooling.GLOBAL_ADD,
     #     deep_nn=True,
     #     num_hidden_neurons=64,
     #     conv_repetition=20,  # The number of repetition of the ConvGNN
-    #     ratio_test_train_rep=1  # The ratio of the number of repetition of the ConvGNN for the testing and training
+    #     ratio_test_train_rep=1,  # The ratio of the number of repetition of the ConvGNN for the testing and training
+    #     aggr=Aggr.ADD
     # )),
     ("gnn", VariableRepeatingNNConvGNN(
         sigmoid_output=True,
         dropout_prob=0,
+        pooling=Pooling.GLOBAL_ADD,
         deep_nn=False,
         num_hidden_neurons=48,
         conv_min_max_rep=(10, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
-        ratio_test_train_rep=2
+        ratio_test_train_rep=2,
+        aggr=Aggr.ADD
     )),
 
 
