@@ -75,12 +75,12 @@ class AbstractTrainer(ABC):
         return train_error / len(train_loader)
 
     def __print_progress_bar(self, progress):
+        time.sleep(0.1) # Prevents race condition with the logger
         if progress >= 1:
             print("\r", end='')
         else:
             print("\r{:.1f}%".format(progress * 100), end='')
 
-        time.sleep(0.1) # Prevents race condition with the logger
 
     def testing_step(self, model_evaluator, current_train_loss, time, model, epoch):
         with torch.no_grad():

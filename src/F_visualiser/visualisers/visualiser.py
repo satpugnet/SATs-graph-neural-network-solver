@@ -35,11 +35,11 @@ class DefaultVisualiser(AbstractVisualiser):
         if save:
             self.__create_if_not_exist(dirname)
             filename = self.__compute_file_name(dirname)
+            logger.set_debug_min_level(False)  # To prevent printing of debugging from plot function
             plt.savefig(dirname + "/" + filename)
+            logger.set_debug_min_level(True)
 
-        logger.set_debug_min_level(False)  # To prevent printing of debugging from plot function
         plt.show()
-        logger.set_debug_min_level(True)
         return filename
 
     def __compute_file_name(self, dirname):

@@ -34,7 +34,7 @@ class VariableRepeatingNNConvGNN(RepeatingNNConvGNN):
         if self.training:
             iteration_number = random.randint(self._conv_min_max_rep[0], self._conv_min_max_rep[1])
         else:
-            iteration_number = self._conv_repetition * self._ratio_test_train_rep
+            iteration_number = int(self._conv_repetition * self._ratio_test_train_rep)
 
         for i in range(iteration_number):
             x = F.dropout(x, p=self._dropout_prob, training=self.training)
