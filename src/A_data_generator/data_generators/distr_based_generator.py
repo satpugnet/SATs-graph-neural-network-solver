@@ -39,10 +39,11 @@ class DistrBasedGenerator(AbstractDataGenerator):
         self._include_trivial_clause = include_trivial_clause
 
     def __repr__(self):
-        return "{}(percentage_sat({:.2f}), seed({}), min_max_n_vars({}), min_max_n_clauses({}), " \
+        percentage_sat = "{:.2f}".format(self._percentage_sat) if self._percentage_sat is not None else self._percentage_sat
+        return "{}(percentage_sat({}), seed({}), min_max_n_vars({}), min_max_n_clauses({}), " \
                "var_num_distr({}), var_num_distr_params({}), clause_num_distr({}), clause_num_distr_params({}), " \
                "lit_in_clause_distr({}), lit_in_clause_distr_params({}), self._include_trivial_clause({}))"\
-            .format(self.__class__.__name__, self._percentage_sat, self._seed, self._min_max_n_vars, self._min_max_n_clauses,
+            .format(self.__class__.__name__, percentage_sat, self._seed, self._min_max_n_vars, self._min_max_n_clauses,
                     self._var_num_distr, self._var_num_distr_params, self._clause_num_distr, self._clause_num_distr_params,
                     self._lit_in_clause_distr, self._lit_in_clause_distr_params, self._include_trivial_clause)
 
@@ -81,7 +82,7 @@ class DistrBasedGenerator(AbstractDataGenerator):
         return self.__generate_value_from_distr_bounded(
             self._lit_in_clause_distr,
             1,
-            n_vars, # TODO: potentially you could have more than n_vars, you could have 2 * n_vars (total number of litteral) although it makes the problem trivial
+            n_vars * 2 if self._include_trivial_clause else n_vars,
             self._lit_in_clause_distr_params
         )
 

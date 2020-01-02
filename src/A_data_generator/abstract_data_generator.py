@@ -31,8 +31,8 @@ class AbstractDataGenerator(ABC):
         self._min_max_n_clauses = min_max_n_clauses
 
     def generate(self, number_dimacs, out_dir):
-        number_sat_required = int(number_dimacs * self._percentage_sat)
-        number_unsat_required = int(number_dimacs - number_sat_required)
+        number_sat_required = int(number_dimacs * self._percentage_sat) if self._percentage_sat is not None else None
+        number_unsat_required = int(number_dimacs - number_sat_required) if self._percentage_sat is not None else None
 
         i = 0
         while i < number_dimacs:
@@ -49,10 +49,12 @@ class AbstractDataGenerator(ABC):
                 logger.get().warning("Warning: the last generated SAT has incorrect satisfiability according to the requested ratio of SAT to UNSAT, trying again")
                 continue
 
-            if is_sat:
-                number_sat_required -= 1
-            else:
-                number_unsat_required -= 1
+            if self._percentage_sat is not None:
+                if is_sat:
+                    number_sat_required -= 1
+                else:
+                    number_unsat_required -= 1
+
             i += 1
 
             out_filename = "{}/{}_{}".format(str(out_dir), self.__class__.__name__,
@@ -70,6 +72,8 @@ class AbstractDataGenerator(ABC):
         return solver.solve()
 
     def _has_correct_satisfiability(self, is_sat, number_sat_required, number_unsat_required):
+        if number_sat_required is None or number_unsat_required is None:
+            return True
         correct_satisfiability = (is_sat and number_sat_required != 0) or (not is_sat and number_unsat_required != 0)
 
         return correct_satisfiability

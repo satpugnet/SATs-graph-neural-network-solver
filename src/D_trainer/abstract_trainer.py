@@ -39,31 +39,38 @@ class AbstractTrainer(ABC):
         test_loss = []
         accuracy = []
         start_time = time.time()
+        last_epoch = 0
 
-        for epoch in range(number_of_epochs):
-            model.train()
+        try:
+            for epoch in range(number_of_epochs):
+                model.train()
 
-            self._set_learning_rate(epoch, self._learning_rate, optimizer)
+                self._set_learning_rate(epoch, self._learning_rate, optimizer)
 
-            current_train_loss = self.training_step(model, train_loader, optimizer)
-            train_loss.append(current_train_loss)
+                current_train_loss = self._training_step(model, train_loader, optimizer)
 
-            model.eval()
-            current_test_loss, current_accuracy, _ = self.testing_step(model_evaluator, current_train_loss,
-                                                                    time.time() - start_time, model, epoch)
-            test_loss.append(current_test_loss)
-            accuracy.append(current_accuracy)
+                model.eval()
+                current_test_loss, current_accuracy, _ = self._testing_step(model_evaluator, current_train_loss,
+                                                                         time.time() - start_time, model, epoch)
+
+                train_loss.append(current_train_loss)
+                test_loss.append(current_test_loss)
+                accuracy.append(current_accuracy)
+                last_epoch = epoch
+        except KeyboardInterrupt:
+            train_loss, test_loss, accuracy = self.__check_same_length_else_correct(train_loss, test_loss, accuracy)
 
         logger.get().info("Training completed")
-        return train_loss, test_loss, accuracy, time.time() - start_time
+        return train_loss, test_loss, accuracy, time.time() - start_time, last_epoch
 
-    def training_step(self, model, train_loader, optimizer):
+    @abstractmethod
+    def _training_step(self, model, train_loader, optimizer):
         train_error = 0
 
         progress = 0
         for batch in train_loader:
             progress += 1
-            self.__print_progress_bar(progress/len(train_loader))
+            logger.get().debug("Training at {:.1f}%\r".format(progress/len(train_loader) * 100))
 
             batch = batch.to(self._device)
 
@@ -80,18 +87,18 @@ class AbstractTrainer(ABC):
 
         return train_error / len(train_loader)
 
-    def __print_progress_bar(self, progress):
-        time.sleep(0.1) # Prevents race condition with the logger
-        if progress >= 1:
-            print("\r", end='')
-        else:
-            print("\r{:.1f}%".format(progress * 100), end='')
-
-
-    def testing_step(self, model_evaluator, current_train_loss, time, model, epoch):
+    @abstractmethod
+    def _testing_step(self, model_evaluator, current_train_loss, time, model, epoch):
         with torch.no_grad():
             return model_evaluator.eval(model, current_train_loss, do_print=True, time=time, epoch=epoch)
+
+    def __check_same_length_else_correct(self, train_loss, test_loss, accuracy):
+        train_loss = train_loss[0:-1]if len(train_loss) > len(accuracy) else train_loss
+        test_loss = test_loss[0:-1] if len(test_loss) > len(accuracy) else test_loss
+
+        return train_loss, test_loss, accuracy
 
     @abstractmethod
     def _set_learning_rate(self, epoch, learning_rate, optimizer):
         pass
+

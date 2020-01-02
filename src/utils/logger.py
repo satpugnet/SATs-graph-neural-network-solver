@@ -22,39 +22,52 @@ class CustomFormatter(logging.Formatter):
     def __init__(self, verbose):
         super().__init__()
         self._verbose = verbose
+        self._previous_carriage_returned = False
 
-    BASE_FORMAT = "{0}[" + datetime.datetime.now().strftime("%a %H:%M:%S") + "] " + \
-                  Color.DEFAULT + "{1} {0}: %(message)s" + Color.DEFAULT
+    BASE_FORMAT = "{0}[{2}] " + Color.DEFAULT + "{1} {0}: %(message)s" + Color.DEFAULT
     VERBOSE_FORMAT = "{0} [%(asctime)s] " + Color.DEFAULT + "{1} {0}[%(module)s]: %(message)s" + Color.DEFAULT
     LEVEL_SPACES = 10
 
     def _compute_format(self, verbose):
         base_format = CustomFormatter.VERBOSE_FORMAT if verbose else CustomFormatter.BASE_FORMAT
+        current_time = datetime.datetime.now().strftime("%a %H:%M:%S")
+
         return {
         logging.DEBUG: base_format.format(
-            Color.GREY, colors.color("DEBUG".center(CustomFormatter.LEVEL_SPACES), 'black', bg='grey')
+            Color.GREY, colors.color("DEBUG".center(CustomFormatter.LEVEL_SPACES), 'black', bg='grey'), current_time
         ),
         logging.INFO: base_format.format(
-            Color.B, colors.color("INFO".center(CustomFormatter.LEVEL_SPACES), 'black', bg='blue')
+            Color.B, colors.color("INFO".center(CustomFormatter.LEVEL_SPACES), 'black', bg='blue'), current_time
         ),
         logging.WARNING: base_format.format(
-            Color.O, colors.color("WARNING".center(CustomFormatter.LEVEL_SPACES), 'black', bg='yellow')
+            Color.O, colors.color("WARNING".center(CustomFormatter.LEVEL_SPACES), 'black', bg='yellow'), current_time
         ),
         logging.ERROR: base_format.format(
-            Color.R, colors.color("ERROR".center(CustomFormatter.LEVEL_SPACES), 'black', bg='red')
+            Color.R, colors.color("ERROR".center(CustomFormatter.LEVEL_SPACES), 'black', bg='red'), current_time
         ),
         logging.CRITICAL: base_format.format(
-            Color.R, colors.color("CRITICAL".center(CustomFormatter.LEVEL_SPACES), 'black', bg='red')
+            Color.R, colors.color("CRITICAL".center(CustomFormatter.LEVEL_SPACES), 'black', bg='red'), current_time
         )
     }
 
     def format(self, record):
-        if record.levelno == logging.DEBUG and record.msg == '':
+        if record.levelno == logging.DEBUG and record.msg == "":
             return ""
+
+        prefix = "\n"
+        if self._previous_carriage_returned:
+            prefix = "\r"
+
+        if record.msg[-1] == '\r':
+            self._previous_carriage_returned = True
+            record.msg = record.msg[:-1]
+        else:
+            self._previous_carriage_returned = False
+
         log_fmt = self._compute_format(self._verbose).get(record.levelno)
         formatter = logging.Formatter(log_fmt)
 
-        return formatter.format(record)
+        return prefix + formatter.format(record)
 
 
 def init(debug, verbose=False):
@@ -62,6 +75,7 @@ def init(debug, verbose=False):
     logging.getLogger().setLevel(level)
 
     handler = logging.StreamHandler()
+    handler.terminator = ''
 
     formatter = CustomFormatter(verbose)
     handler.setFormatter(formatter)

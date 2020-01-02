@@ -1,6 +1,7 @@
 import time
 from collections import OrderedDict
 
+import torch
 from torch_geometric.data import DataLoader
 
 from configs import exp_configs, other_configs, device
@@ -87,7 +88,7 @@ logger.skip_line()
 logger.get().info("TRAINING")
 
 exp_configs["evaluator"].test_loader = test_loader
-train_loss, test_loss, accuracy, final_time = exp_configs["trainer"].train(
+train_loss, test_loss, accuracy, final_time, exp_configs["number_of_epochs"] = exp_configs["trainer"].train(
     exp_configs["number_of_epochs"],
     model,
     train_loader,
@@ -105,7 +106,8 @@ logger.skip_line()
 logger.get().info("EVALUATING")
 
 model.eval()
-final_test_loss, final_accuracy, final_confusion_matrix = exp_configs["evaluator"].eval(model, do_print=True)
+with torch.no_grad():
+    final_test_loss, final_accuracy, final_confusion_matrix = exp_configs["evaluator"].eval(model, do_print=True)
 
 
 #################################################

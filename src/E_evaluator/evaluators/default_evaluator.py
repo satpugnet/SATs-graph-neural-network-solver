@@ -28,7 +28,7 @@ class DefaultEvaluator(AbstractEvaluator):
         self._test_loader = new_test_loader
 
     def eval(self, model, train_loss=None, do_print=True, time=None, epoch=None):
-        all_pred, all_truth, accuracy, test_loss = self.__eval_model( model)
+        all_pred, all_truth, accuracy, test_loss = self.__eval_model(model)
         confusion_matrix = self.__confusion_matrix(all_pred, all_truth)
 
         if do_print:
@@ -42,7 +42,11 @@ class DefaultEvaluator(AbstractEvaluator):
 
         test_error = 0
         correct = 0
+        progress = 0
         for batch in self.test_loader:
+            progress += 1
+            logger.get().debug("Testing at {:.1f}%\r".format(progress/len(self.test_loader) * 100))
+
             batch = batch.to(self._device)
             pred = model(batch)
 

@@ -24,6 +24,12 @@ class AdamTrainer(AbstractTrainer):
             self._num_epoch_before_halving_lr
         )
 
+    def _training_step(self, model, train_loader, optimizer):
+        return super()._training_step(model, train_loader, optimizer)
+
+    def _testing_step(self, model_evaluator, current_train_loss, time, model, epoch):
+        return super()._testing_step(model_evaluator, current_train_loss, time, model, epoch)
+
     def _create_optimizer(self, parameters, learning_rate, weight_decay):
         return torch.optim.Adam(parameters, lr=learning_rate, weight_decay=weight_decay)
 

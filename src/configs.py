@@ -21,19 +21,16 @@ from utils import logger
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# TODO: add an option to put into a folder sample of (TP, FP, TN, FN) with the name similar to the graphs name for
-#  later visualisation
-# TODO: add comment to describe how to use this file
-# TODO: Fix the bug when printing epoch percentages
-# TODO: Ability to stop in the middle and save the results
+# TODO: add an option to put into a folder sample of (TP, FP, TN, FN) with the name similar to the graphs name for later visualisation
+# TODO: Fix the bug when printing epoch percentages and print percentage for the testing
 # These configs will be saved to a file when saving the experiment configurations, put important configs here
 exp_configs = OrderedDict([
     # GENERATE SATS DATA
     ("generator", DistrBasedGenerator(  # The algorithm use to generate the SATs data
         percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
         seed=None,  # The seed used if any
-        min_max_n_vars=(10, 40),  # The min and max number of variable in the problems
-        min_max_n_clauses=(50, 200),  # The min and max number of clauses in the problems
+        min_max_n_vars=(20, 40),  # The min and max number of variable in the problems
+        min_max_n_clauses=(50, 150),  # The min and max number of clauses in the problems
         var_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of variable in a problem
         var_num_distr_params=[],  # The distribution parameters
         clause_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
@@ -50,19 +47,19 @@ exp_configs = OrderedDict([
     #     min_max_n_pigeons=(1, 10),  # The min and max number of pigeons
     #     min_max_n_holes=(1, 10),  # The min and max number of holes
     # )),
-    # ("test_generator", DistrBasedGenerator(  # (optional) The generator to use for the testing data, optional, if not set, the same distribution is used than the one for training
-    #     percentage_sat=0.5,
-    #     seed=None,
-    #     min_max_n_vars=(30, 40),
-    #     min_max_n_clauses=(100, 150),
-    #     var_num_distr=Distribution.UNIFORM,
-    #     var_num_distr_params=[],
-    #     clause_num_distr=Distribution.UNIFORM,
-    #     clause_num_distr_params=[],
-    #     lit_in_clause_distr=Distribution.GEOMETRIC,
-    #     lit_in_clause_distr_params=[0.1],
-    #     include_trivial_clause=False
-    # )),
+    ("test_generator", DistrBasedGenerator(  # (optional) The generator to use for the testing data, optional, if not set, the same distribution is used than the one for training
+        percentage_sat=None,  # The percentage of SAT to UNSAT problems
+        seed=None,  # The seed used if any
+        min_max_n_vars=(20, 40),  # The min and max number of variable in the problems
+        min_max_n_clauses=(50, 150),  # The min and max number of clauses in the problems
+        var_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of variable in a problem
+        var_num_distr_params=[],  # The distribution parameters
+        clause_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
+        clause_num_distr_params=[],  # The distribution parameters
+        lit_in_clause_distr=Distribution.GEOMETRIC,  # The distribution used to generate the number of clauses in a problem
+        lit_in_clause_distr_params=[0.2],  # The distribution parameters
+        include_trivial_clause=False  # Whether to include clause containing a variable and its opposite such as (x and not x)
+    )),
     ("num_gen_data", 4000),  # The amount of data to generate in total
     ("percentage_training_set", 0.75),  # The percentage of training data in total compare to testing
 
@@ -99,7 +96,7 @@ exp_configs = OrderedDict([
         sigmoid_output=True,
         dropout_prob=0,
         deep_nn=False,
-        num_hidden_neurons=32,
+        num_hidden_neurons=48,
         conv_min_max_rep=(10, 15),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
         ratio_test_train_rep=3
     )),
@@ -152,7 +149,7 @@ other_configs = {
 
     # VISUALISE
     "visualiser": DefaultVisualiser(),  # The visualiser to display interesting information about the experiment
-    "graph_directory_name": "../graphs",  # The location to store the graphs
+    "graph_directory_name": "../graphs",  # The location to store the graphs TODO: change name to plot
 
 
     # SAVE
