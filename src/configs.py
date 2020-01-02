@@ -8,14 +8,11 @@ from collections import OrderedDict
 
 import torch
 
-from A_data_generator.data_generators.distr_based_generator.distr_based_generator_enum import Distribution
-from A_data_generator.data_generators.distr_generator import DistrBasedGenerator
+from A_data_generator.data_generators.distr_based_generators.distr_based_generator_enum import Distribution
+from A_data_generator.data_generators.distr_based_generator import DistrBasedGenerator
 from B_SAT_to_graph_converter.SAT_to_graph_converters.clause_variable_graph_converter.clause_to_variable_graph import \
     ClauseToVariableGraph
-from C_GNN.gnns.gcn_2_layer_linear_1_layer_gnn import GCN2LayerLinear1LayerGNN
-from C_GNN.gnns.nnconv_gnn import NNConvGNN
-from C_GNN.gnns.repeating_nnconv_gnn import RepeatingNNConvGNN
-from C_GNN.gnns.variable_repeating_nnconv_gnn import VariableRepeatingNNConvGNN
+from C_GNN.gnns.repeating_nnconv_gnns.variable_repeating_nnconv_gnn import VariableRepeatingNNConvGNN
 from D_trainer.trainers.adam_trainer import AdamTrainer
 from E_evaluator.evaluators.default_evaluator import DefaultEvaluator
 from F_visualiser.visualisers.visualiser import DefaultVisualiser

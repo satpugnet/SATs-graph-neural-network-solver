@@ -3,6 +3,10 @@ from abc import ABC, abstractmethod
 
 class AbstractEvaluator(ABC):
     def __init__(self, device):
+        '''
+        The evaluator to evaluate the experiment.
+        :param device: The device to use for pytorch.
+        '''
         self._device = device
 
     @abstractmethod

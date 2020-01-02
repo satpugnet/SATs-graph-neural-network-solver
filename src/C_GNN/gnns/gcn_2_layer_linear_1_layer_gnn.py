@@ -1,15 +1,18 @@
-import time
-
-import torch
 import torch.nn.functional as F
-from torch_geometric.nn import GCNConv, global_add_pool
 from torch import nn
+from torch_geometric.nn import GCNConv, global_add_pool
+
 from C_GNN.abstract_gnn import AbstractGNN
 
 
 class GCN2LayerLinear1LayerGNN(AbstractGNN):
 
     def __init__(self, sigmoid_output=True, dropout_prob=0.5):
+        '''
+        Defines a GNN architecture with 2 convolution layers and one linear layer.
+        :param sigmoid_output: Whether to output a sigmoid.
+        :param dropout_prob: The probability of dropout.
+        '''
         super(GCN2LayerLinear1LayerGNN, self).__init__(sigmoid_output, dropout_prob)
 
     def initialise_channels(self, in_channels, out_channels, num_edge_features=None):

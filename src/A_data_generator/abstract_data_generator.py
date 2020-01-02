@@ -14,6 +14,13 @@ from utils import logger
 class AbstractDataGenerator(ABC):
     def __init__(self, percentage_sat=0.50, seed=None, min_max_n_vars=(None, None),
                  min_max_n_clauses=(None, None)):
+        '''
+        Generates SATs data in the form of Dimacs that can be used later on for training.
+        :param percentage_sat: The percentage of SAT to UNSAT problems.
+        :param seed: The seed used if any.
+        :param min_max_n_vars: The min and max number of variable in the problems.
+        :param min_max_n_clauses: The min and max number of clauses in the problems.
+        '''
         self._seed = seed if seed is not None else time.time_ns() % 100000
         random.seed(self._seed)
         np.random.seed(self._seed)

@@ -1,13 +1,23 @@
 import random
 
-from C_GNN.gnns.repeating_nnconv_gnn import RepeatingNNConvGNN
 import torch.nn.functional as F
+
+from C_GNN.gnns.repeating_nnconv_gnn import RepeatingNNConvGNN
 
 
 class VariableRepeatingNNConvGNN(RepeatingNNConvGNN):
 
     def __init__(self, sigmoid_output=True, dropout_prob=0.5, deep_nn=False, num_hidden_neurons=8,
                  conv_min_max_rep=(10, 20), ratio_test_train_rep=4):
+        '''
+        Defines a GNN architecture which uses NNConv and repeat a random number of time in the feedforward phase for training.
+        :param sigmoid_output: Whether to output a sigmoid.
+        :param dropout_prob: The probability of dropout.
+        :param deep_nn: Whether to use a deep neural net of shallow one.
+        :param num_hidden_neurons: The number of hidden neurons in the hidden layers.
+        :param conv_min_max_rep: The range in which to uniformly pick for the number of repetition of the ConvGNN.
+        :param ratio_test_train_rep: The ratio of the number of repetition of the ConvGNN for the testing and training.
+        '''
         super().__init__(sigmoid_output, dropout_prob, deep_nn, num_hidden_neurons, conv_min_max_rep[1],
                          ratio_test_train_rep)
         self._conv_min_max_rep = conv_min_max_rep

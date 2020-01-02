@@ -6,6 +6,11 @@ import torch
 class AbstractGNN(torch.nn.Module, ABC):
 
     def __init__(self, sigmoid_output=True, dropout_prob=0.5):
+        '''
+        Defines the GNN architecture.
+        :param sigmoid_output: Whether to output a sigmoid.
+        :param dropout_prob: The probability of dropout.
+        '''
         super(AbstractGNN, self).__init__()
         self._sigmoid_output = sigmoid_output
         self._dropout_prob = dropout_prob

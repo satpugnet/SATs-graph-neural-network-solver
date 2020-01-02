@@ -6,6 +6,9 @@ from B_SAT_to_graph_converter.abstract_SAT_to_graph_converter import AbstractSAT
 class AbstractClauseVariableGraphConverter(AbstractSATToGraphConverter, ABC):
 
     def __init__(self):
+        '''
+        Converting SAT problems to graphs using the clauses and variables as nodes.
+        '''
         super().__init__()
         self.__opposite_edge_attr = [1]
 

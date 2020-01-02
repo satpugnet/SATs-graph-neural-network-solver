@@ -9,6 +9,9 @@ from utils import logger
 class AbstractSATToGraphConverter(ABC):
 
     def __init__(self):
+        '''
+        The algorithm used to convert from SAT problems to graphs.
+        '''
         pass
 
     def __repr__(self):

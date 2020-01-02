@@ -9,6 +9,10 @@ from utils import logger
 class DefaultEvaluator(AbstractEvaluator):
 
     def __init__(self, device):
+        '''
+        The default evaluator to evaluate the experiment.
+        :param device: The device to use for pytorch.
+        '''
         super().__init__(device)
         self._test_loader = None
 

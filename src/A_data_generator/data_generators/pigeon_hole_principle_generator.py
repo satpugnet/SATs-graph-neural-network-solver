@@ -7,8 +7,17 @@ from A_data_generator.abstract_data_generator import AbstractDataGenerator
 
 class PigeonHolePrincipleGenerator(AbstractDataGenerator):
 
-    def __init__(self,percentage_sat=0.50, min_max_n_vars=None, min_max_n_clauses=None,
-                 seed=None, min_max_n_pigeons=(1, 10), min_max_n_holes=(1, 10)):
+    def __init__(self,percentage_sat=0.50, seed=None,min_max_n_vars=None, min_max_n_clauses=None,
+                 min_max_n_pigeons=(1, 10), min_max_n_holes=(1, 10)):
+        '''
+        Generate SATs based on the pigeon hole principle.
+        :param percentage_sat: The percentage of SAT to UNSAT problems.
+        :param seed: The seed used if any.
+        :param min_max_n_vars: The min and max number of variable in the problems.
+        :param min_max_n_clauses: The min and max number of clauses in the problems.
+        :param min_max_n_pigeons: The min and max number of pigeons in the problems.
+        :param min_max_n_holes: The min and max number of holes in the problems.
+        '''
         super().__init__(percentage_sat, seed, min_max_n_vars, min_max_n_clauses)
         self._min_max_n_pigeons = min_max_n_pigeons
         self._min_max_n_holes = min_max_n_holes

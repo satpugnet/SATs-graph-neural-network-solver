@@ -10,6 +10,9 @@ from utils import logger
 
 class DefaultVisualiser(AbstractVisualiser):
     def __init__(self):
+        '''
+        The default visualiser to display interesting information about the experiment
+        '''
         super().__init__()
 
     def _perform_visualisation(self, train_loss, test_loss, accuracy, dirname, save=True):

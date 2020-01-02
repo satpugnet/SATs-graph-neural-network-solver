@@ -5,6 +5,9 @@ from B_SAT_to_graph_converter.SAT_to_graph_converters.abstract_clause_variable_g
 class ClauseToVariableGraph(AbstractClauseVariableGraphConverter):
 
     def __init__(self):
+        '''
+        Converting SAT problems to graphs using both the clauses and variables as nodes.
+        '''
         super().__init__()
         self.__clause_var_edge_attr = [1]
         self.__clause_node_feature = [1, 0]

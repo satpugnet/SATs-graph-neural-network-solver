@@ -9,6 +9,12 @@ from utils import logger
 
 class AbstractTrainer(ABC):
     def __init__(self, learning_rate, weight_decay, device):
+        '''
+        Trainer for the network.
+        :param learning_rate: The learning rate.
+        :param weight_decay: The weight decay.
+        :param device: The device used.
+        '''
         self._learning_rate = learning_rate
         self._weight_decay = weight_decay
         self._device = device

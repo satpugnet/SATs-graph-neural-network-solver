@@ -5,6 +5,9 @@ from utils import logger
 
 class AbstractVisualiser(ABC):
     def __init__(self):
+        '''
+        The visualiser to display interesting information about the experiment
+        '''
         pass
 
     def visualise(self, train_loss, test_loss, accuracy, dirname, save=True):

@@ -1,12 +1,12 @@
-import time
-
-import numpy as np
 import random
 from random import shuffle
 
+import numpy as np
+
 from A_data_generator.abstract_data_generator import AbstractDataGenerator
-from A_data_generator.data_generators.distr_based_generator.distr_based_generator_enum import Distribution
+from A_data_generator.data_generators.distr_based_generators.distr_based_generator_enum import Distribution
 from utils import logger
+
 
 class DistrBasedGenerator(AbstractDataGenerator):
 
@@ -14,6 +14,20 @@ class DistrBasedGenerator(AbstractDataGenerator):
                  var_num_distr=Distribution.UNIFORM, var_num_distr_params=[], clause_num_distr=Distribution.UNIFORM,
                  clause_num_distr_params=[], lit_in_clause_distr=Distribution.GEOMETRIC, lit_in_clause_distr_params=[0.4],
                  include_trivial_clause=False):
+        '''
+        Generate SATs based on classical distributions.
+        :param percentage_sat: The percentage of SAT to UNSAT problems.
+        :param seed: The seed used if any.
+        :param min_max_n_vars: The min and max number of variable in the problems.
+        :param min_max_n_clauses: The min and max number of clauses in the problems.
+        :param var_num_distr: The distribution used to generate the number of variable in a problem.
+        :param var_num_distr_params: The distribution parameters.
+        :param clause_num_distr: The distribution used to generate the number of clauses in a problem.
+        :param clause_num_distr_params: The distribution parameters.
+        :param lit_in_clause_distr: The distribution used to generate the number of clauses in a problem.
+        :param lit_in_clause_distr_params: The distribution parameters.
+        :param include_trivial_clause: Whether to include clause containing a variable and its opposite such as (x and not x).
+        '''
         super().__init__(percentage_sat, seed, min_max_n_vars, min_max_n_clauses)
         self._var_num_distr = var_num_distr
         self._var_num_distr_params = var_num_distr_params

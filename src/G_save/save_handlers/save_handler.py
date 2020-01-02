@@ -1,7 +1,5 @@
-import collections
 import csv
 import os
-import types
 from collections import OrderedDict
 
 from G_save.abstract_save_handler import AbstractSaveHandler
@@ -14,8 +12,11 @@ NEWLINE = '\n'
 class SaveHandler(AbstractSaveHandler):
 
     def __init__(self, config, experiment_results, filename):
-        super().__init__(config)
-        self._all_data = collections.OrderedDict(list(experiment_results.items()) + list(config.items()))
+        '''
+        The default save handler for saving experiments.
+        :param config: The config used for the experiment
+        '''
+        super().__init__(config, experiment_results)
         self._filename = filename
 
     def save(self):

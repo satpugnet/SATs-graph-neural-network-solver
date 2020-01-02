@@ -5,6 +5,9 @@ from B_SAT_to_graph_converter.SAT_to_graph_converters.abstract_clause_variable_g
 class VariableToVariableGraph(AbstractClauseVariableGraphConverter):
 
     def __init__(self, max_clause_length):
+        '''
+        Converting SAT problems to graphs using only the variables as nodes.
+        '''
         super().__init__()
         self._max_clause_length = max_clause_length
 
