@@ -12,6 +12,9 @@ class GraphColoringGenerator(AbstractDataGenerator):
         '''
         super().__init__(percentage_sat, seed, min_max_n_vars, min_max_n_clauses)
 
+    def _get_fields_for_repr(self):
+        return {**super()._get_fields_for_repr(), **{}}
+
     def _generate_CNF(self):
         pass
 

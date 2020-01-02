@@ -2,7 +2,7 @@ import random
 
 import torch.nn.functional as F
 
-from C_GNN.gnns.repeating_nnconv_gnn import RepeatingNNConvGNN
+from C_GNN.gnns.edge_attr_gnns.repeating_nnconv_gnn import RepeatingNNConvGNN
 
 
 class VariableRepeatingNNConvGNN(RepeatingNNConvGNN):
@@ -22,23 +22,11 @@ class VariableRepeatingNNConvGNN(RepeatingNNConvGNN):
                          ratio_test_train_rep)
         self._conv_min_max_rep = conv_min_max_rep
 
-    def __repr__(self):
-        return "{}(nn1({}), conv1({}), dropout({}), conv_min_max_rep({}), ratio_test_train_rep({}), nn2({}), conv2({}), " \
-               "pooling ({}), fc1({}), fc2({}), sigmoid_output({}))"\
-            .format(
-                self.__class__.__name__,
-                self._nn1,
-                self._conv1,
-                self._conv_min_max_rep,
-                self._ratio_test_train_rep,
-                self._dropout_prob,
-                self._nn2,
-                self._conv2,
-                self._pooling.__name__,
-                self._fc1,
-                self._fc2,
-                self._sigmoid_output
-            )
+    def _get_fields_for_repr(self):
+        return {**super()._get_fields_for_repr(),
+                **{
+                    "conv_min_max_rep": self._conv_min_max_rep
+                }}
 
     def _iterate_nnconv(self, x, edge_index, edge_attr):
         if self.training:
@@ -49,3 +37,4 @@ class VariableRepeatingNNConvGNN(RepeatingNNConvGNN):
         for i in range(iteration_number):
             x = F.dropout(x, p=self._dropout_prob, training=self.training)
             x = F.leaky_relu(self._conv2(x, edge_index, edge_attr))
+

@@ -19,6 +19,9 @@ class SaveHandler(AbstractSaveHandler):
         super().__init__(config, experiment_results)
         self._filename = filename
 
+    def _get_fields_for_repr(self):
+        return {**super()._get_fields_for_repr(), **{}}
+
     def save(self):
         logger.get().info("Starting the saving")
 

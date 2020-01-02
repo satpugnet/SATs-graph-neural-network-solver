@@ -16,13 +16,11 @@ class AdamTrainer(AbstractTrainer):
         super().__init__(learning_rate, weight_decay, device)
         self._num_epoch_before_halving_lr = num_epoch_before_halving_lr
 
-    def __repr__(self):
-        return "{}(learning_rate({}), weight_decay({}), num_epoch_before_halving_lr({}))".format(
-            self.__class__.__name__,
-            self._learning_rate,
-            self._weight_decay,
-            self._num_epoch_before_halving_lr
-        )
+    def _get_fields_for_repr(self):
+        return {**super()._get_fields_for_repr(),
+                **{
+                    "num_epoch_before_halving_lr": self._num_epoch_before_halving_lr
+                }}
 
     def _training_step(self, model, train_loader, optimizer):
         return super()._training_step(model, train_loader, optimizer)

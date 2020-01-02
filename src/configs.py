@@ -12,7 +12,7 @@ from A_data_generator.data_generators.distr_based_generators.distr_based_generat
 from A_data_generator.data_generators.distr_based_generator import DistrBasedGenerator
 from B_SAT_to_graph_converter.SAT_to_graph_converters.clause_variable_graph_converter.clause_to_variable_graph import \
     ClauseToVariableGraph
-from C_GNN.gnns.repeating_nnconv_gnns.variable_repeating_nnconv_gnn import VariableRepeatingNNConvGNN
+from C_GNN.gnns.edge_attr_gnns.repeating_nnconv_gnns.variable_repeating_nnconv_gnn import VariableRepeatingNNConvGNN
 from D_trainer.trainers.adam_trainer import AdamTrainer
 from E_evaluator.evaluators.default_evaluator import DefaultEvaluator
 from F_visualiser.visualisers.visualiser import DefaultVisualiser
@@ -23,6 +23,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # TODO: add an option to put into a folder sample of (TP, FP, TN, FN) with the name similar to the graphs name for later visualisation
 # TODO: Fix the bug when printing epoch percentages and print percentage for the testing
+# TODO: replace this ordered dict by dict
 # These configs will be saved to a file when saving the experiment configurations, put important configs here
 exp_configs = OrderedDict([
     # GENERATE SATS DATA
@@ -60,7 +61,7 @@ exp_configs = OrderedDict([
         lit_in_clause_distr_params=[0.2],  # The distribution parameters
         include_trivial_clause=False  # Whether to include clause containing a variable and its opposite such as (x and not x)
     )),
-    ("num_gen_data", 4000),  # The amount of data to generate in total
+    ("num_gen_data", 50),  # The amount of data to generate in total
     ("percentage_training_set", 0.75),  # The percentage of training data in total compare to testing
 
 
@@ -97,8 +98,8 @@ exp_configs = OrderedDict([
         dropout_prob=0,
         deep_nn=False,
         num_hidden_neurons=48,
-        conv_min_max_rep=(10, 15),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
-        ratio_test_train_rep=3
+        conv_min_max_rep=(10, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
+        ratio_test_train_rep=2
     )),
 
 
@@ -109,7 +110,7 @@ exp_configs = OrderedDict([
         device=device,  # The device used
         num_epoch_before_halving_lr=33  # The number of epoch between each halving of the learning rate
     )),
-    ("number_of_epochs", 10),
+    ("number_of_epochs", 100),
 
 
     # EVAL

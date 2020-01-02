@@ -38,14 +38,17 @@ class DistrBasedGenerator(AbstractDataGenerator):
 
         self._include_trivial_clause = include_trivial_clause
 
-    def __repr__(self):
-        percentage_sat = "{:.2f}".format(self._percentage_sat) if self._percentage_sat is not None else self._percentage_sat
-        return "{}(percentage_sat({}), seed({}), min_max_n_vars({}), min_max_n_clauses({}), " \
-               "var_num_distr({}), var_num_distr_params({}), clause_num_distr({}), clause_num_distr_params({}), " \
-               "lit_in_clause_distr({}), lit_in_clause_distr_params({}), self._include_trivial_clause({}))"\
-            .format(self.__class__.__name__, percentage_sat, self._seed, self._min_max_n_vars, self._min_max_n_clauses,
-                    self._var_num_distr, self._var_num_distr_params, self._clause_num_distr, self._clause_num_distr_params,
-                    self._lit_in_clause_distr, self._lit_in_clause_distr_params, self._include_trivial_clause)
+    def _get_fields_for_repr(self):
+        return {**super()._get_fields_for_repr(),
+                **{
+                   "var_num_distr": self._var_num_distr,
+                   "var_num_distr_params": self._var_num_distr_params,
+                    "clause_num_distr": self._clause_num_distr,
+                    "clause_num_distr_params": self._clause_num_distr_params,
+                    "lit_in_clause_distr": self._lit_in_clause_distr,
+                    "lit_in_clause_distr_params": self._lit_in_clause_distr_params,
+                    "include_trivial_clause": self._include_trivial_clause
+                }}
 
     def _generate_CNF(self):
         n_vars = self._compute_num_vars()

@@ -1,4 +1,5 @@
 import random
+from collections import OrderedDict
 
 from cnfformula.families.pigeonhole import PigeonholePrinciple
 
@@ -7,7 +8,7 @@ from A_data_generator.abstract_data_generator import AbstractDataGenerator
 
 class PigeonHolePrincipleGenerator(AbstractDataGenerator):
 
-    def __init__(self,percentage_sat=0.50, seed=None,min_max_n_vars=None, min_max_n_clauses=None,
+    def __init__(self, percentage_sat=0.50, seed=None, min_max_n_vars=None, min_max_n_clauses=None,
                  min_max_n_pigeons=(1, 10), min_max_n_holes=(1, 10)):
         '''
         Generate SATs based on the pigeon hole principle.
@@ -22,10 +23,12 @@ class PigeonHolePrincipleGenerator(AbstractDataGenerator):
         self._min_max_n_pigeons = min_max_n_pigeons
         self._min_max_n_holes = min_max_n_holes
 
-    def __repr__(self):
-        return "{}(percentage_sat({:.2f}), seed({}), min_max_n_pigeon({}), min_max_n_holes({}))"\
-            .format(self.__class__.__name__,  self._percentage_sat, self._seed,
-                    self._min_max_n_pigeons, self._min_max_n_holes)
+    def _get_fields_for_repr(self):
+        return {**super()._get_fields_for_repr(),
+                **{
+                   "min_max_n_pigeons": self._min_max_n_pigeons,
+                   "min_max_n_holes": self._min_max_n_holes
+               }}
 
     def _generate_CNF(self):
         n_pigeons = random.randint(self._min_max_n_pigeons[0], self._min_max_n_pigeons[1])

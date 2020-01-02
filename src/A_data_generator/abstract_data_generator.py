@@ -9,9 +9,10 @@ import numpy as np
 
 from A_data_generator.deterministic_solvers.PyMiniSolvers import minisolvers
 from utils import logger
+from utils.abstract_repr import AbstractRepr
 
 
-class AbstractDataGenerator(ABC):
+class AbstractDataGenerator(ABC, AbstractRepr):
     def __init__(self, percentage_sat=0.50, seed=None, min_max_n_vars=(None, None),
                  min_max_n_clauses=(None, None)):
         '''
@@ -29,6 +30,14 @@ class AbstractDataGenerator(ABC):
 
         self._min_max_n_vars = min_max_n_vars
         self._min_max_n_clauses = min_max_n_clauses
+
+    def _get_fields_for_repr(self):
+        return {
+            "percentage_sat": self._percentage_sat,
+            "seed": self._seed,
+            "min_max_n_vars": self._min_max_n_vars,
+            "min_max_n_clauses": self._min_max_n_clauses
+        }
 
     def generate(self, number_dimacs, out_dir):
         number_sat_required = int(number_dimacs * self._percentage_sat) if self._percentage_sat is not None else None

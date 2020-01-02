@@ -4,9 +4,10 @@ import torch
 from torch_geometric.data import Data
 
 from utils import logger
+from utils.abstract_repr import AbstractRepr
 
 
-class AbstractSATToGraphConverter(ABC):
+class AbstractSATToGraphConverter(ABC, AbstractRepr):
 
     def __init__(self):
         '''
@@ -14,8 +15,8 @@ class AbstractSATToGraphConverter(ABC):
         '''
         pass
 
-    def __repr__(self):
-        return "{}()".format(self.__class__.__name__)
+    def _get_fields_for_repr(self):
+        return {}
 
     def convert_all(self, SAT_problems):
         logger.get().info("Converting SAT problems to graphs")

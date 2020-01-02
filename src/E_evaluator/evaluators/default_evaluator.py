@@ -16,8 +16,8 @@ class DefaultEvaluator(AbstractEvaluator):
         super().__init__(device)
         self._test_loader = None
 
-    def __repr__(self):
-        return "{}()".format(self.__class__.__name__)
+    def _get_fields_for_repr(self):
+        return {**super()._get_fields_for_repr(), **{}}
 
     @property
     def test_loader(self):

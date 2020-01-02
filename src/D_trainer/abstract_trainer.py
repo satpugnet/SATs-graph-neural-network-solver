@@ -5,9 +5,10 @@ import torch
 from torch import nn
 
 from utils import logger
+from utils.abstract_repr import AbstractRepr
 
 
-class AbstractTrainer(ABC):
+class AbstractTrainer(ABC, AbstractRepr):
     def __init__(self, learning_rate, weight_decay, device):
         '''
         Trainer for the network.
@@ -19,12 +20,11 @@ class AbstractTrainer(ABC):
         self._weight_decay = weight_decay
         self._device = device
 
-    def __repr__(self):
-        return "{}(learning_rate({}), weight_decay({}))".format(
-            self.__class__.__name__,
-            self._learning_rate,
-            self._weight_decay
-        )
+    def _get_fields_for_repr(self):
+        return {
+            "learning_rate": "{:.5f}".format(self._learning_rate),
+            "weight_decay": "{:.5f}".format(self._weight_decay)
+        }
 
     @abstractmethod
     def _create_optimizer(self, parameters, learning_rate, weight_decay):

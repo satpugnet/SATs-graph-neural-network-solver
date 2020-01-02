@@ -12,6 +12,9 @@ class AbstractClauseVariableGraphConverter(AbstractSATToGraphConverter, ABC):
         super().__init__()
         self.__opposite_edge_attr = [1]
 
+    def _get_fields_for_repr(self):
+        return {**super()._get_fields_for_repr(), **{}}
+
     @property
     @abstractmethod
     def _lit_node_feature(self):

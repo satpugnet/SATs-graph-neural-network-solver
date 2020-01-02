@@ -1,9 +1,12 @@
 from abc import ABC, abstractmethod
 
 import torch
+from torch_geometric.nn import global_add_pool
 
+from utils.abstract_repr import AbstractRepr
 
-class AbstractGNN(torch.nn.Module, ABC):
+# TODO: add options for the pooling
+class AbstractGNN(torch.nn.Module, ABC, AbstractRepr):
 
     def __init__(self, sigmoid_output=True, dropout_prob=0.5):
         '''
@@ -14,6 +17,17 @@ class AbstractGNN(torch.nn.Module, ABC):
         super(AbstractGNN, self).__init__()
         self._sigmoid_output = sigmoid_output
         self._dropout_prob = dropout_prob
+
+    def _get_fields_for_repr(self):
+        return {
+            "sigmoid_output": self._sigmoid_output,
+            "dropout_prob": self._dropout_prob,
+            "pooling": self._pooling.__name__
+        }
+
+    @property
+    def _pooling(self):
+        return global_add_pool
 
     # Initialise the dynamic part of the data later in a method so that we can build the object in the config, this
     # could be replaced by a constructor pattern
@@ -36,9 +50,8 @@ class AbstractGNN(torch.nn.Module, ABC):
     def _perform_pre_pooling(self, x, edge_index, edge_attr):
         pass
 
-    @abstractmethod
-    def _perform_pooling(self, x, batch):
-        pass
+    def __perform_pooling(self, x, batch):
+        return self._pooling(x, batch)
 
     @abstractmethod
     def _perform_post_pooling(self, x, edge_index, edge_attr):

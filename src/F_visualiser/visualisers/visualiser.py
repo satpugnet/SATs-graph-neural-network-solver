@@ -15,6 +15,9 @@ class DefaultVisualiser(AbstractVisualiser):
         '''
         super().__init__()
 
+    def _get_fields_for_repr(self):
+        return {**super()._get_fields_for_repr(), **{}}
+
     def _perform_visualisation(self, train_loss, test_loss, accuracy, dirname, save=True):
         fig, ax1 = plt.subplots()
 

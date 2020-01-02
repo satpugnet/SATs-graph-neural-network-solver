@@ -11,8 +11,11 @@ class VariableToVariableGraph(AbstractClauseVariableGraphConverter):
         super().__init__()
         self._max_clause_length = max_clause_length
 
-    def __repr__(self):
-        return "{}(max_clause_length({}))".format(self.__class__.__name__, self._max_clause_length)
+    def _get_fields_for_repr(self):
+        return {**super()._get_fields_for_repr(),
+                **{
+                   "max_clause_length": self._max_clause_length
+               }}
 
     @property
     def _lit_node_feature(self):

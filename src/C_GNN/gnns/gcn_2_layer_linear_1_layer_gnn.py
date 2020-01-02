@@ -22,20 +22,18 @@ class GCN2LayerLinear1LayerGNN(AbstractGNN):
 
         self._fc2 = nn.Linear(out_channels, 1)
 
-    def __repr__(self):
-        return "{}(conv1({}), dropout({}), conv2({}), fc2({}))".format(self.__class__.__name__,
-                                                                       self._conv1, self._dropout_prob,
-                                                                       self.self._conv2, self._fc2)
+    def _get_fields_for_repr(self):
+        return {**super()._get_fields_for_repr(),
+                **{
+                   "conv1": self._conv1,
+                   "conv2": self._conv2,
+                    "fc2": self._fc2
+                }}
 
     def _perform_pre_pooling(self, x, edge_index, edge_attr):
         x = F.relu(self._conv1(x, edge_index))
         x = F.dropout(x, p=self._dropout_prob, training=self.training)
         x = F.relu(self._conv2(x, edge_index))
-
-        return x
-
-    def _perform_pooling(self, x, batch):
-        x = global_add_pool(x, batch)
 
         return x
 
