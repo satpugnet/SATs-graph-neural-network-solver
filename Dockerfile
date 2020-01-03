@@ -9,5 +9,7 @@ WORKDIR /SATs-graph-neural-network-solver
 
 RUN pip3 install --no-cache-dir -r requirements.txt
 RUN ./scripts/setup.sh
+RUN apt-get update
+RUN apt-get install vim
 
 CMD [ "python", "./src/main.py" ]

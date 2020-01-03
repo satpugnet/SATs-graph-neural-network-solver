@@ -31,7 +31,7 @@ class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
                     "conv_repetition": self._conv_repetition,
                     "ratio_test_train_rep": self._ratio_test_train_rep,
                     "nn2": self._nn2,
-                    "conv2": self._conv2,
+                    "convs": self._convs,
                     "fc1": self._fc1,
                     "fc2": self._fc2
                 }}
