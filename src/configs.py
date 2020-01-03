@@ -170,12 +170,12 @@ other_configs = {
 
     # VISUALISE
     "visualiser": DefaultVisualiser(),  # The visualiser to display interesting information about the experiment
-    "graph_directory_name": "../graphs",  # The location to store the graphs TODO: change name to plot
+    "graph_directory_name": "../experiments_results/plots",  # The location to store the graphs TODO: change name to plot
 
 
     # SAVE
     "save_handler": SaveHandler,  # The save handler for saving experiments
-    "save_filename": "experiments.csv"  # The filename of the saved information
+    "save_filename": "../experiments_results/experiments.csv"  # The filename of the saved information
 }
 
 logger.init(debug=other_configs["debug"], verbose=other_configs["verbose"])
