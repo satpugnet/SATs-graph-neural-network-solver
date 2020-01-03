@@ -6,7 +6,7 @@ COPY ./requirements.txt /SATs-graph-neural-network-solver/requirements.txt
 
 WORKDIR /SATs-graph-neural-network-solver
 
-RUN pip install -r requirements.txt
+RUN pip3 install -r requirements.txt
 RUN ./scripts/setup.sh
 
 CMD [ "python", "./src/main.py" ]
