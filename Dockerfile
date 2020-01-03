@@ -1,4 +1,4 @@
-FROM jmitton/pytorch-geometric
+FROM pytorch/manylinux-cuda100
 
 COPY ./src /SATs-graph-neural-network-solver/src
 COPY ./scripts /SATs-graph-neural-network-solver/scripts
