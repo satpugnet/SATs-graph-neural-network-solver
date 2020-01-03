@@ -22,7 +22,7 @@ class AbstractDataGenerator(ABC, AbstractRepr):
         :param min_max_n_vars: The min and max number of variable in the problems.
         :param min_max_n_clauses: The min and max number of clauses in the problems.
         '''
-        self._seed = seed if seed is not None else time.time_ns() % 100000
+        self._seed = seed if seed is not None else int(round(time.time() * 10**6)) % 100000
         random.seed(self._seed)
         np.random.seed(self._seed)
 
