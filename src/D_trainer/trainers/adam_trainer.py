@@ -6,14 +6,14 @@ from utils import logger
 
 class AdamTrainer(AbstractTrainer):
 
-    def __init__(self, learning_rate, weight_decay, device, num_epoch_before_halving_lr):
+    def __init__(self, learning_rate, weight_decay, device, activate_amp, num_epoch_before_halving_lr):
         '''
         An adam trainer for the network.
         :param learning_rate: The learning rate.
         :param weight_decay: The weight decay.
         :param device: The device used.
         '''
-        super().__init__(learning_rate, weight_decay, device)
+        super().__init__(learning_rate, weight_decay, device, activate_amp)
         self._num_epoch_before_halving_lr = num_epoch_before_halving_lr
 
     def _get_fields_for_repr(self):

@@ -8,7 +8,7 @@ from C_GNN.gnns.abstract_edge_attr_gnn import AbstractEdgeAttrGNN
 
 class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
     def __init__(self, sigmoid_output, dropout_prob, pooling, num_hidden_neurons, deep_nn, conv_repetition,
-                 ratio_test_train_rep, aggr):
+                 ratio_test_train_rep, aggr, num_repeating_layer):
         '''
         Defines a GNN architecture which uses NNConv and repeat a fixed number of time in the feedforward phase for training.
         :param sigmoid_output: Whether to output a sigmoid.
@@ -21,6 +21,7 @@ class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
         super().__init__(sigmoid_output, dropout_prob, pooling, num_hidden_neurons, deep_nn, aggr)
         self._ratio_test_train_rep = ratio_test_train_rep
         self._conv_repetition = conv_repetition
+        self._num_repeating_layer = num_repeating_layer
 
     def _get_fields_for_repr(self):
         return {**super()._get_fields_for_repr(),
@@ -44,11 +45,13 @@ class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
             self._nn1 = nn.Linear(num_edge_features, in_channels * self._num_hidden_neurons)
         self._conv1 = NNConv(in_channels, self._num_hidden_neurons, self._nn1, aggr=self._aggr.value)
 
-        if self._deep_nn:
-            self._nn2 = nn.Sequential(nn.Linear(num_edge_features, int(self._num_hidden_neurons / 4)), nn.LeakyReLU(), nn.Linear(int(self._num_hidden_neurons / 4), self._num_hidden_neurons * self._num_hidden_neurons))
-        else:
-            self._nn2 = nn.Linear(num_edge_features, self._num_hidden_neurons * self._num_hidden_neurons)
-        self._conv2 = NNConv(self._num_hidden_neurons, self._num_hidden_neurons, self._nn2, aggr=self._aggr.value)
+        self._convs = []
+        for _ in range(self._num_repeating_layer):
+            if self._deep_nn:
+                self._nn2 = nn.Sequential(nn.Linear(num_edge_features, int(self._num_hidden_neurons / 4)), nn.LeakyReLU(), nn.Linear(int(self._num_hidden_neurons / 4), self._num_hidden_neurons * self._num_hidden_neurons))
+            else:
+                self._nn2 = nn.Linear(num_edge_features, self._num_hidden_neurons * self._num_hidden_neurons)
+            self._convs.append(NNConv(self._num_hidden_neurons, self._num_hidden_neurons, self._nn2, aggr=self._aggr.value))
 
         self._fc1 = torch.nn.Linear(self._post_pulling_num_neurons, self._num_hidden_neurons)
         self._fc2 = torch.nn.Linear(self._num_hidden_neurons, out_channels)
@@ -61,11 +64,15 @@ class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
         return x
 
     def _iterate_nnconv(self, x, edge_index, edge_attr):
-        iteration_number = self._conv_repetition if self.training else self._conv_repetition * self._ratio_test_train_rep
+        num_iterations = self._compute_num_iterations()
 
-        for i in range(iteration_number):
+        for i in range(num_iterations):
             x = F.dropout(x, p=self._dropout_prob, training=self.training)
-            x = F.leaky_relu(self._conv2(x, edge_index, edge_attr))
+            for conv in self._convs:
+                x = F.leaky_relu(conv(x, edge_index, edge_attr))
+
+    def _compute_num_iterations(self):
+        return self._conv_repetition if self.training else self._conv_repetition * self._ratio_test_train_rep
 
     def _perform_post_pooling(self, x, edge_index, edge_attr):
         x = F.leaky_relu(self._fc1(x))

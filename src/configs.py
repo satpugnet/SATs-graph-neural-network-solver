@@ -70,7 +70,7 @@ exp_configs = OrderedDict([
         lit_in_clause_distr_params=[0.2],  # The distribution parameters
         include_trivial_clause=False  # Whether to include clause containing a variable and its opposite such as (x and not x)
     )),
-    ("num_gen_data", 50),  # The amount of data to generate in total
+    ("num_gen_data", 4000),  # The amount of data to generate in total
     ("percentage_training_set", 0.75),  # The percentage of training data in total compare to testing
 
 
@@ -106,17 +106,19 @@ exp_configs = OrderedDict([
     #     num_hidden_neurons=64,
     #     conv_repetition=20,  # The number of repetition of the ConvGNN
     #     ratio_test_train_rep=1,  # The ratio of the number of repetition of the ConvGNN for the testing and training
-    #     aggr=Aggr.ADD
+    #     aggr=Aggr.ADD,
+    #     num_repeating_layer=1
     # )),
     ("gnn", VariableRepeatingNNConvGNN(
         sigmoid_output=True,
         dropout_prob=0,
-        pooling=SetToSetPooling(3, 6),
-        deep_nn=False,
-        num_hidden_neurons=48,
+        pooling=GlobalAttentionPooling(64, True),
+        deep_nn=True,
+        num_hidden_neurons=32,
         conv_min_max_rep=(10, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
         ratio_test_train_rep=2,
-        aggr=Aggr.ADD
+        aggr=Aggr.ADD,
+        num_repeating_layer=3
     )),
 
 
@@ -125,7 +127,8 @@ exp_configs = OrderedDict([
         learning_rate=0.001,  # The learning rate
         weight_decay=5e-4,  # The weight decay
         device=device,  # The device used
-        num_epoch_before_halving_lr=33  # The number of epoch between each halving of the learning rate
+        num_epoch_before_halving_lr=33,  # The number of epoch between each halving of the learning rate
+        activate_amp=False
     )),
     ("number_of_epochs", 100),
 

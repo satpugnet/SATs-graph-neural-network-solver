@@ -2,6 +2,7 @@ import time
 from abc import ABC, abstractmethod
 
 import torch
+# from apex import amp, optimizers
 from torch import nn
 
 from utils import logger
@@ -9,7 +10,7 @@ from utils.abstract_repr import AbstractRepr
 
 
 class AbstractTrainer(ABC, AbstractRepr):
-    def __init__(self, learning_rate, weight_decay, device):
+    def __init__(self, learning_rate, weight_decay, device, activate_amp):
         '''
         Trainer for the network.
         :param learning_rate: The learning rate.
@@ -19,6 +20,7 @@ class AbstractTrainer(ABC, AbstractRepr):
         self._learning_rate = learning_rate
         self._weight_decay = weight_decay
         self._device = device
+        self._activate_amp = activate_amp
 
     def _get_fields_for_repr(self):
         return {
@@ -34,6 +36,9 @@ class AbstractTrainer(ABC, AbstractRepr):
         logger.get().info("Starting the training")
 
         optimizer = self._create_optimizer(model.parameters(), self._learning_rate, self._weight_decay)
+
+        # if self._activate_amp:
+        #     model, optimizer = amp.initialize(model, optimizer, opt_level="O1")
 
         train_loss = []
         test_loss = []
@@ -82,7 +87,12 @@ class AbstractTrainer(ABC, AbstractRepr):
             # loss = F.mse_loss(out, batch.y.view(-1, 1))  # F.nll_loss(out, batch.y)
             train_error += loss
 
-            loss.backward()
+            if self._activate_amp:
+                pass
+                # with amp.scale_loss(loss, optimizer) as scaled_loss:
+                #     scaled_loss.backward()
+            else:
+                loss.backward()
             optimizer.step()
 
         return train_error / len(train_loader)
