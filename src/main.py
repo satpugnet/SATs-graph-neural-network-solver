@@ -123,7 +123,7 @@ logger.get().info("VISUALISE")
 save_user_input = ""
 while save_user_input != "y" and save_user_input != "n":
     time.sleep(0.01) # Prevents problems of race condition with the logger
-    save_user_input = input("\nSave the results? (y or n)")
+    save_user_input = input("\nSave the results? (y or n)\n")
 save_result = save_user_input == "y"
 
 graph_filename = other_configs["visualiser"].visualise(

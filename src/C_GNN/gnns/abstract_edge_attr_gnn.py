@@ -1,10 +1,8 @@
 from C_GNN.abstract_gnn import AbstractGNN
-from C_GNN.gnn_enums.pooling import Pooling
-from C_GNN.gnns.edge_atr_gnns_enums.aggr import Aggr
 
 
 class AbstractEdgeAttrGNN(AbstractGNN):
-    def __init__(self, sigmoid_output=True, dropout_prob=0.5, pooling=Pooling.GLOBAL_ADD, num_hidden_neurons=8, deep_nn=True, aggr=Aggr.ADD):
+    def __init__(self, sigmoid_output, dropout_prob, pooling, num_hidden_neurons, deep_nn, aggr):
         '''
         Defines a GNN architecture which uses the node attr, the edge index and teh edge attr.
         :param sigmoid_output: Whether to output a sigmoid.

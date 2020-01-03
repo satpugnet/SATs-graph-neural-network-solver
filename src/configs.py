@@ -8,16 +8,16 @@ from collections import OrderedDict
 
 import torch
 
-from A_data_generator.data_generators.distr_based_generators.distr_based_generator_enum import Distribution
 from A_data_generator.data_generators.distr_based_generator import DistrBasedGenerator
+from A_data_generator.data_generators.distr_based_generators.distr_based_generator_enum import Distribution
 from B_SAT_to_graph_converter.SAT_to_graph_converters.clause_variable_graph_converter.clause_to_variable_graph import \
     ClauseToVariableGraph
-from C_GNN.gnn_enums.pooling import Pooling
-from C_GNN.gnns.edge_atr_gnns_enums.aggr import Aggr
-from C_GNN.gnns.edge_attr_gnns.nnconv_gnn import NNConvGNN
-from C_GNN.gnns.edge_attr_gnns.repeating_nnconv_gnn import RepeatingNNConvGNN
+from C_GNN.gnns.edge_atr_gnns_enums.aggr_enum import Aggr
 from C_GNN.gnns.edge_attr_gnns.repeating_nnconv_gnns.variable_repeating_nnconv_gnn import VariableRepeatingNNConvGNN
-from C_GNN.gnns.gcn_2_layer_linear_1_layer_gnn import GCN2LayerLinear1LayerGNN
+from C_GNN.poolings.global_attention_pooling import GlobalAttentionPooling
+from C_GNN.poolings.mean_pooling import MeanPooling
+from C_GNN.poolings.set_to_set_pooling import SetToSetPooling
+from C_GNN.poolings.sort_pooling import SortPooling
 from D_trainer.trainers.adam_trainer import AdamTrainer
 from E_evaluator.evaluators.default_evaluator import DefaultEvaluator
 from F_visualiser.visualisers.visualiser import DefaultVisualiser
@@ -30,6 +30,9 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # TODO: Fix the bug when printing epoch percentages and print percentage for the testing
 # TODO: replace this ordered dict by dict
 # TODO: remove all the optional param everywhere
+# TODO: create an all node graph so that the algorithms without edge_attr can be tested
+# TODO: Create non-global pooling layer
+# TODO: Check normalisation pooling layers
 # These configs will be saved to a file when saving the experiment configurations, put important configs here
 exp_configs = OrderedDict([
     # GENERATE SATS DATA
@@ -108,7 +111,7 @@ exp_configs = OrderedDict([
     ("gnn", VariableRepeatingNNConvGNN(
         sigmoid_output=True,
         dropout_prob=0,
-        pooling=Pooling.GLOBAL_ADD,
+        pooling=SetToSetPooling(3, 6),
         deep_nn=False,
         num_hidden_neurons=48,
         conv_min_max_rep=(10, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN

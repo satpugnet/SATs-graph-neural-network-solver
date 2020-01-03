@@ -2,14 +2,14 @@ import random
 
 import torch.nn.functional as F
 
-from C_GNN.gnn_enums.pooling import Pooling
-from C_GNN.gnns.edge_atr_gnns_enums.aggr import Aggr
+from C_GNN.gnns.edge_atr_gnns_enums.aggr_enum import Aggr
 from C_GNN.gnns.edge_attr_gnns.repeating_nnconv_gnn import RepeatingNNConvGNN
+from C_GNN.poolings.add_pooling import AddPooling
 
 
 class VariableRepeatingNNConvGNN(RepeatingNNConvGNN):
 
-    def __init__(self, sigmoid_output=True, dropout_prob=0.5, pooling=Pooling.GLOBAL_ADD, num_hidden_neurons=8, deep_nn=False,
+    def __init__(self, sigmoid_output=True, dropout_prob=0.5, pooling=AddPooling(), num_hidden_neurons=8, deep_nn=False,
                  conv_min_max_rep=(10, 20), ratio_test_train_rep=4, aggr=Aggr.ADD):
         '''
         Defines a GNN architecture which uses NNConv and repeat a random number of time in the feedforward phase for training.

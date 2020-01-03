@@ -1,17 +1,14 @@
 import torch
 from torch import nn
-from torch_geometric.nn import global_add_pool, NNConv
+from torch_geometric.nn import NNConv
 import torch.nn.functional as F
 
-from C_GNN.abstract_gnn import AbstractGNN
-from C_GNN.gnn_enums.pooling import Pooling
 from C_GNN.gnns.abstract_edge_attr_gnn import AbstractEdgeAttrGNN
-from C_GNN.gnns.edge_atr_gnns_enums.aggr import Aggr
 
 
 class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
-    def __init__(self, sigmoid_output=True, dropout_prob=0.5, pooling=Pooling.GLOBAL_ADD, num_hidden_neurons=8, deep_nn=False, conv_repetition=20,
-                 ratio_test_train_rep=4, aggr=Aggr.ADD):
+    def __init__(self, sigmoid_output, dropout_prob, pooling, num_hidden_neurons, deep_nn, conv_repetition,
+                 ratio_test_train_rep, aggr):
         '''
         Defines a GNN architecture which uses NNConv and repeat a fixed number of time in the feedforward phase for training.
         :param sigmoid_output: Whether to output a sigmoid.
@@ -39,6 +36,8 @@ class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
                 }}
 
     def initialise_channels(self, in_channels, out_channels, num_edge_features=None):
+        super().initialise_channels(in_channels, out_channels, num_edge_features)
+
         if self._deep_nn:
             self._nn1 = nn.Sequential(nn.Linear(num_edge_features, int(self._num_hidden_neurons / 4)), nn.LeakyReLU(), nn.Linear(int(self._num_hidden_neurons / 4), in_channels * self._num_hidden_neurons))
         else:
@@ -51,7 +50,7 @@ class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
             self._nn2 = nn.Linear(num_edge_features, self._num_hidden_neurons * self._num_hidden_neurons)
         self._conv2 = NNConv(self._num_hidden_neurons, self._num_hidden_neurons, self._nn2, aggr=self._aggr.value)
 
-        self._fc1 = torch.nn.Linear(self._num_hidden_neurons, self._num_hidden_neurons)
+        self._fc1 = torch.nn.Linear(self._post_pulling_num_neurons, self._num_hidden_neurons)
         self._fc2 = torch.nn.Linear(self._num_hidden_neurons, out_channels)
 
     def _perform_pre_pooling(self, x, edge_index, edge_attr):
