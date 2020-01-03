@@ -1,4 +1,4 @@
-FROM pytorch/manylinux-cuda100
+FROM pytorch/pytorch
 
 COPY ./src /SATs-graph-neural-network-solver/src
 COPY ./experiments_results /SATs-graph-neural-network-solver/experiments_results
