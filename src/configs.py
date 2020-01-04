@@ -24,6 +24,8 @@ from F_visualiser.visualisers.visualiser import DefaultVisualiser
 from G_save.save_handlers.save_handler import SaveHandler
 from utils import logger
 
+logger.init(debug=True, verbose=False)
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 logger.get().warning("Running the experiment on " + ('GPU' if torch.cuda.is_available() else 'CPU'))
 
@@ -155,8 +157,6 @@ exp_configs = OrderedDict([
 
 # These configs will be saved to a file when saving the experiment configurations, put unimportant configs here
 other_configs = {
-    "debug": True,  # Whether to print the debug info or not
-    "verbose": False,  # The verbosity of the printing
 
     # GENERATE SATS DATA
     "data_generated_train_folder_location": "../data_generated/train",  # Where to store the training data
@@ -184,5 +184,3 @@ other_configs = {
     "save_handler": SaveHandler,  # The save handler for saving experiments
     "save_filename": "../experiments_results/experiments.csv"  # The filename of the saved information
 }
-
-logger.init(debug=other_configs["debug"], verbose=other_configs["verbose"])

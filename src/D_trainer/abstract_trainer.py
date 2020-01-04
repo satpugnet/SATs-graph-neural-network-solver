@@ -77,7 +77,7 @@ class AbstractTrainer(ABC, AbstractRepr):
         progress = 0
         for batch in train_loader:
             progress += 1
-            logger.get().debug("Training at {:.1f}%\r".format(progress/len(train_loader) * 100))
+            logger.get().debug("Training at: {:.1f}%\r".format(progress/len(train_loader) * 100))
 
             batch = batch.to(self._device)
 

@@ -45,7 +45,7 @@ class DefaultEvaluator(AbstractEvaluator):
         progress = 0
         for batch in self.test_loader:
             progress += 1
-            logger.get().debug("Testing at {:.1f}%\r".format(progress/len(self.test_loader) * 100))
+            logger.get().debug("Testing at: {:.1f}%\r".format(progress/len(self.test_loader) * 100))
 
             batch = batch.to(self._device)
             pred = model(batch)
