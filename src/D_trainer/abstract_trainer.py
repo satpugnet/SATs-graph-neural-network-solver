@@ -1,12 +1,14 @@
 import time
 from abc import ABC, abstractmethod
-
 import torch
-# from apex import amp, optimizers
 from torch import nn
-
 from utils import logger
 from utils.abstract_repr import AbstractRepr
+
+try:
+    from apex import amp, optimizers
+except ImportError:
+    logger.get().error("The apex package could not be imported, the experiment cannot be run with amp activated.")
 
 
 class AbstractTrainer(ABC, AbstractRepr):
@@ -37,8 +39,8 @@ class AbstractTrainer(ABC, AbstractRepr):
 
         optimizer = self._create_optimizer(model.parameters(), self._learning_rate, self._weight_decay)
 
-        # if self._activate_amp:
-        #     model, optimizer = amp.initialize(model, optimizer, opt_level="O1")
+        if self._activate_amp:
+            model, optimizer = amp.initialize(model, optimizer, opt_level="O1")
 
         train_loss = []
         test_loss = []
@@ -88,9 +90,8 @@ class AbstractTrainer(ABC, AbstractRepr):
             train_error += loss
 
             if self._activate_amp:
-                pass
-                # with amp.scale_loss(loss, optimizer) as scaled_loss:
-                #     scaled_loss.backward()
+                with amp.scale_loss(loss, optimizer) as scaled_loss:
+                    scaled_loss.backward()
             else:
                 loss.backward()
             optimizer.step()

@@ -32,7 +32,7 @@ To run the code from this project on a docker container, run:
 ```bash
 docker pull saturnin13/sats-graph-neural-network-solver
 docker run -v [absolute path to folder where to put the experiments results on your host machine]:/SATs-graph-neural-network-solver/experiments_results -i -t saturnin13/sats-graph-neural-network-solver:latest /bin/bash
-(i.e. docker run -v /home/sat/SATs-graph-neural-network-solver/experiments_results:/SATs-graph-neural-network-solver/experiments_results -i -t saturnin13/sats-graph-neural-network-solver:latest /bin/bash)
+(i.e. `docker run -v /home/sat/SATs-graph-neural-network-solver/experiments_results:/SATs-graph-neural-network-solver/experiments_results -i -t saturnin13/sats-graph-neural-network-solver:latest /bin/bash`)
 ```
 This sets the container to output the experiment results to the folder specified on your host machine.
 

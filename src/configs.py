@@ -113,7 +113,7 @@ exp_configs = OrderedDict([
     #     conv_repetition=20,  # The number of repetition of the ConvGNN
     #     ratio_test_train_rep=1,  # The ratio of the number of repetition of the ConvGNN for the testing and training
     #     aggr=Aggr.ADD,
-    #     num_repeating_layer=1
+    #     num_layers_per_rep=1
     # )),
     ("gnn", VariableRepeatingNNConvGNN(
         sigmoid_output=True,
@@ -124,7 +124,7 @@ exp_configs = OrderedDict([
         conv_min_max_rep=(10, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
         ratio_test_train_rep=2,
         aggr=Aggr.ADD,
-        num_repeating_layer=3
+        num_layers_per_rep=3
     )),
 
 

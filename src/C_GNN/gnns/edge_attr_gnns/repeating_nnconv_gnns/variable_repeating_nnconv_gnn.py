@@ -8,7 +8,7 @@ from C_GNN.gnns.edge_attr_gnns.repeating_nnconv_gnn import RepeatingNNConvGNN
 class VariableRepeatingNNConvGNN(RepeatingNNConvGNN):
 
     def __init__(self, sigmoid_output, dropout_prob, pooling, num_hidden_neurons, deep_nn, conv_min_max_rep,
-                 ratio_test_train_rep, aggr, num_repeating_layer):
+                 ratio_test_train_rep, aggr, num_layers_per_rep):
         '''
         Defines a GNN architecture which uses NNConv and repeat a random number of time in the feedforward phase for training.
         :param sigmoid_output: Whether to output a sigmoid.
@@ -19,7 +19,7 @@ class VariableRepeatingNNConvGNN(RepeatingNNConvGNN):
         :param ratio_test_train_rep: The ratio of the number of repetition of the ConvGNN for the testing and training.
         '''
         super().__init__(sigmoid_output, dropout_prob, pooling, num_hidden_neurons, deep_nn, conv_min_max_rep[1],
-                         ratio_test_train_rep, aggr, num_repeating_layer)
+                         ratio_test_train_rep, aggr, num_layers_per_rep)
         self._conv_min_max_rep = conv_min_max_rep
 
     def _get_fields_for_repr(self):

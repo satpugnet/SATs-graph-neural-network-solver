@@ -45,8 +45,9 @@ class AbstractDataGenerator(ABC, AbstractRepr):
 
         i = 0
         while i < number_dimacs:
-            logger.get().info("Generation of SATs problem at: " + str(int(i / number_dimacs * 100)) + "% (" + str(number_sat_required)
-                + " SAT left and " + str(number_unsat_required) + " UNSAT left)")
+            logger.get().info("Generation of SATs problem at: " + str(int(i / number_dimacs * 100)) + "% " + ("(" + str(number_sat_required)
+                + " SAT left and " + str(number_unsat_required) + " UNSAT left)" if number_sat_required is not None else ""))
+
             n_vars, clauses = self._generate_CNF()
 
             if not self._has_correct_num_var_and_clauses(n_vars, clauses):

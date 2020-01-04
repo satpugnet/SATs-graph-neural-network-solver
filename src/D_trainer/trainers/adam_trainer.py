@@ -6,7 +6,7 @@ from utils import logger
 
 class AdamTrainer(AbstractTrainer):
 
-    def __init__(self, learning_rate, weight_decay, device, activate_amp, num_epoch_before_halving_lr):
+    def __init__(self, learning_rate, weight_decay, device, num_epoch_before_halving_lr, activate_amp):
         '''
         An adam trainer for the network.
         :param learning_rate: The learning rate.
