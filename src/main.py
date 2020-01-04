@@ -8,6 +8,7 @@ from configs import exp_configs, other_configs, device
 from utils import logger
 from utils.dimac_loader import DimacLoader
 
+
 #################################################
 #
 # GENERATE SATS DATA
@@ -154,3 +155,7 @@ if save_result:
         ("graph_filename", graph_filename)
     ])
     other_configs["save_handler"](exp_configs, experiment_results, other_configs["save_filename"]).save()
+
+
+logger.skip_line()
+logger.get().info("EXPERIMENT COMPLETED\n")

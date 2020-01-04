@@ -25,6 +25,8 @@ from G_save.save_handlers.save_handler import SaveHandler
 from utils import logger
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+logger.get().warning("Running the experiment on " + ('GPU' if torch.cuda.is_available() else 'CPU'))
+
 
 # TODO: add an option to put into a folder sample of (TP, FP, TN, FN) with the name similar to the graphs name for later visualisation
 # TODO: Fix the bug when printing epoch percentages and print percentage for the testing
@@ -34,6 +36,8 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # TODO: Create non-global pooling layer
 # TODO: Check normalisation pooling layers
 # TODO: make amp work
+# TODO: make main.py independent of the place from where it is ran (using import main \n main.__file__)
+# TODO: be able to put more than one test distribution
 
 # These configs will be saved to a file when saving the experiment configurations, put important configs here
 exp_configs = OrderedDict([

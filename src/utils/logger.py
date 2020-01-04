@@ -51,23 +51,24 @@ class CustomFormatter(logging.Formatter):
     }
 
     def format(self, record):
-        if record.levelno == logging.DEBUG and record.msg == "":
-            return ""
-
         prefix = "\n"
         if self._previous_carriage_returned:
             prefix = "\r"
 
-        if record.msg[-1] == '\r':
-            self._previous_carriage_returned = True
-            record.msg = record.msg[:-1]
+        if record.levelno == logging.DEBUG and record.msg == "":
+            message = ""
         else:
-            self._previous_carriage_returned = False
+            if record.msg[-1] == '\r':
+                self._previous_carriage_returned = True
+                record.msg = record.msg[:-1]
+            else:
+                self._previous_carriage_returned = False
 
-        log_fmt = self._compute_format(self._verbose).get(record.levelno)
-        formatter = logging.Formatter(log_fmt)
+            log_fmt = self._compute_format(self._verbose).get(record.levelno)
+            formatter = logging.Formatter(log_fmt)
+            message = formatter.format(record)
 
-        return prefix + formatter.format(record)
+        return prefix + message
 
 
 def init(debug, verbose=False):
@@ -88,7 +89,7 @@ def set_debug_min_level(debug):
 
 
 def skip_line():
-    logging.getLogger().debug("")
+    get().debug("")
 
 def get():
     return logging.getLogger()

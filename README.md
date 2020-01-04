@@ -1,12 +1,20 @@
-# SATs-graph-neural-network-solver
-Usage of graph neural networks to solve SATisfiability problems.
+# Overview
+
+A package containing several modulable parts to provide a foundation and foster further research 
+in SATisfiability problem solving with Graph Neural Network. It is aimed at aiming the research
+community to easily test and evaluate there ideas in this specific field.
 
 # Setup and Run Command
 
 ## Run locally 
 
-Run the setup script and install the dependencies:
+Clone the project
 ```bash
+git clone https://github.com/saturnin13/SATs-graph-neural-network-solver.git
+```
+
+Run the setup script and install the dependencies:
+``bash
 chmod +x scripts/setup.sh
 ./scripts/setup.sh
 pip install -r requirements.txt
@@ -18,15 +26,15 @@ cd src
 python main.py
 ```
 
-# Run on Docker
+## Run on Docker
 
 To run the code from this project on a docker container, run:
 ```bash
 docker pull saturnin13/sats-graph-neural-network-solver
-docker run -v [absolute path to experiments_results folder]:/SATs-graph-neural-network-solver/experiments_results -i -t saturnin13/sats-graph-neural-network-solver:latest /bin/bash
-(i.e. docker run -v /Users/saturninpugnet/IdeaProjects/SATs-graph-neural-network-solver/experiments_results:/SATs-graph-neural-network-solver/experiments_results -i -t saturnin13/sats-graph-neural-network-solver:latest /bin/bash)
+docker run -v [absolute path to folder where to put the experiments results on your host machine]:/SATs-graph-neural-network-solver/experiments_results -i -t saturnin13/sats-graph-neural-network-solver:latest /bin/bash
+(i.e. docker run -v /home/sat/SATs-graph-neural-network-solver/experiments_results:/SATs-graph-neural-network-solver/experiments_results -i -t saturnin13/sats-graph-neural-network-solver:latest /bin/bash)
 ```
-This will output the experiment result to the folder experiments_results on your local machine.
+This sets the container to output the experiment results to the folder specified on your host machine.
 
 Then go into the src folder in the container and run the main.py. 
 This can be done as follow:
@@ -40,7 +48,7 @@ python main.py
 **data_generated/**: Contain the data generated when running the experiments.   
 **scripts/**: Contains the basic scripts.  
 **src/**: Contains the code.  
-**src/experiments/**: Contains the list of experiment result that were saved.  
+**experiments_results/**: Contains the list of experiment results that were saved.  
 **src/PyMiniSolvers/**: Contains an old fashion SATs solver used to generate the data.  
 
 # Instructions
