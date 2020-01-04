@@ -38,6 +38,7 @@ logger.get().warning("Running the experiment on " + ('GPU' if torch.cuda.is_avai
 # TODO: make amp work
 # TODO: make main.py independent of the place from where it is ran (using import main \n main.__file__)
 # TODO: be able to put more than one test distribution
+# TODO: Make the printing for the SATs problem loading inplace
 
 # These configs will be saved to a file when saving the experiment configurations, put important configs here
 exp_configs = OrderedDict([
