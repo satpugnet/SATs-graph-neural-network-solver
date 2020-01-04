@@ -34,19 +34,19 @@ class CustomFormatter(logging.Formatter):
 
         return {
         logging.DEBUG: base_format.format(
-            Color.GREY, colors.color("DEBUG".center(CustomFormatter.LEVEL_SPACES), 'black', bg='grey'), current_time
+            Color.GREY, colors.color("DEBUG".center(CustomFormatter.LEVEL_SPACES), 'white', bg='grey'), current_time
         ),
         logging.INFO: base_format.format(
-            Color.B, colors.color("INFO".center(CustomFormatter.LEVEL_SPACES), 'black', bg='blue'), current_time
+            Color.B, colors.color("INFO".center(CustomFormatter.LEVEL_SPACES), 'white', bg='blue'), current_time
         ),
         logging.WARNING: base_format.format(
-            Color.O, colors.color("WARNING".center(CustomFormatter.LEVEL_SPACES), 'black', bg='yellow'), current_time
+            Color.O, colors.color("WARNING".center(CustomFormatter.LEVEL_SPACES), 'white', bg='yellow'), current_time
         ),
         logging.ERROR: base_format.format(
-            Color.R, colors.color("ERROR".center(CustomFormatter.LEVEL_SPACES), 'black', bg='red'), current_time
+            Color.R, colors.color("ERROR".center(CustomFormatter.LEVEL_SPACES), 'white', bg='red'), current_time
         ),
         logging.CRITICAL: base_format.format(
-            Color.R, colors.color("CRITICAL".center(CustomFormatter.LEVEL_SPACES), 'black', bg='red'), current_time
+            Color.R, colors.color("CRITICAL".center(CustomFormatter.LEVEL_SPACES), 'white', bg='red'), current_time
         )
     }
 

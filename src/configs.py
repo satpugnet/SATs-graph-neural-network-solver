@@ -33,6 +33,8 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # TODO: create an all node graph so that the algorithms without edge_attr can be tested
 # TODO: Create non-global pooling layer
 # TODO: Check normalisation pooling layers
+# TODO: make amp work
+
 # These configs will be saved to a file when saving the experiment configurations, put important configs here
 exp_configs = OrderedDict([
     # GENERATE SATS DATA
