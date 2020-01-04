@@ -12,5 +12,3 @@ RUN ./scripts/setup.sh
 RUN apt-get update
 RUN apt-get install vim -y
 RUN cd src
-
-CMD [ "python", "main.py" ]
