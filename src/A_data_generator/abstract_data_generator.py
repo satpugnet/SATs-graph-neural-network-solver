@@ -7,7 +7,8 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
-from A_data_generator.deterministic_solvers.PyMiniSolvers import minisolvers
+from pysat.solvers import Glucose3
+
 from utils import logger
 from utils.abstract_repr import AbstractRepr
 
@@ -54,7 +55,7 @@ class AbstractDataGenerator(ABC, AbstractRepr):
                 logger.get().warning("Warning: the last generated SAT has incorrect number of variable or clauses, trying again")
                 continue
 
-            is_sat = self._is_satisfiable(n_vars, clauses)
+            is_sat = self._is_satisfiable(clauses)
             if not self._has_correct_satisfiability(is_sat, number_sat_required, number_unsat_required):
                 logger.get().warning("Warning: the last generated SAT has incorrect satisfiability according to the requested ratio of SAT to UNSAT, trying again")
                 continue
@@ -71,10 +72,8 @@ class AbstractDataGenerator(ABC, AbstractRepr):
                            self._make_filename(n_vars, len(clauses), is_sat, i))
             self._save_sat_problem_to(out_filename, n_vars, clauses)
 
-    def _is_satisfiable(self, n_vars, clauses):
-        solver = minisolvers.MinisatSolver()
-        for i in range(n_vars):
-            solver.new_var(dvar=True)
+    def _is_satisfiable(self, clauses):
+        solver = Glucose3()
 
         for clause in clauses:
             solver.add_clause(clause)

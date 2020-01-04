@@ -21,6 +21,7 @@ plyfile==0.7.1
 pydot==1.4.1
 pyparsing==2.4.5
 python-dateutil==2.8.1
+python-sat==0.1.5.dev4
 python-utils==2.3.0
 pytz==2019.3
 rdflib==4.2.2
@@ -35,3 +36,4 @@ torch-scatter==1.4.0
 torch-sparse==0.4.3
 torchvision==0.4.2
 urllib3==1.25.7
+
