@@ -4,7 +4,7 @@ from collections import OrderedDict
 import torch
 from torch_geometric.data import DataLoader
 
-from configs import exp_configs, other_configs, device
+from configs import exp_configs, other_configs
 from utils import logger
 from utils.dimac_loader import DimacLoader
 
@@ -76,7 +76,7 @@ exp_configs["gnn"].initialise_channels(
     next(iter(train_loader)).num_edge_features
 )
 
-model = exp_configs["gnn"].to(device)
+model = exp_configs["gnn"].to(other_configs["device"])
 
 
 #################################################

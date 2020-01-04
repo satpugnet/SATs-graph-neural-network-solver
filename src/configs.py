@@ -157,6 +157,7 @@ exp_configs = OrderedDict([
 
 # These configs will be saved to a file when saving the experiment configurations, put unimportant configs here
 other_configs = {
+    "device": device,
 
     # GENERATE SATS DATA
     "data_generated_train_folder_location": "../data_generated/train",  # Where to store the training data
