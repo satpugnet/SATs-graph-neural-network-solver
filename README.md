@@ -5,25 +5,28 @@ Usage of graph neural networks to solve SATisfiability problems.
 
 ## Run locally 
 
-Run the setup script:
-`bash
+Run the setup script and install the dependencies:
+```bash
 chmod +x scripts/setup.sh
 ./scripts/setup.sh
-`
+pip install -r requirements.txt
+```
 
 Then to run the application, move to the src folder and run the `main.py`:
-`bash
+```bash
 cd src
 python main.py
-`
+```
 
 # Run on Docker
 
 To run the code from this project on a docker container, run:
 ```bash
 docker pull saturnin13/sats-graph-neural-network-solver
-docker run -i -t saturnin13/sats-graph-neural-network-solver:last /bin/bash 
+docker run -v [absolute path to experiments_results folder]:/SATs-graph-neural-network-solver/experiments_results -i -t saturnin13/sats-graph-neural-network-solver:latest /bin/bash
+(i.e. docker run -v /Users/saturninpugnet/IdeaProjects/SATs-graph-neural-network-solver/experiments_results:/SATs-graph-neural-network-solver/experiments_results -i -t saturnin13/sats-graph-neural-network-solver:latest /bin/bash)
 ```
+This will output the experiment result to the folder experiments_results on your local machine.
 
 Then go into the src folder in the container and run the main.py. 
 This can be done as follow:
