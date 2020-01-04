@@ -14,6 +14,8 @@ from B_SAT_to_graph_converter.SAT_to_graph_converters.clause_variable_graph_conv
     ClauseToVariableGraph
 from C_GNN.gnns.edge_atr_gnns_enums.aggr_enum import Aggr
 from C_GNN.gnns.edge_attr_gnns.repeating_nnconv_gnns.variable_repeating_nnconv_gnn import VariableRepeatingNNConvGNN
+from C_GNN.gnns.gcn_2_layer_linear_1_layer_gnn import GCN2LayerLinear1LayerGNN
+from C_GNN.poolings.add_pooling import AddPooling
 from C_GNN.poolings.global_attention_pooling import GlobalAttentionPooling
 from C_GNN.poolings.mean_pooling import MeanPooling
 from C_GNN.poolings.set_to_set_pooling import SetToSetPooling
@@ -93,12 +95,12 @@ exp_configs = OrderedDict([
 
 
     # GRAPH NEURAL NETWORK STRUCTURE
-    # ("gnn", GCN2LayerLinear1LayerGNN(  # The GNN architecture to use
-    #     sigmoid_output=True,  # Whether to output a sigmoid
-    #     dropout_prob=0.5,  # The probability of dropout
-    #     pooling=Pooling.GLOBAL_ADD,
-    #     num_hidden_neurons=8
-    # )),
+    ("gnn", GCN2LayerLinear1LayerGNN(  # The GNN architecture to use
+        sigmoid_output=True,  # Whether to output a sigmoid
+        dropout_prob=0.5,  # The probability of dropout
+        pooling=AddPooling(),
+        num_hidden_neurons=8
+    )),
     # ("gnn", NNConvGNN(
     #     sigmoid_output=True,
     #     deep_nn=False,  # Whether to use a deep neural net of shallow one
@@ -118,17 +120,17 @@ exp_configs = OrderedDict([
     #     aggr=Aggr.ADD,
     #     num_layers_per_rep=1
     # )),
-    ("gnn", VariableRepeatingNNConvGNN(
-        sigmoid_output=True,
-        dropout_prob=0,
-        pooling=GlobalAttentionPooling(64, True),
-        deep_nn=True,
-        num_hidden_neurons=32,
-        conv_min_max_rep=(10, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
-        ratio_test_train_rep=2,
-        aggr=Aggr.ADD,
-        num_layers_per_rep=3
-    )),
+    # ("gnn", VariableRepeatingNNConvGNN(
+    #     sigmoid_output=True,
+    #     dropout_prob=0,
+    #     pooling=GlobalAttentionPooling(64, True),
+    #     deep_nn=True,
+    #     num_hidden_neurons=32,
+    #     conv_min_max_rep=(10, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
+    #     ratio_test_train_rep=2,
+    #     aggr=Aggr.ADD,
+    #     num_layers_per_rep=3
+    # )),
 
 
     # TRAIN

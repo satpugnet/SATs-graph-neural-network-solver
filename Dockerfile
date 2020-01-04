@@ -2,6 +2,8 @@ FROM nvcr.io/nvidia/pytorch:19.12-py3
 
 COPY ./requirements.txt /requirements.txt
 
+WORKDIR /
+
 RUN pip install --no-cache-dir -r requirements.txt
 RUN rm requirements.txt
 

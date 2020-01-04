@@ -37,8 +37,8 @@ class DefaultEvaluator(AbstractEvaluator):
         return test_loss, accuracy, confusion_matrix
 
     def __eval_model(self, model):
-        all_pred = torch.tensor([])
-        all_truth = torch.tensor([])
+        all_pred = torch.tensor([]).to(self._device)
+        all_truth = torch.tensor([]).to(self._device)
 
         test_error = 0
         correct = 0
