@@ -4,14 +4,14 @@ from torch_geometric.nn import NNConv
 
 import torch.nn.functional as F
 
-from C_GNN.poolings.pooling import Pooling
 from C_GNN.gnns.abstract_edge_attr_gnn import AbstractEdgeAttrGNN
-from C_GNN.gnns.edge_atr_gnns_enums.aggr import Aggr
+from C_GNN.gnns.edge_atr_gnns_enums.aggr_enum import Aggr
+from C_GNN.poolings.add_pooling import AddPooling
 
 
 class NNConvGNN(AbstractEdgeAttrGNN):
 
-    def __init__(self, sigmoid_output=True, dropout_prob=0.5, pooling=Pooling.GLOBAL_ADD, num_hidden_neurons=8, deep_nn=True, aggr=Aggr.ADD):
+    def __init__(self, sigmoid_output, dropout_prob, pooling, num_hidden_neurons, deep_nn, aggr):
         '''
         Defines a GNN architecture which uses NNConv.
         :param sigmoid_output: Whether to output a sigmoid.

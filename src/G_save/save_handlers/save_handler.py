@@ -1,6 +1,6 @@
 import csv
 import os
-from collections import OrderedDict
+
 
 from G_save.abstract_save_handler import AbstractSaveHandler
 from utils import logger
@@ -75,11 +75,12 @@ class SaveHandler(AbstractSaveHandler):
 
     def __create_if_not_exist(self):
         if not os.path.exists(self._filename):
-            with open(self._filename, 'w'): pass
+            with open(self._filename, 'w'):
+                pass
 
     def __curate_data(self):
         confusion_matrix_str = "confusion_matrix"
-        new_dict = OrderedDict()
+        new_dict = {}
 
         for key, value in self._all_data.items():
             new_key = key

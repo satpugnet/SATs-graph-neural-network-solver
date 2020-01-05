@@ -6,3 +6,4 @@ data_generated/*
 src/A_data_generator/deterministic_solvers/PyMiniSolvers/*
 *.pyc
 *.pyo
+*__pycache__*

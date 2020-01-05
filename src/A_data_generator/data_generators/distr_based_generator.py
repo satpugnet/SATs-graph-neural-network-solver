@@ -10,7 +10,7 @@ from utils import logger
 
 class DistrBasedGenerator(AbstractDataGenerator):
 
-    def __init__(self, percentage_sat=0.50, seed=None, min_max_n_vars=(1, 30), min_max_n_clauses=(20, 30),
+    def __init__(self, percentage_sat, seed=None, min_max_n_vars=(1, 30), min_max_n_clauses=(20, 30),
                  var_num_distr=Distribution.UNIFORM, var_num_distr_params=[], clause_num_distr=Distribution.UNIFORM,
                  clause_num_distr_params=[], lit_in_clause_distr=Distribution.GEOMETRIC, lit_in_clause_distr_params=[0.4],
                  include_trivial_clause=False):

@@ -1,15 +1,11 @@
 from abc import ABC, abstractmethod
-
 import torch
-
-from C_GNN.poolings.mean_pooling import MeanPooling
 from utils.abstract_repr import AbstractRepr
 
 
-# TODO: add options for the pooling
 class AbstractGNN(torch.nn.Module, ABC, AbstractRepr):
 
-    def __init__(self, sigmoid_output=True, dropout_prob=0.5, pooling=MeanPooling(), num_hidden_neurons=8):
+    def __init__(self, sigmoid_output, dropout_prob, pooling, num_hidden_neurons):
         '''
         Defines the GNN architecture.
         :param sigmoid_output: Whether to output a sigmoid.
