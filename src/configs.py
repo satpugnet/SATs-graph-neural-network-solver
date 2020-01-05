@@ -139,7 +139,8 @@ exp_configs = OrderedDict([
         weight_decay=5e-4,  # The weight decay
         device=device,  # The device used
         num_epoch_before_halving_lr=33,  # The number of epoch between each halving of the learning rate
-        activate_amp=False
+        activate_amp=False,
+        bce_loss=True
     )),
     ("number_of_epochs", 100),
 
@@ -185,5 +186,6 @@ other_configs = {
 
     # SAVE
     "save_handler": SaveHandler,  # The save handler for saving experiments
-    "save_filename": "../experiments_results/experiments.csv"  # The filename of the saved information
+    "save_filename": "../experiments_results/experiments.csv",  # The filename of the saved information
+    "ask_for_saving": False
 }

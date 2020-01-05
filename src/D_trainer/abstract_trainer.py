@@ -4,6 +4,7 @@ import torch
 from torch import nn
 from utils import logger
 from utils.abstract_repr import AbstractRepr
+import torch.nn.functional as F
 
 try:
     from apex import amp, optimizers
@@ -12,7 +13,7 @@ except ImportError:
 
 
 class AbstractTrainer(ABC, AbstractRepr):
-    def __init__(self, learning_rate, weight_decay, device, activate_amp):
+    def __init__(self, learning_rate, weight_decay, device, activate_amp, bce_loss):
         '''
         Trainer for the network.
         :param learning_rate: The learning rate.
@@ -23,6 +24,7 @@ class AbstractTrainer(ABC, AbstractRepr):
         self._weight_decay = weight_decay
         self._device = device
         self._activate_amp = activate_amp
+        self._bce_loss = bce_loss
 
     def _get_fields_for_repr(self):
         return {
@@ -85,8 +87,10 @@ class AbstractTrainer(ABC, AbstractRepr):
 
             out = model(batch)
 
-            loss = nn.BCELoss()(out, batch.y.view(-1, 1))
-            # loss = F.mse_loss(out, batch.y.view(-1, 1))  # F.nll_loss(out, batch.y)
+            if self._bce_loss:
+                loss = nn.BCELoss()(out, batch.y.view(-1, 1))
+            else:
+                loss = F.mse_loss(out, batch.y.view(-1, 1))  # F.nll_loss(out, batch.y)
             train_error += loss
 
             if self._activate_amp:

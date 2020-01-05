@@ -122,10 +122,13 @@ logger.get().info("VISUALISE")
 
 # Ask the user to save or not the results
 save_user_input = ""
-while save_user_input != "y" and save_user_input != "n":
-    time.sleep(0.01) # Prevents problems of race condition with the logger
-    save_user_input = input("\nSave the results? (y or n)\n")
-save_result = save_user_input == "y"
+if other_configs["ask_for_saving"]:
+    while save_user_input != "y" and save_user_input != "n":
+        time.sleep(0.01) # Prevents problems of race condition with the logger
+        save_user_input = input("\nSave the results? (y or n)\n")
+    save_result = save_user_input == "y"
+else:
+    save_result = True
 
 graph_filename = other_configs["visualiser"].visualise(
     train_loss,
