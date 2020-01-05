@@ -28,11 +28,13 @@ python main.py
 
 ## Run on Docker
 
+First, the Dockerfile should be updated with the github credential information for email and username.
+
 To run the code from this project on a docker container, run:
 ```bash
 docker pull saturnin13/sats-graph-neural-network-solver
-docker run -v [absolute path to folder where to put the experiments results on your host machine]:/SATs-graph-neural-network-solver/experiments_results -i -t saturnin13/sats-graph-neural-network-solver:latest /bin/bash
-(i.e. `docker run -v /home/sat/SATs-graph-neural-network-solver/experiments_results:/SATs-graph-neural-network-solver/experiments_results -i -t saturnin13/sats-graph-neural-network-solver:latest /bin/bash`)
+docker run -it --runtime=nvidia saturnin13/sats-graph-neural-network-solver:latest /bin/bash (For Docker < 19.03)
+docker run -it --gpus=all saturnin13/sats-graph-neural-network-solver:latest /bin/bash (For Docker >= 19.03)
 ```
 This sets the container to output the experiment results to the folder specified on your host machine.
 
@@ -41,6 +43,14 @@ This can be done as follow:
 ```bash
 cd src
 python main.py
+```
+
+The container will save the results on the container and they will need to be pushed to git or saved on the host to be saved.
+To save the result to the host, the container can be instanciated with the following command instead to mount a directory on
+the container:
+```bash
+docker run -it --runtime=nvidia -v [absolute path to folder where to put the experiments results on your host machine]:[absolute path to folder on container] saturnin13/sats-graph-neural-network-solver:latest /bin/bash
+(i.e. `docker run -it --runtime=nvidia -v /home/sat/SATs-graph-neural-network-solver/experiments_results:/SATs-graph-neural-network-solver/experiments_results saturnin13/sats-graph-neural-network-solver:latest /bin/bash`)
 ```
 
 # Folder organisation

@@ -81,7 +81,7 @@ exp_configs = OrderedDict([
         lit_in_clause_distr_params=[0.2],  # The distribution parameters
         include_trivial_clause=False  # Whether to include clause containing a variable and its opposite such as (x and not x)
     )),
-    ("num_gen_data", 100),  # The amount of data to generate in total
+    ("num_gen_data", 4000),  # The amount of data to generate in total
     ("percentage_training_set", 0.75),  # The percentage of training data in total compare to testing
 
 
@@ -95,12 +95,12 @@ exp_configs = OrderedDict([
 
 
     # GRAPH NEURAL NETWORK STRUCTURE
-    ("gnn", GCN2LayerLinear1LayerGNN(  # The GNN architecture to use
-        sigmoid_output=True,  # Whether to output a sigmoid
-        dropout_prob=0.5,  # The probability of dropout
-        pooling=AddPooling(),
-        num_hidden_neurons=8
-    )),
+    # ("gnn", GCN2LayerLinear1LayerGNN(  # The GNN architecture to use
+    #     sigmoid_output=True,  # Whether to output a sigmoid
+    #     dropout_prob=0.5,  # The probability of dropout
+    #     pooling=AddPooling(),
+    #     num_hidden_neurons=8
+    # )),
     # ("gnn", NNConvGNN(
     #     sigmoid_output=True,
     #     deep_nn=False,  # Whether to use a deep neural net of shallow one
@@ -120,17 +120,17 @@ exp_configs = OrderedDict([
     #     aggr=Aggr.ADD,
     #     num_layers_per_rep=1
     # )),
-    # ("gnn", VariableRepeatingNNConvGNN(
-    #     sigmoid_output=True,
-    #     dropout_prob=0,
-    #     pooling=GlobalAttentionPooling(64, True),
-    #     deep_nn=True,
-    #     num_hidden_neurons=32,
-    #     conv_min_max_rep=(10, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
-    #     ratio_test_train_rep=2,
-    #     aggr=Aggr.ADD,
-    #     num_layers_per_rep=3
-    # )),
+    ("gnn", VariableRepeatingNNConvGNN(
+        sigmoid_output=True,
+        dropout_prob=0,
+        pooling=GlobalAttentionPooling(64, True),
+        deep_nn=True,
+        num_hidden_neurons=32,
+        conv_min_max_rep=(10, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
+        ratio_test_train_rep=2,
+        aggr=Aggr.MEAN,
+        num_layers_per_rep=3
+    )),
 
 
     # TRAIN
