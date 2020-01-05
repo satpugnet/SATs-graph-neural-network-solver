@@ -81,7 +81,7 @@ exp_configs = OrderedDict([
         lit_in_clause_distr_params=[0.2],  # The distribution parameters
         include_trivial_clause=False  # Whether to include clause containing a variable and its opposite such as (x and not x)
     )),
-    ("num_gen_data", 40),  # The amount of data to generate in total
+    ("num_gen_data", 100),  # The amount of data to generate in total
     ("percentage_training_set", 0.75),  # The percentage of training data in total compare to testing
 
 

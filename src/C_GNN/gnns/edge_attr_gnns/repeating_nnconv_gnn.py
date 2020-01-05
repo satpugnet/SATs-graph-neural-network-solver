@@ -45,13 +45,15 @@ class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
             self._nn1 = nn.Linear(num_edge_features, in_channels * self._num_hidden_neurons)
         self._conv1 = NNConv(in_channels, self._num_hidden_neurons, self._nn1, aggr=self._aggr.value)
 
-        self._convs = []
+        convs = []
         for _ in range(self._num_layers_per_rep):
             if self._deep_nn:
                 self._nn2 = nn.Sequential(nn.Linear(num_edge_features, int(self._num_hidden_neurons / 4)), nn.LeakyReLU(), nn.Linear(int(self._num_hidden_neurons / 4), self._num_hidden_neurons * self._num_hidden_neurons))
             else:
                 self._nn2 = nn.Linear(num_edge_features, self._num_hidden_neurons * self._num_hidden_neurons)
-            self._convs.append(NNConv(self._num_hidden_neurons, self._num_hidden_neurons, self._nn2, aggr=self._aggr.value))
+            convs.append(NNConv(self._num_hidden_neurons, self._num_hidden_neurons, self._nn2, aggr=self._aggr.value))
+
+        self._convs = nn.ModuleList(convs)
 
         self._fc1 = torch.nn.Linear(self._post_pulling_num_neurons, self._num_hidden_neurons)
         self._fc2 = torch.nn.Linear(self._num_hidden_neurons, out_channels)

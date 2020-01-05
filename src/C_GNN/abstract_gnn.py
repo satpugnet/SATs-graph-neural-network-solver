@@ -48,9 +48,6 @@ class AbstractGNN(torch.nn.Module, ABC, AbstractRepr):
     def _perform_pre_pooling(self, x, edge_index, edge_attr):
         pass
 
-    def __perform_pooling(self, x, batch):
-        return self._pooling(x, batch)
-
     @abstractmethod
     def _perform_post_pooling(self, x, edge_index, edge_attr):
         pass

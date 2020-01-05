@@ -1,11 +1,13 @@
 from abc import ABC, abstractmethod
 
+import torch
+
 from utils.abstract_repr import AbstractRepr
 
 
-class AbstractPooling(ABC, AbstractRepr):
+class AbstractPooling(torch.nn.Module, ABC, AbstractRepr):
     def __init__(self):
-        pass
+        super().__init__()
 
     def _get_fields_for_repr(self):
         return {}
