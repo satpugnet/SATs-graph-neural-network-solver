@@ -1,4 +1,4 @@
-from collections import OrderedDict
+
 from abc import ABC, abstractmethod
 
 from utils.abstract_repr import AbstractRepr
@@ -11,7 +11,7 @@ class AbstractSaveHandler(ABC, AbstractRepr):
         :param config: The config used for the experiment
         '''
         self._config = config
-        self._all_data = OrderedDict(list(experiment_results.items()) + list(config.items()))
+        self._all_data = dict(list(experiment_results.items()) + list(config.items()))
 
     def _get_fields_for_repr(self):
         return {}

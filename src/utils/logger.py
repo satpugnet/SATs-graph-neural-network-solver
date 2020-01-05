@@ -68,7 +68,9 @@ class CustomFormatter(logging.Formatter):
             formatter = logging.Formatter(log_fmt)
             message = formatter.format(record)
 
-        return prefix + message
+        # Suffix to write over the previous line when doing inplace writing
+        suffix = " " * 10
+        return prefix + message + suffix
 
 
 def init(debug, verbose=False):

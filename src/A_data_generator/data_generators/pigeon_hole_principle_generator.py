@@ -1,5 +1,5 @@
 import random
-from collections import OrderedDict
+
 
 from cnfformula.families.pigeonhole import PigeonholePrinciple
 

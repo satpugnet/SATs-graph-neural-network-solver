@@ -4,13 +4,12 @@ import re
 from B_SAT_to_graph_converter.wrapper.SAT_problem import SATProblem
 
 
-#TODO: generate real dimac (with 0\n at the end instead of just \n)
 from utils import logger
 
 
 class DimacLoader:
 
-    def __init__(self, dir_path=None):
+    def __init__(self, dir_path):
         self.dir_path = os.getcwd() + "/" + dir_path
 
     def load_sat_problems(self):

@@ -1,5 +1,4 @@
 import time
-from collections import OrderedDict
 
 import torch
 from torch_geometric.data import DataLoader
@@ -14,24 +13,27 @@ from utils.dimac_loader import DimacLoader
 # GENERATE SATS DATA
 #
 #################################################
+from utils.user_input_querier import UserInputQuerier
 
 logger.skip_line()
 logger.get().info("GENERATING SATS DATA")
 
-logger.get().info("Deleting old data")
-exp_configs["generator"].delete_all(other_configs["data_generated_train_folder_location"])
-exp_configs["generator"].delete_all(other_configs["data_generated_test_folder_location"])
-
-logger.get().info("Generating data")
 number_train_generated = int(exp_configs["num_gen_data"] * exp_configs["percentage_training_set"])
 number_test_generated = exp_configs["num_gen_data"] - number_train_generated
 
-if "test_generator" in exp_configs:
-    exp_configs["test_generator"].generate(number_test_generated, other_configs["data_generated_test_folder_location"])
-else:
-    exp_configs["generator"].generate(number_test_generated, other_configs["data_generated_test_folder_location"])
+regenerate_test_data = not other_configs["ask_for_regenerating_data"] or UserInputQuerier.ask("Regenerate test data? (y or n)")
+regenerate_train_data = not other_configs["ask_for_regenerating_data"] or UserInputQuerier.ask("Regenerate train data? (y or n)")
 
-exp_configs["generator"].generate(number_train_generated, other_configs["data_generated_train_folder_location"])
+if regenerate_test_data:
+    exp_configs["generator"].delete_all(other_configs["data_generated_test_folder_location"])
+    if "test_generator" in exp_configs:
+        exp_configs["test_generator"].generate(number_test_generated, other_configs["data_generated_test_folder_location"])
+    else:
+        exp_configs["generator"].generate(number_test_generated, other_configs["data_generated_test_folder_location"])
+
+if regenerate_train_data:
+    exp_configs["generator"].delete_all(other_configs["data_generated_train_folder_location"])
+    exp_configs["generator"].generate(number_train_generated, other_configs["data_generated_train_folder_location"])
 
 
 #################################################
@@ -121,20 +123,13 @@ logger.skip_line()
 logger.get().info("VISUALISE")
 
 # Ask the user to save or not the results
-save_user_input = ""
-if other_configs["ask_for_saving"]:
-    while save_user_input != "y" and save_user_input != "n":
-        time.sleep(0.01) # Prevents problems of race condition with the logger
-        save_user_input = input("\nSave the results? (y or n)\n")
-    save_result = save_user_input == "y"
-else:
-    save_result = True
+save_result = not other_configs["ask_for_saving"] or UserInputQuerier.ask("Save the results? (y or n)")
 
 graph_filename = other_configs["visualiser"].visualise(
     train_loss,
     test_loss,
     accuracy,
-    other_configs["graph_directory_name"],
+    other_configs["plot_directory_name"],
     save=save_result
 )
 
@@ -149,14 +144,14 @@ logger.skip_line()
 logger.get().info("SAVING")
 
 if save_result:
-    experiment_results = OrderedDict([
-        ("time_taken", final_time),
-        ("test_loss", final_test_loss.item()),
-        ("train_loss", train_loss[-1].item()),
-        ("accuracy", final_accuracy),
-        ("confusion_matrix", final_confusion_matrix),
-        ("graph_filename", graph_filename)
-    ])
+    experiment_results = {
+        "time_taken": final_time,
+        "test_loss": final_test_loss.item(),
+        "train_loss": train_loss[-1].item(),
+        "accuracy": final_accuracy,
+        "confusion_matrix": final_confusion_matrix,
+        "graph_filename": graph_filename
+    }
     other_configs["save_handler"](exp_configs, experiment_results, other_configs["save_filename"]).save()
 
 
