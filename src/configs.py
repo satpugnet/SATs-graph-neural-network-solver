@@ -12,6 +12,7 @@ from A_data_generator.data_generators.distr_based_generators.distr_based_generat
 from B_SAT_to_graph_converter.SAT_to_graph_converters.clause_variable_graph_converter.clause_to_variable_graph import \
     ClauseToVariableGraph
 from C_GNN.gnns.edge_atr_gnns_enums.aggr_enum import Aggr
+from C_GNN.gnns.edge_attr_gnns.repeating_nnconv_gnn import RepeatingNNConvGNN
 from C_GNN.gnns.edge_attr_gnns.repeating_nnconv_gnns.variable_repeating_nnconv_gnn import VariableRepeatingNNConvGNN
 from C_GNN.gnns.gcn_2_layer_linear_1_layer_gnn import GCN2LayerLinear1LayerGNN
 from C_GNN.poolings.add_pooling import AddPooling
@@ -39,6 +40,7 @@ logger.get().warning("Running the experiment on " + ('GPU' if torch.cuda.is_avai
 # TODO: make main.py independent of the place from where it is ran (using import main \n main.__file__)
 # TODO: be able to put more than one test distribution
 # TODO: generate real dimac (with 0\n at the end instead of just \n)
+# TODO: fix the print of the debug that does not appear to be grey in terminal and the text that is not white
 
 
 # These configs will be saved to a file when saving the experiment configurations, put important configs here
@@ -106,28 +108,28 @@ exp_configs = {
     #     num_hidden_neurons=8,  # The number of hidden neurons in the hidden layers
     #     aggr=Aggr.ADD
     # ),
-    # "gnn": RepeatingNNConvGNN(
-    #     sigmoid_output=True,
-    #     dropout_prob=0,
-    #     pooling=Pooling.GLOBAL_ADD,
-    #     deep_nn=True,
-    #     num_hidden_neurons=64,
-    #     conv_repetition=20,  # The number of repetition of the ConvGNN
-    #     ratio_test_train_rep=1,  # The ratio of the number of repetition of the ConvGNN for the testing and training
-    #     aggr=Aggr.ADD,
-    #     num_layers_per_rep=1
-    # ),
-    "gnn": VariableRepeatingNNConvGNN(
+    "gnn": RepeatingNNConvGNN(
         sigmoid_output=True,
         dropout_prob=0,
-        pooling=GlobalAttentionPooling(64, True),
+        pooling=AddPooling(),
         deep_nn=True,
-        num_hidden_neurons=32,
-        conv_min_max_rep=(10, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
-        ratio_test_train_rep=2,
-        aggr=Aggr.MEAN,
-        num_layers_per_rep=3
+        num_hidden_neurons=64,
+        conv_repetition=20,  # The number of repetition of the ConvGNN
+        ratio_test_train_rep=1,  # The ratio of the number of repetition of the ConvGNN for the testing and training
+        aggr=Aggr.ADD,
+        num_layers_per_rep=1
     ),
+    # "gnn": VariableRepeatingNNConvGNN(
+    #     sigmoid_output=True,
+    #     dropout_prob=0,
+    #     pooling=GlobalAttentionPooling(64, True),
+    #     deep_nn=True,
+    #     num_hidden_neurons=32,
+    #     conv_min_max_rep=(10, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
+    #     ratio_test_train_rep=2,
+    #     aggr=Aggr.MEAN,
+    #     num_layers_per_rep=3
+    # ),
 
 
     # TRAIN

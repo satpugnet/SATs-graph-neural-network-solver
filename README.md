@@ -33,10 +33,25 @@ First, the Dockerfile should be updated with the github credential information f
 To run the code from this project on a docker container, run:
 ```bash
 docker pull saturnin13/sats-graph-neural-network-solver
-docker run -it --runtime=nvidia saturnin13/sats-graph-neural-network-solver:latest /bin/bash (For Docker < 19.03)
-docker run -it --gpus=all saturnin13/sats-graph-neural-network-solver:latest /bin/bash (For Docker >= 19.03)
 ```
-This sets the container to output the experiment results to the folder specified on your host machine.
+
+Then:
+```bash
+docker run -it --gpus=all saturnin13/sats-graph-neural-network-solver:latest /bin/bash
+```
+For docker < 19.03 replace --gpus=all by --runtime=nvidia
+
+To sets the container to output the experiment results to the folder specified on your host machine by mounting a folder to
+the container:
+```bash
+docker run -it -v <Host absolute directory path>:<Container directory path> --runtime=nvidia saturnin13/sats-graph-neural-network-solver:latest /bin/bash
+```
+
+To run the container in detached mode to run in the background, do:
+```bash
+docker run -it -d --gpus=all saturnin13/sats-graph-neural-network-solver:latest /bin/bash
+docker exec -it <Container ID> /bin/bash
+```
 
 Then go into the src folder in the container and run the main.py. 
 This can be done as follow:
