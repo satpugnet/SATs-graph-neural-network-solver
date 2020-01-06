@@ -10,6 +10,6 @@ class UserInputQuerier:
         user_input = ""
         while user_input != "y" and user_input != "n":
             time.sleep(0.01)  # Prevents problems of race condition with the logger
-            user_input = input("\n" + question)
+            user_input = input("\n" + question + " (y or n): ")
 
         return user_input == "y"
