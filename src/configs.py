@@ -49,8 +49,8 @@ exp_configs = {
     "generator": DistrBasedGenerator(  # The algorithm use to generate the SATs data
         percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
         seed=None,  # The seed used if any
-        min_max_n_vars=(20, 40),  # The min and max number of variable in the problems
-        min_max_n_clauses=(50, 150),  # The min and max number of clauses in the problems
+        min_max_n_vars=(20, 60),  # The min and max number of variable in the problems
+        min_max_n_clauses=(50, 250),  # The min and max number of clauses in the problems
         var_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of variable in a problem
         var_num_distr_params=[],  # The distribution parameters
         clause_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
@@ -70,8 +70,8 @@ exp_configs = {
     "test_generator": DistrBasedGenerator(  # (optional) The generator to use for the testing data, optional, if not set, the same distribution is used than the one for training
         percentage_sat=None,  # The percentage of SAT to UNSAT problems
         seed=None,  # The seed used if any
-        min_max_n_vars=(20, 40),  # The min and max number of variable in the problems
-        min_max_n_clauses=(50, 150),  # The min and max number of clauses in the problems
+        min_max_n_vars=(20, 60),  # The min and max number of variable in the problems
+        min_max_n_clauses=(50, 250),  # The min and max number of clauses in the problems
         var_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of variable in a problem
         var_num_distr_params=[],  # The distribution parameters
         clause_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
