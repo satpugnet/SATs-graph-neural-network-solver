@@ -6,6 +6,7 @@
 
 
 import torch
+from C_GNN.gnns.edge_attr_gnns.repeating_nnconv_gnn import RepeatingNNConvGNN
 
 from A_data_generator.data_generators.distr_based_generator import DistrBasedGenerator
 from A_data_generator.data_generators.distr_based_generators.distr_based_generator_enum import Distribution
@@ -47,8 +48,8 @@ exp_configs = {
     "generator": DistrBasedGenerator(  # The algorithm use to generate the SATs data
         percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
         seed=None,  # The seed used if any
-        min_max_n_vars=(20, 60),  # The min and max number of variable in the problems
-        min_max_n_clauses=(50, 250),  # The min and max number of clauses in the problems
+        min_max_n_vars=(1, 50),  # The min and max number of variable in the problems
+        min_max_n_clauses=(1, 200),  # The min and max number of clauses in the problems
         var_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of variable in a problem
         var_num_distr_params=[],  # The distribution parameters
         clause_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
@@ -66,10 +67,10 @@ exp_configs = {
     #     min_max_n_holes=(1, 10),  # The min and max number of holes
     # ),
     "test_generator": DistrBasedGenerator(  # (optional) The generator to use for the testing data, optional, if not set, the same distribution is used than the one for training
-        percentage_sat=None,  # The percentage of SAT to UNSAT problems
+        percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
         seed=None,  # The seed used if any
-        min_max_n_vars=(20, 60),  # The min and max number of variable in the problems
-        min_max_n_clauses=(50, 250),  # The min and max number of clauses in the problems
+        min_max_n_vars=(1, 80),  # The min and max number of variable in the problems
+        min_max_n_clauses=(1, 400),  # The min and max number of clauses in the problems
         var_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of variable in a problem
         var_num_distr_params=[],  # The distribution parameters
         clause_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
@@ -78,7 +79,7 @@ exp_configs = {
         lit_in_clause_distr_params=[0.2],  # The distribution parameters
         include_trivial_clause=False  # Whether to include clause containing a variable and its opposite such as (x and not x)
     ),
-    "num_gen_data": 400,  # The amount of data to generate in total
+    "num_gen_data": 100000,  # The amount of data to generate in total
     "percentage_training_set": 0.75,  # The percentage of training data in total compare to testing
 
 
@@ -109,13 +110,13 @@ exp_configs = {
     # "gnn": RepeatingNNConvGNN(
     #     sigmoid_output=True,
     #     dropout_prob=0,
-    #     pooling=Pooling.GLOBAL_ADD,
+    #     pooling=GlobalAttentionPooling(64, True),
     #     deep_nn=True,
-    #     num_hidden_neurons=64,
+    #     num_hidden_neurons=32,
     #     conv_repetition=20,  # The number of repetition of the ConvGNN
     #     ratio_test_train_rep=1,  # The ratio of the number of repetition of the ConvGNN for the testing and training
-    #     aggr=Aggr.ADD,
-    #     num_layers_per_rep=1
+    #     aggr=Aggr.MEAN,
+    #     num_layers_per_rep=3
     # ),
     "gnn": VariableRepeatingNNConvGNN(
         sigmoid_output=True,
