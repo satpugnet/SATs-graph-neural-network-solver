@@ -13,6 +13,7 @@ from A_data_generator.data_generators.distr_based_generators.distr_based_generat
 from B_SAT_to_graph_converter.SAT_to_graph_converters.clause_variable_graph_converter.clause_to_variable_graph import \
     ClauseToVariableGraph
 from C_GNN.gnns.edge_atr_gnns_enums.aggr_enum import Aggr
+from C_GNN.gnns.edge_attr_gnns.repeating_nnconv_gnn import RepeatingNNConvGNN
 from C_GNN.gnns.edge_attr_gnns.repeating_nnconv_gnns.variable_repeating_nnconv_gnn import VariableRepeatingNNConvGNN
 from C_GNN.gnns.gcn_2_layer_linear_1_layer_gnn import GCN2LayerLinear1LayerGNN
 from C_GNN.poolings.add_pooling import AddPooling
@@ -40,6 +41,7 @@ logger.get().warning("Running the experiment on " + ('GPU' if torch.cuda.is_avai
 # TODO: make main.py independent of the place from where it is ran (using import main \n main.__file__)
 # TODO: be able to put more than one test distribution
 # TODO: generate real dimac (with 0\n at the end instead of just \n)
+# TODO: fix the print of the debug that does not appear to be grey in terminal and the text that is not white
 
 
 # These configs will be saved to a file when saving the experiment configurations, put important configs here
@@ -69,8 +71,8 @@ exp_configs = {
     "test_generator": DistrBasedGenerator(  # (optional) The generator to use for the testing data, optional, if not set, the same distribution is used than the one for training
         percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
         seed=None,  # The seed used if any
-        min_max_n_vars=(1, 80),  # The min and max number of variable in the problems
-        min_max_n_clauses=(1, 400),  # The min and max number of clauses in the problems
+        min_max_n_vars=(1, 150),  # The min and max number of variable in the problems
+        min_max_n_clauses=(1, 800),  # The min and max number of clauses in the problems
         var_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of variable in a problem
         var_num_distr_params=[],  # The distribution parameters
         clause_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
@@ -118,17 +120,17 @@ exp_configs = {
     #     aggr=Aggr.MEAN,
     #     num_layers_per_rep=3
     # ),
-    "gnn": VariableRepeatingNNConvGNN(
-        sigmoid_output=True,
-        dropout_prob=0,
-        pooling=GlobalAttentionPooling(64, True),
-        deep_nn=True,
-        num_hidden_neurons=32,
-        conv_min_max_rep=(10, 30),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
-        ratio_test_train_rep=2,
-        aggr=Aggr.MEAN,
-        num_layers_per_rep=3
-    ),
+     "gnn": VariableRepeatingNNConvGNN(
+         sigmoid_output=True,
+         dropout_prob=0,
+         pooling=GlobalAttentionPooling(64, True),
+         deep_nn=True,
+         num_hidden_neurons=32,
+         conv_min_max_rep=(10, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
+         ratio_test_train_rep=2,
+         aggr=Aggr.MEAN,
+         num_layers_per_rep=3
+     ),
 
 
     # TRAIN
