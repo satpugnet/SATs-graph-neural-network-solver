@@ -43,11 +43,13 @@ class AbstractDataGenerator(ABC, AbstractRepr):
     def generate(self, number_dimacs, out_dir):
         number_sat_required = int(number_dimacs * self._percentage_sat) if self._percentage_sat is not None else None
         number_unsat_required = int(number_dimacs - number_sat_required) if self._percentage_sat is not None else None
+        start_time = time.time()
 
-        i = 0
-        while i < number_dimacs:
-            logger.get().debug("Generation of SATs problem at: " + str(int(i / number_dimacs * 100)) + "% " + ("(" + str(number_sat_required)
-                + " SAT left and " + str(number_unsat_required) + " UNSAT left)" if number_sat_required is not None else "") + "\r")
+        total_sat = 0
+        total_unsat = 0
+        while total_sat + total_unsat < number_dimacs:
+            logger.get().debug("Generation of SATs problem at: " + str(int((total_sat + total_unsat) / number_dimacs * 100)) +
+                               "% " + ("(" + str(total_sat) + " SAT and " + str(total_unsat) + " UNSAT)\r"))
 
             n_vars, clauses = self._generate_CNF()
 
@@ -56,21 +58,19 @@ class AbstractDataGenerator(ABC, AbstractRepr):
                 continue
 
             is_sat = self._is_satisfiable(clauses)
-            if not self._has_correct_satisfiability(is_sat, number_sat_required, number_unsat_required):
+            if self._percentage_sat is not None and not self._has_correct_satisfiability(is_sat, total_sat, total_unsat, number_sat_required, number_unsat_required):
                 logger.get().warning("Warning: the last generated SAT has incorrect satisfiability according to the requested ratio of SAT to UNSAT, trying again")
                 continue
 
-            if self._percentage_sat is not None:
-                if is_sat:
-                    number_sat_required -= 1
-                else:
-                    number_unsat_required -= 1
-
-            i += 1
+            if is_sat:
+                total_sat += 1
+            else:
+                total_unsat += 1
 
             out_filename = "{}/{}_{}".format(str(out_dir), self.__class__.__name__,
-                           self._make_filename(n_vars, len(clauses), is_sat, i))
+                           self._make_filename(n_vars, len(clauses), is_sat, total_sat + total_unsat))
             self._save_sat_problem_to(out_filename, n_vars, clauses)
+
 
     def _is_satisfiable(self, clauses):
         solver = Glucose3()
@@ -80,10 +80,11 @@ class AbstractDataGenerator(ABC, AbstractRepr):
 
         return solver.solve()
 
-    def _has_correct_satisfiability(self, is_sat, number_sat_required, number_unsat_required):
+    def _has_correct_satisfiability(self, is_sat, total_sat, total_unsat, number_sat_required, number_unsat_required):
         if number_sat_required is None or number_unsat_required is None:
             return True
-        correct_satisfiability = (is_sat and number_sat_required != 0) or (not is_sat and number_unsat_required != 0)
+
+        correct_satisfiability = (is_sat and total_sat != number_sat_required) or (not is_sat and total_unsat != number_unsat_required)
 
         return correct_satisfiability
 

@@ -21,9 +21,10 @@ logger.get().info("GENERATING SATS DATA")
 number_train_generated = int(exp_configs["num_gen_data"] * exp_configs["percentage_training_set"])
 number_test_generated = exp_configs["num_gen_data"] - number_train_generated
 
-regenerate_test_data = not other_configs["ask_for_regenerating_data"] or UserInputQuerier.ask("Regenerate test data? (y or n)")
-regenerate_train_data = not other_configs["ask_for_regenerating_data"] or UserInputQuerier.ask("Regenerate train data? (y or n)")
+regenerate_test_data = not other_configs["ask_for_regenerating_data"] or UserInputQuerier.ask("Regenerate test data?")
+regenerate_train_data = not other_configs["ask_for_regenerating_data"] or UserInputQuerier.ask("Regenerate train data?")
 
+generation_start_time = time.time()
 if regenerate_test_data:
     exp_configs["generator"].delete_all(other_configs["data_generated_test_folder_location"])
     if "test_generator" in exp_configs:
@@ -31,10 +32,13 @@ if regenerate_test_data:
     else:
         exp_configs["generator"].generate(number_test_generated, other_configs["data_generated_test_folder_location"])
 
+test_generation_completed_time = time.time()
 if regenerate_train_data:
     exp_configs["generator"].delete_all(other_configs["data_generated_train_folder_location"])
     exp_configs["generator"].generate(number_train_generated, other_configs["data_generated_train_folder_location"])
 
+logger.get().info("The generation of the data took a total of {:.1f}s ({:.1f}s for testing data and {:.1f}s for training data)"
+                  .format(time.time() - generation_start_time, test_generation_completed_time - generation_start_time, time.time() - test_generation_completed_time))
 
 #################################################
 #
@@ -123,7 +127,7 @@ logger.skip_line()
 logger.get().info("VISUALISE")
 
 # Ask the user to save or not the results
-save_result = not other_configs["ask_for_saving"] or UserInputQuerier.ask("Save the results? (y or n)")
+save_result = not other_configs["ask_for_saving"] or UserInputQuerier.ask("Save the results?")
 
 graph_filename = other_configs["visualiser"].visualise(
     train_loss,
