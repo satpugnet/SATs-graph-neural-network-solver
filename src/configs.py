@@ -50,8 +50,8 @@ exp_configs = {
     "generator": DistrBasedGenerator(  # The algorithm use to generate the SATs data
         percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
         seed=None,  # The seed used if any
-        min_max_n_vars=(1, 60),  # The min and max number of variable in the problems
-        min_max_n_clauses=(1, 250),  # The min and max number of clauses in the problems
+        min_max_n_vars=(1, 50),  # The min and max number of variable in the problems
+        min_max_n_clauses=(1, 200),  # The min and max number of clauses in the problems
         var_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of variable in a problem
         var_num_distr_params=[],  # The distribution parameters
         clause_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
@@ -71,8 +71,8 @@ exp_configs = {
     "test_generator": DistrBasedGenerator(  # (optional) The generator to use for the testing data, optional, if not set, the same distribution is used than the one for training
         percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
         seed=None,  # The seed used if any
-        min_max_n_vars=(1, 150),  # The min and max number of variable in the problems
-        min_max_n_clauses=(300, 800),  # The min and max number of clauses in the problems
+        min_max_n_vars=(50, 100),  # The min and max number of variable in the problems
+        min_max_n_clauses=(100, 300),  # The min and max number of clauses in the problems
         var_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of variable in a problem
         var_num_distr_params=[],  # The distribution parameters
         clause_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
@@ -109,28 +109,28 @@ exp_configs = {
     #     num_hidden_neurons=8,  # The number of hidden neurons in the hidden layers
     #     aggr=Aggr.ADD
     # ),
-    # "gnn": RepeatingNNConvGNN(
-    #     sigmoid_output=True,
-    #     dropout_prob=0,
-    #     pooling=GlobalAttentionPooling(64, True),
-    #     deep_nn=True,
-    #     num_hidden_neurons=32,
-    #     conv_repetition=20,  # The number of repetition of the ConvGNN
-    #     ratio_test_train_rep=1,  # The ratio of the number of repetition of the ConvGNN for the testing and training
-    #     aggr=Aggr.MEAN,
-    #     num_layers_per_rep=3
-    # ),
-     "gnn": VariableRepeatingNNConvGNN(
+     "gnn": RepeatingNNConvGNN(
          sigmoid_output=True,
          dropout_prob=0,
          pooling=GlobalAttentionPooling(64, True),
          deep_nn=True,
          num_hidden_neurons=32,
-         conv_min_max_rep=(10, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
-         ratio_test_train_rep=2,
+         conv_repetition=20,  # The number of repetition of the ConvGNN
+         ratio_test_train_rep=1,  # The ratio of the number of repetition of the ConvGNN for the testing and training
          aggr=Aggr.MEAN,
          num_layers_per_rep=3
      ),
+    # "gnn": VariableRepeatingNNConvGNN(
+    #     sigmoid_output=True,
+    #     dropout_prob=0,
+    #     pooling=GlobalAttentionPooling(64, True),
+    #     deep_nn=True,
+    #     num_hidden_neurons=32,
+    #     conv_min_max_rep=(10, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
+    #     ratio_test_train_rep=2,
+    #     aggr=Aggr.MEAN,
+    #     num_layers_per_rep=3
+    # ),
 
 
     # TRAIN
