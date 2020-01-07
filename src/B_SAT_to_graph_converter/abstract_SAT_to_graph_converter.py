@@ -22,8 +22,9 @@ class AbstractSATToGraphConverter(ABC, AbstractRepr):
         logger.get().info("Converting SAT problems to graphs")
         graphs_data = []
 
-        for SAT_problem in SAT_problems:
-            graphs_data.append(self.__convert(SAT_problem))
+        for i in range(len(SAT_problems)):
+            logger.get().debug("{:.1f}% SAT problem converted\r".format(i / len(SAT_problems)))
+            graphs_data.append(self.__convert(SAT_problems[i]))
 
         logger.get().info("Convertion of SAT problems to graphs completed")
         return graphs_data
