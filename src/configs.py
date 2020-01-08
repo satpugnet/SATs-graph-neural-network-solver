@@ -68,19 +68,19 @@ exp_configs = {
     #     min_max_n_pigeons=(1, 10),  # The min and max number of pigeons
     #     min_max_n_holes=(1, 10),  # The min and max number of holes
     # ),
-    "test_generator": DistrBasedGenerator(  # (optional) The generator to use for the testing data, optional, if not set, the same distribution is used than the one for training
-        percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
-        seed=None,  # The seed used if any
-        min_max_n_vars=(50, 100),  # The min and max number of variable in the problems
-        min_max_n_clauses=(100, 300),  # The min and max number of clauses in the problems
-        var_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of variable in a problem
-        var_num_distr_params=[],  # The distribution parameters
-        clause_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
-        clause_num_distr_params=[],  # The distribution parameters
-        lit_in_clause_distr=Distribution.GEOMETRIC,  # The distribution used to generate the number of clauses in a problem
-        lit_in_clause_distr_params=[0.2],  # The distribution parameters
-        include_trivial_clause=False  # Whether to include clause containing a variable and its opposite such as (x and not x)
-    ),
+    #"test_generator": DistrBasedGenerator(  # (optional) The generator to use for the testing data, optional, if not set, the same distribution is used than the one for training
+    #    percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
+    #    seed=None,  # The seed used if any
+    #    min_max_n_vars=(50, 100),  # The min and max number of variable in the problems
+    #    min_max_n_clauses=(100, 300),  # The min and max number of clauses in the problems
+    #    var_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of variable in a problem
+    #    var_num_distr_params=[],  # The distribution parameters
+    #    clause_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
+    #    clause_num_distr_params=[],  # The distribution parameters
+    #    lit_in_clause_distr=Distribution.GEOMETRIC,  # The distribution used to generate the number of clauses in a problem
+    #    lit_in_clause_distr_params=[0.2],  # The distribution parameters
+    #    include_trivial_clause=False  # Whether to include clause containing a variable and its opposite such as (x and not x)
+    #),
     "num_gen_data": 100000,  # The amount of data to generate in total
     "percentage_training_set": 0.75,  # The percentage of training data in total compare to testing
 
@@ -109,28 +109,28 @@ exp_configs = {
     #     num_hidden_neurons=8,  # The number of hidden neurons in the hidden layers
     #     aggr=Aggr.ADD
     # ),
-     "gnn": RepeatingNNConvGNN(
-         sigmoid_output=True,
-         dropout_prob=0,
-         pooling=GlobalAttentionPooling(64, True),
-         deep_nn=True,
-         num_hidden_neurons=32,
-         conv_repetition=20,  # The number of repetition of the ConvGNN
-         ratio_test_train_rep=1,  # The ratio of the number of repetition of the ConvGNN for the testing and training
-         aggr=Aggr.MEAN,
-         num_layers_per_rep=3
-     ),
-    # "gnn": VariableRepeatingNNConvGNN(
+    # "gnn": RepeatingNNConvGNN(
     #     sigmoid_output=True,
     #     dropout_prob=0,
     #     pooling=GlobalAttentionPooling(64, True),
     #     deep_nn=True,
     #     num_hidden_neurons=32,
-    #     conv_min_max_rep=(10, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
-    #     ratio_test_train_rep=2,
+    #     conv_repetition=20,  # The number of repetition of the ConvGNN
+    #     ratio_test_train_rep=2,  # The ratio of the number of repetition of the ConvGNN for the testing and training
     #     aggr=Aggr.MEAN,
     #     num_layers_per_rep=3
     # ),
+     "gnn": VariableRepeatingNNConvGNN(
+         sigmoid_output=True,
+         dropout_prob=0,
+         pooling=GlobalAttentionPooling(128, True),
+         deep_nn=True,
+         num_hidden_neurons=64,
+         conv_min_max_rep=(10, 30),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
+         ratio_test_train_rep=2,
+         aggr=Aggr.MEAN,
+         num_layers_per_rep=5
+     ),
 
 
     # TRAIN
@@ -142,7 +142,7 @@ exp_configs = {
         activate_amp=False,
         bce_loss=True
     ),
-    "number_of_epochs": 100,
+    "number_of_epochs": 5,
 
 
     # EVAL
