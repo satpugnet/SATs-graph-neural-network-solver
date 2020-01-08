@@ -18,7 +18,7 @@ class DimacLoader:
         SAT_problems = []
         for (dirpath, dirnames, filenames) in os.walk(self.dir_path):
             for i in range(len(filenames)):
-                logger.get().debug("{:.1f}% SAT problems loaded\r".format(i / len(filenames)))
+                logger.get().debug("{:.1f}% SAT problems loaded\r".format(i / len(filenames) * 100))
                 file_path = os.path.join(self.dir_path, filenames[i])
                 SAT_problems.append(self.__load_dimac(file_path))
 

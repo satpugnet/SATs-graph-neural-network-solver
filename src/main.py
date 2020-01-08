@@ -26,6 +26,7 @@ regenerate_train_data = not other_configs["ask_for_regenerating_data"] or UserIn
 
 generation_start_time = time.time()
 if regenerate_test_data:
+    logger.get().info("Generating testing data")
     exp_configs["generator"].delete_all(other_configs["data_generated_test_folder_location"])
     if "test_generator" in exp_configs:
         exp_configs["test_generator"].generate(number_test_generated, other_configs["data_generated_test_folder_location"])
@@ -34,6 +35,7 @@ if regenerate_test_data:
 
 test_generation_completed_time = time.time()
 if regenerate_train_data:
+    logger.get().info("Generating training data")
     exp_configs["generator"].delete_all(other_configs["data_generated_train_folder_location"])
     exp_configs["generator"].generate(number_train_generated, other_configs["data_generated_train_folder_location"])
 
@@ -55,11 +57,14 @@ test_SAT_problems = DimacLoader(other_configs["data_generated_test_folder_locati
 train_dataset = exp_configs["SAT_to_graph_converter"].convert_all(train_SAT_problems)
 test_dataset = exp_configs["SAT_to_graph_converter"].convert_all(test_SAT_problems)
 
+logger.get().info("Loading the training data")
 train_loader = DataLoader(
     train_dataset,
     batch_size=exp_configs["train_batch_size"],
     shuffle=True
 )
+
+logger.get().info("Loading the testing data")
 test_loader = DataLoader(
     test_dataset,
     batch_size=exp_configs["test_batch_size"],
