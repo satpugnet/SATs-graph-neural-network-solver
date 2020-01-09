@@ -6,6 +6,8 @@
 
 
 import torch
+
+from A_data_generator.data_generators.paired_problem_generator import PairedProblemGenerator
 from C_GNN.gnns.edge_attr_gnns.repeating_nnconv_gnn import RepeatingNNConvGNN
 
 from A_data_generator.data_generators.distr_based_generator import DistrBasedGenerator
@@ -47,19 +49,19 @@ logger.get().warning("Running the experiment on " + ('GPU' if torch.cuda.is_avai
 # These configs will be saved to a file when saving the experiment configurations, put important configs here
 exp_configs = {
     # GENERATE SATS DATA
-    "generator": DistrBasedGenerator(  # The algorithm use to generate the SATs data
-        percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
-        seed=None,  # The seed used if any
-        min_max_n_vars=(1, 100),  # The min and max number of variable in the problems
-        min_max_n_clauses=(100, 200),  # The min and max number of clauses in the problems
-        var_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of variable in a problem
-        var_num_distr_params=[],  # The distribution parameters
-        clause_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
-        clause_num_distr_params=[],  # The distribution parameters
-        lit_in_clause_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
-        lit_in_clause_distr_params=[],  # The distribution parameters
-        include_trivial_clause=False  # Whether to include clause containing a variable and its opposite such as (x and not x)
-    ),
+    # "generator": DistrBasedGenerator(  # The algorithm use to generate the SATs data
+    #     percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
+    #     seed=None,  # The seed used if any
+    #     min_max_n_vars=(1, 100),  # The min and max number of variable in the problems
+    #     min_max_n_clauses=(100, 200),  # The min and max number of clauses in the problems
+    #     var_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of variable in a problem
+    #     var_num_distr_params=[],  # The distribution parameters
+    #     clause_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
+    #     clause_num_distr_params=[],  # The distribution parameters
+    #     lit_in_clause_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
+    #     lit_in_clause_distr_params=[],  # The distribution parameters
+    #     include_trivial_clause=False  # Whether to include clause containing a variable and its opposite such as (x and not x)
+    # ),
     # "generator": PigeonHolePrincipleGenerator(
     #     percentage_sat=0.5,
     #     seed=None,
@@ -68,18 +70,26 @@ exp_configs = {
     #     min_max_n_pigeons=(1, 10),  # The min and max number of pigeons
     #     min_max_n_holes=(1, 10),  # The min and max number of holes
     # ),
-    "test_generator": DistrBasedGenerator(  # (optional) The generator to use for the testing data, optional, if not set, the same distribution is used than the one for training
-        percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
+    "generator": PairedProblemGenerator(
         seed=None,  # The seed used if any
-        min_max_n_vars=(1, 100),  # The min and max number of variable in the problems
-        min_max_n_clauses=(100, 200),  # The min and max number of clauses in the problems
-        var_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of variable in a problem
-        var_num_distr_params=[],  # The distribution parameters
-        clause_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
-        clause_num_distr_params=[],  # The distribution parameters
-        lit_in_clause_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
-        lit_in_clause_distr_params=[],  # The distribution parameters
-        include_trivial_clause=False  # Whether to include clause containing a variable and its opposite such as (x and not x)
+        min_max_n_vars=(10, 40),  # The min and max number of variable in the problems
+    ),
+    # "test_generator": DistrBasedGenerator(  # (optional) The generator to use for the testing data, optional, if not set, the same distribution is used than the one for training
+    #     percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
+    #     seed=None,  # The seed used if any
+    #     min_max_n_vars=(1, 100),  # The min and max number of variable in the problems
+    #     min_max_n_clauses=(100, 200),  # The min and max number of clauses in the problems
+    #     var_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of variable in a problem
+    #     var_num_distr_params=[],  # The distribution parameters
+    #     clause_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
+    #     clause_num_distr_params=[],  # The distribution parameters
+    #     lit_in_clause_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
+    #     lit_in_clause_distr_params=[],  # The distribution parameters
+    #     include_trivial_clause=False  # Whether to include clause containing a variable and its opposite such as (x and not x)
+    # ),
+    "test_generator": PairedProblemGenerator(
+        seed=None,  # The seed used if any
+        min_max_n_vars=(40, 40),  # The min and max number of variable in the problems
     ),
     "num_gen_data": 50000,  # The amount of data to generate in total
     "percentage_training_set": 0.75,  # The percentage of training data in total compare to testing

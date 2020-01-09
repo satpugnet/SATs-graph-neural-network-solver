@@ -51,26 +51,32 @@ class AbstractDataGenerator(ABC, AbstractRepr):
             logger.get().debug("Generation of SATs problem at: " + str(int((total_sat + total_unsat) / number_dimacs * 100)) +
                                "% " + ("(" + str(total_sat) + " SAT and " + str(total_unsat) + " UNSAT)\r"))
 
-            n_vars, clauses = self._generate_CNF()
+            cnfs = self._generate_CNF()
 
-            if not self._has_correct_num_var_and_clauses(n_vars, clauses):
-                logger.get().warning("Warning: the last generated SAT has incorrect number of variable or clauses, trying again")
-                continue
+            for clauses in cnfs:
+                n_vars = self._count_num_vars(clauses)
 
-            is_sat = self._is_satisfiable(clauses)
-            if self._percentage_sat is not None and not self._has_correct_satisfiability(is_sat, total_sat, total_unsat, number_sat_required, number_unsat_required):
-                logger.get().warning("Warning: the last generated SAT has incorrect satisfiability according to the requested ratio of SAT to UNSAT, trying again")
-                continue
+                if not self._has_correct_num_var_and_clauses(n_vars, clauses):
+                    logger.get().warning("Warning: the last generated SAT has incorrect number of variable or clauses, trying again")
+                    continue
 
-            if is_sat:
-                total_sat += 1
-            else:
-                total_unsat += 1
+                is_sat = self._is_satisfiable(clauses)
+                if self._percentage_sat is not None and not self._has_correct_satisfiability(is_sat, total_sat, total_unsat, number_sat_required, number_unsat_required):
+                    logger.get().warning("Warning: the last generated SAT has incorrect satisfiability according to the requested ratio of SAT to UNSAT, trying again")
+                    continue
 
-            out_filename = "{}/{}_{}".format(str(out_dir), self.__class__.__name__,
-                           self._make_filename(n_vars, len(clauses), is_sat, total_sat + total_unsat))
-            self._save_sat_problem_to(out_filename, n_vars, clauses)
+                if is_sat:
+                    total_sat += 1
+                else:
+                    total_unsat += 1
 
+                out_filename = "{}/{}_{}".format(str(out_dir), self.__class__.__name__,
+                               self._make_filename(n_vars, len(clauses), is_sat, total_sat + total_unsat))
+                self._save_sat_problem_to(out_filename, n_vars, clauses)
+
+    def _count_num_vars(self, clauses):
+        flat_clause = [lit for clause in clauses for lit in clause]
+        return max(abs(min(flat_clause)), max(flat_clause))
 
     def _is_satisfiable(self, clauses):
         solver = Glucose3()
@@ -107,9 +113,9 @@ class AbstractDataGenerator(ABC, AbstractRepr):
         except FileNotFoundError as e:
             pass
 
-    @abstractmethod
     def _make_filename(self, n_vars, n_clause, is_sat, iter_num):
-        pass
+        return "sat=%i_n_vars=%.3d_n_clause=%.3d_seed=%d-%i.sat" % \
+               (is_sat, n_vars, n_clause, self._seed, iter_num)
 
     def _save_sat_problem_to(self, out_filename, n_vars, clauses):
         if not os.path.exists(os.path.dirname(out_filename)):

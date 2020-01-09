@@ -36,11 +36,10 @@ class PigeonHolePrincipleGenerator(AbstractDataGenerator):
 
         cnf = PigeonholePrinciple(n_pigeons, n_holes)
         clauses = self._convert_from_dimac_to_list(cnf.dimacs())
-        n_vars = len(list(cnf.variables()))
 
         # is_sat = cnf.is_satisfiable(cmd="cryptominisat5", sameas="cryptominisat")[0]
 
-        return n_vars, clauses
+        return [clauses]
 
     def _convert_from_dimac_to_list(self, dimacs):
         lines = dimacs[1:].splitlines()
@@ -56,8 +55,4 @@ class PigeonHolePrincipleGenerator(AbstractDataGenerator):
             result.append(lits)
 
         return result
-
-    def _make_filename(self, n_vars, n_clause, is_sat, iter_num):
-        return "sat=%i_n_vars=%.3d_n_clause=%.3d_seed=%d-%i.sat" % \
-               (is_sat, n_vars, n_clause, self._seed, iter_num)
 

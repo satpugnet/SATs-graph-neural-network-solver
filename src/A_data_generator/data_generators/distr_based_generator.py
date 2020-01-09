@@ -63,7 +63,7 @@ class DistrBasedGenerator(AbstractDataGenerator):
             )
             clauses.append(current_clause)
 
-        return n_vars, clauses
+        return [clauses]
 
     def _compute_num_vars(self):
         return self.__generate_value_from_distr_bounded(
@@ -124,7 +124,3 @@ class DistrBasedGenerator(AbstractDataGenerator):
             lits_picked = [lit if random.random() < 0.5 else -lit for lit in lits_picked]
 
         return lits_picked
-
-    def _make_filename(self, n_vars, n_clause, is_sat, iter_num):
-        return "sat=%i_n_vars=%.3d_n_clause=%.3d_seed=%d-%i.sat" % \
-               (is_sat, n_vars, n_clause, self._seed, iter_num)
