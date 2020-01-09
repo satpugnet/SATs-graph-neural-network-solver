@@ -1,6 +1,7 @@
 import time
 
 import torch
+from torch import nn
 from torch_geometric.data import DataLoader
 
 from configs import exp_configs, other_configs
@@ -54,7 +55,9 @@ logger.get().info("LOADING SATS AND CONVERTING TO GRAPH DATA")
 train_SAT_problems = DimacLoader(other_configs["data_generated_train_folder_location"]).load_sat_problems()
 test_SAT_problems = DimacLoader(other_configs["data_generated_test_folder_location"]).load_sat_problems()
 
+logger.get().info("Converting train data to graph data")
 train_dataset = exp_configs["SAT_to_graph_converter"].convert_all(train_SAT_problems)
+logger.get().info("Converting test data to graph data")
 test_dataset = exp_configs["SAT_to_graph_converter"].convert_all(test_SAT_problems)
 
 logger.get().info("Loading the training data")
@@ -86,6 +89,10 @@ exp_configs["gnn"].initialise_channels(
     int(len(next(iter(train_loader)).y) / exp_configs["train_batch_size"]),
     next(iter(train_loader)).num_edge_features
 )
+
+if torch.cuda.device_count() > 1:
+  logger.get().info("Using " + str(torch.cuda.device_count()) + " GPUs")
+  exp_configs["gnn"] = nn.DataParallel(exp_configs["gnn"])
 
 model = exp_configs["gnn"].to(other_configs["device"])
 
