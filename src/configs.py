@@ -50,14 +50,14 @@ exp_configs = {
     "generator": DistrBasedGenerator(  # The algorithm use to generate the SATs data
         percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
         seed=None,  # The seed used if any
-        min_max_n_vars=(1, 50),  # The min and max number of variable in the problems
-        min_max_n_clauses=(1, 200),  # The min and max number of clauses in the problems
+        min_max_n_vars=(1, 100),  # The min and max number of variable in the problems
+        min_max_n_clauses=(200, 200),  # The min and max number of clauses in the problems
         var_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of variable in a problem
         var_num_distr_params=[],  # The distribution parameters
         clause_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
         clause_num_distr_params=[],  # The distribution parameters
-        lit_in_clause_distr=Distribution.GEOMETRIC,  # The distribution used to generate the number of clauses in a problem
-        lit_in_clause_distr_params=[0.2],  # The distribution parameters
+        lit_in_clause_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
+        lit_in_clause_distr_params=[],  # The distribution parameters
         include_trivial_clause=False  # Whether to include clause containing a variable and its opposite such as (x and not x)
     ),
     # "generator": PigeonHolePrincipleGenerator(
@@ -68,19 +68,19 @@ exp_configs = {
     #     min_max_n_pigeons=(1, 10),  # The min and max number of pigeons
     #     min_max_n_holes=(1, 10),  # The min and max number of holes
     # ),
-    #"test_generator": DistrBasedGenerator(  # (optional) The generator to use for the testing data, optional, if not set, the same distribution is used than the one for training
-    #    percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
-    #    seed=None,  # The seed used if any
-    #    min_max_n_vars=(50, 100),  # The min and max number of variable in the problems
-    #    min_max_n_clauses=(100, 300),  # The min and max number of clauses in the problems
-    #    var_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of variable in a problem
-    #    var_num_distr_params=[],  # The distribution parameters
-    #    clause_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
-    #    clause_num_distr_params=[],  # The distribution parameters
-    #    lit_in_clause_distr=Distribution.GEOMETRIC,  # The distribution used to generate the number of clauses in a problem
-    #    lit_in_clause_distr_params=[0.2],  # The distribution parameters
-    #    include_trivial_clause=False  # Whether to include clause containing a variable and its opposite such as (x and not x)
-    #),
+    "test_generator": DistrBasedGenerator(  # (optional) The generator to use for the testing data, optional, if not set, the same distribution is used than the one for training
+        percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
+        seed=None,  # The seed used if any
+        min_max_n_vars=(1, 100),  # The min and max number of variable in the problems
+        min_max_n_clauses=(200, 400),  # The min and max number of clauses in the problems
+        var_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of variable in a problem
+        var_num_distr_params=[],  # The distribution parameters
+        clause_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
+        clause_num_distr_params=[],  # The distribution parameters
+        lit_in_clause_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
+        lit_in_clause_distr_params=[],  # The distribution parameters
+        include_trivial_clause=False  # Whether to include clause containing a variable and its opposite such as (x and not x)
+    ),
     "num_gen_data": 50000,  # The amount of data to generate in total
     "percentage_training_set": 0.75,  # The percentage of training data in total compare to testing
 
@@ -90,8 +90,8 @@ exp_configs = {
     #     max_clause_length=65
     # ),
     "SAT_to_graph_converter": ClauseToVariableGraph(),  # The algorithm used to convert from SAT problems to graph problems
-    "train_batch_size": 32,  # The size of the train batch
-    "test_batch_size": 32,  # The size of the test batch
+    "train_batch_size": 8,  # The size of the train batch
+    "test_batch_size": 8,  # The size of the test batch
 
 
     # GRAPH NEURAL NETWORK STRUCTURE
@@ -123,13 +123,13 @@ exp_configs = {
      "gnn": VariableRepeatingNNConvGNN(
          sigmoid_output=True,
          dropout_prob=0,
-         pooling=GlobalAttentionPooling(128, True),
+         pooling=GlobalAttentionPooling(96, True),
          deep_nn=True,
-         num_hidden_neurons=64,
-         conv_min_max_rep=(10, 30),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
-         ratio_test_train_rep=2,
+         num_hidden_neurons=48,
+         conv_min_max_rep=(5, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
+         ratio_test_train_rep=3,
          aggr=Aggr.MEAN,
-         num_layers_per_rep=5
+         num_layers_per_rep=3
      ),
 
 
