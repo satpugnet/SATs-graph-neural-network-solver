@@ -52,8 +52,8 @@ exp_configs = {
     # "generator": DistrBasedGenerator(  # The algorithm use to generate the SATs data
     #     percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
     #     seed=None,  # The seed used if any
-    #     min_max_n_vars=(1, 100),  # The min and max number of variable in the problems
-    #     min_max_n_clauses=(100, 200),  # The min and max number of clauses in the problems
+    #     min_max_n_vars=(1, 2),  # The min and max number of variable in the problems
+    #     min_max_n_clauses=(2, 50),  # The min and max number of clauses in the problems
     #     var_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of variable in a problem
     #     var_num_distr_params=[],  # The distribution parameters
     #     clause_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
@@ -72,26 +72,26 @@ exp_configs = {
     # ),
     "generator": PairedProblemGenerator(
         seed=None,  # The seed used if any
-        min_max_n_vars=(10, 40),  # The min and max number of variable in the problems
+        min_max_n_vars=(2, 2),  # The min and max number of variable in the problems
     ),
-    # "test_generator": DistrBasedGenerator(  # (optional) The generator to use for the testing data, optional, if not set, the same distribution is used than the one for training
-    #     percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
-    #     seed=None,  # The seed used if any
-    #     min_max_n_vars=(1, 100),  # The min and max number of variable in the problems
-    #     min_max_n_clauses=(100, 200),  # The min and max number of clauses in the problems
-    #     var_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of variable in a problem
-    #     var_num_distr_params=[],  # The distribution parameters
-    #     clause_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
-    #     clause_num_distr_params=[],  # The distribution parameters
-    #     lit_in_clause_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
-    #     lit_in_clause_distr_params=[],  # The distribution parameters
-    #     include_trivial_clause=False  # Whether to include clause containing a variable and its opposite such as (x and not x)
-    # ),
+     #"test_generator": DistrBasedGenerator(  # (optional) The generator to use for the testing data, optional, if not set, the same distribution is used than the one for training
+     #    percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
+     #    seed=None,  # The seed used if any
+     #    min_max_n_vars=(1, 50),  # The min and max number of variable in the problems
+     #    min_max_n_clauses=(100, 200),  # The min and max number of clauses in the problems
+     #    var_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of variable in a problem
+     #    var_num_distr_params=[],  # The distribution parameters
+     #    clause_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
+     #    clause_num_distr_params=[],  # The distribution parameters
+     #    lit_in_clause_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
+     #    lit_in_clause_distr_params=[],  # The distribution parameters
+     #    include_trivial_clause=False  # Whether to include clause containing a variable and its opposite such as (x and not x)
+     #),
     "test_generator": PairedProblemGenerator(
         seed=None,  # The seed used if any
-        min_max_n_vars=(40, 40),  # The min and max number of variable in the problems
+        min_max_n_vars=(2, 2),  # The min and max number of variable in the problems
     ),
-    "num_gen_data": 50000,  # The amount of data to generate in total
+    "num_gen_data": 100,  # The amount of data to generate in total
     "percentage_training_set": 0.75,  # The percentage of training data in total compare to testing
 
 
@@ -100,17 +100,17 @@ exp_configs = {
     #     max_clause_length=65
     # ),
     "SAT_to_graph_converter": ClauseToVariableGraph(),  # The algorithm used to convert from SAT problems to graph problems
-    "train_batch_size": 8,  # The size of the train batch
-    "test_batch_size": 8,  # The size of the test batch
+    "train_batch_size": 4,  # The size of the train batch
+    "test_batch_size": 4,  # The size of the test batch
 
 
     # GRAPH NEURAL NETWORK STRUCTURE
-    # "gnn": GCN2LayerLinear1LayerGNN(  # The GNN architecture to use
-    #     sigmoid_output=True,  # Whether to output a sigmoid
-    #     dropout_prob=0.5,  # The probability of dropout
-    #     pooling=AddPooling(),
-    #     num_hidden_neurons=8
-    # ),
+     "gnn": GCN2LayerLinear1LayerGNN(  # The GNN architecture to use
+         sigmoid_output=True,  # Whether to output a sigmoid
+         dropout_prob=0.5,  # The probability of dropout
+         pooling=AddPooling(),
+         num_hidden_neurons=8
+     ),
     # "gnn": NNConvGNN(
     #     sigmoid_output=True,
     #     deep_nn=False,  # Whether to use a deep neural net of shallow one
@@ -130,29 +130,29 @@ exp_configs = {
     #     aggr=Aggr.MEAN,
     #     num_layers_per_rep=3
     # ),
-     "gnn": VariableRepeatingNNConvGNN(
-         sigmoid_output=True,
-         dropout_prob=0,
-         pooling=GlobalAttentionPooling(96, True),
-         deep_nn=True,
-         num_hidden_neurons=48,
-         conv_min_max_rep=(5, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
-         ratio_test_train_rep=3,
-         aggr=Aggr.MEAN,
-         num_layers_per_rep=3
-     ),
+    # "gnn": VariableRepeatingNNConvGNN(
+    #     sigmoid_output=True,
+    #     dropout_prob=0,
+    #     pooling=GlobalAttentionPooling(128, True),
+    #     deep_nn=True,
+    #     num_hidden_neurons=64,
+    #     conv_min_max_rep=(15, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
+    #     ratio_test_train_rep=3,
+    #     aggr=Aggr.ADD,
+    #     num_layers_per_rep=4
+    # ),
 
 
     # TRAIN
     "trainer": AdamTrainer(  # The trainer to use
-        learning_rate=0.001,  # The learning rate
+        learning_rate=0.0005,  # The learning rate
         weight_decay=5e-4,  # The weight decay
         device=device,  # The device used
         num_epoch_before_halving_lr=33,  # The number of epoch between each halving of the learning rate
         activate_amp=False,
         bce_loss=True
     ),
-    "number_of_epochs": 5,
+    "number_of_epochs": 20,
 
 
     # EVAL

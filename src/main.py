@@ -2,8 +2,7 @@ import time
 
 import torch
 from torch import nn
-from torch_geometric.data import DataLoader
-
+from torch_geometric.data import DataListLoader
 from configs import exp_configs, other_configs
 from utils import logger
 from utils.dimac_loader import DimacLoader
@@ -61,14 +60,14 @@ logger.get().info("Converting test data to graph data")
 test_dataset = exp_configs["SAT_to_graph_converter"].convert_all(test_SAT_problems)
 
 logger.get().info("Loading the training data")
-train_loader = DataLoader(
+train_loader = DataListLoader(
     train_dataset,
     batch_size=exp_configs["train_batch_size"],
     shuffle=True
 )
 
 logger.get().info("Loading the testing data")
-test_loader = DataLoader(
+test_loader = DataListLoader(
     test_dataset,
     batch_size=exp_configs["test_batch_size"],
     shuffle=True
@@ -85,14 +84,14 @@ logger.skip_line()
 logger.get().info("CREATING GRAPH NEURAL NETWORK STRUCTURE")
 
 exp_configs["gnn"].initialise_channels(
-    next(iter(train_loader)).num_node_features,
-    int(len(next(iter(train_loader)).y) / exp_configs["train_batch_size"]),
-    next(iter(train_loader)).num_edge_features
+    next(iter(train_loader))[0].num_node_features,
+    int(len(next(iter(train_loader))[0].y) / exp_configs["train_batch_size"]),
+    next(iter(train_loader))[0].num_edge_features
 )
 
-#if torch.cuda.device_count() > 1:
-#  logger.get().info("Using " + str(torch.cuda.device_count()) + " GPUs")
-#  exp_configs["gnn"] = nn.DataParallel(exp_configs["gnn"])
+if torch.cuda.device_count() > 1:
+  logger.get().info("Using " + str(torch.cuda.device_count()) + " GPUs")
+  exp_configs["gnn"] = nn.DataParallel(exp_configs["gnn"])
 
 exp_configs["gnn"].to(other_configs["device"])
 

@@ -32,7 +32,8 @@ class GCN2LayerLinear1LayerGNN(AbstractGNN):
                 }}
 
     def _perform_pre_pooling(self, x, edge_index, edge_attr):
-        x = F.leaky_relu(self._conv1(x, edge_index))
+        x = self._conv1(x, edge_index)
+        x = F.leaky_relu(x)
         x = F.dropout(x, p=self._dropout_prob, training=self.training)
         x = F.leaky_relu(self._conv2(x, edge_index))
 
