@@ -49,7 +49,7 @@ class VariableToVariableGraph(AbstractClauseVariableGraphConverter):
                             edge_attr = [0] * self._max_clause_length
 
                         if i >= self._max_clause_length:
-                            raise Exception("The max_clause_length value is too low for the given clause of size " + str(i))
+                            raise Exception("The max_clause_length value ({}) is too low for the given clause of size {}".format(self._max_clause_length, str(i)))
                         edge_attr[i] = 1
                         edges[(lit_index1, lit_index2)] = edge_attr
 
