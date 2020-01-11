@@ -91,7 +91,7 @@ exp_configs = {
         seed=None,  # The seed used if any
         min_max_n_vars=(2, 2),  # The min and max number of variable in the problems
     ),
-    "num_gen_data": 100,  # The amount of data to generate in total
+    "num_gen_data": 3000,  # The amount of data to generate in total
     "percentage_training_set": 0.75,  # The percentage of training data in total compare to testing
 
 
@@ -100,17 +100,17 @@ exp_configs = {
     #     max_clause_length=65
     # ),
     "SAT_to_graph_converter": ClauseToVariableGraph(),  # The algorithm used to convert from SAT problems to graph problems
-    "train_batch_size": 4,  # The size of the train batch
-    "test_batch_size": 4,  # The size of the test batch
+    "train_batch_size": 256,  # The size of the train batch
+    "test_batch_size": 256,  # The size of the test batch
 
 
     # GRAPH NEURAL NETWORK STRUCTURE
-     "gnn": GCN2LayerLinear1LayerGNN(  # The GNN architecture to use
-         sigmoid_output=True,  # Whether to output a sigmoid
-         dropout_prob=0.5,  # The probability of dropout
-         pooling=AddPooling(),
-         num_hidden_neurons=8
-     ),
+    # "gnn": GCN2LayerLinear1LayerGNN(  # The GNN architecture to use
+    #     sigmoid_output=True,  # Whether to output a sigmoid
+    #     dropout_prob=0.5,  # The probability of dropout
+    #     pooling=AddPooling(),
+    #     num_hidden_neurons=8
+    # ),
     # "gnn": NNConvGNN(
     #     sigmoid_output=True,
     #     deep_nn=False,  # Whether to use a deep neural net of shallow one
@@ -130,17 +130,17 @@ exp_configs = {
     #     aggr=Aggr.MEAN,
     #     num_layers_per_rep=3
     # ),
-    # "gnn": VariableRepeatingNNConvGNN(
-    #     sigmoid_output=True,
-    #     dropout_prob=0,
-    #     pooling=GlobalAttentionPooling(128, True),
-    #     deep_nn=True,
-    #     num_hidden_neurons=64,
-    #     conv_min_max_rep=(15, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
-    #     ratio_test_train_rep=3,
-    #     aggr=Aggr.ADD,
-    #     num_layers_per_rep=4
-    # ),
+     "gnn": VariableRepeatingNNConvGNN(
+         sigmoid_output=True,
+         dropout_prob=0,
+         pooling=GlobalAttentionPooling(128, True),
+         deep_nn=True,
+         num_hidden_neurons=64,
+         conv_min_max_rep=(15, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
+         ratio_test_train_rep=3,
+         aggr=Aggr.ADD,
+         num_layers_per_rep=4
+     ),
 
 
     # TRAIN
@@ -157,7 +157,8 @@ exp_configs = {
 
     # EVAL
     "evaluator": DefaultEvaluator(  # The default evaluator used
-        device=device
+        device=device,
+        bce_loss=True
     ),
 
 
@@ -171,6 +172,7 @@ exp_configs = {
 # These configs will be saved to a file when saving the experiment configurations, put unimportant configs here
 other_configs = {
     "device": device,
+    "multi_gpu": False,
 
     # GENERATE SATS DATA
     "data_generated_train_folder_location": "../data_generated/train",  # Where to store the training data

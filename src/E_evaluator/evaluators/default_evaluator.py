@@ -4,16 +4,16 @@ from torch import nn
 
 from E_evaluator.abstract_evaluator import AbstractEvaluator
 from utils import logger
-
+from torch_geometric.nn import DataParallel
 
 class DefaultEvaluator(AbstractEvaluator):
 
-    def __init__(self, device):
+    def __init__(self, device, bce_loss):
         '''
         The default evaluator to evaluate the experiment.
         :param device: The device to use for pytorch.
         '''
-        super().__init__(device)
+        super().__init__(device, bce_loss)
         self._test_loader = None
 
     def _get_fields_for_repr(self):
@@ -35,7 +35,8 @@ class DefaultEvaluator(AbstractEvaluator):
             self.__perform_printing(accuracy, test_loss, train_loss, confusion_matrix, time, epoch)
 
         return test_loss, accuracy, confusion_matrix
-
+    
+    # TODO: remove duplication with the trainer
     def __eval_model(self, model):
         all_pred = torch.tensor([]).to(self._device)
         all_truth = torch.tensor([]).to(self._device)
@@ -46,18 +47,28 @@ class DefaultEvaluator(AbstractEvaluator):
         for batch in self.test_loader:
             progress += 1
             logger.get().debug("Testing at: {:.1f}%\r".format(progress/len(self.test_loader) * 100))
-
-            batch = batch.to(self._device)
+            
+            if not isinstance(model, DataParallel): # If we are not using multi-gpu
+                batch = batch.to(self._device)
+            
             pred = model(batch)
-
-            test_error += nn.BCELoss()(pred, batch.y.view(-1, 1))
+            
+            if not isinstance(model, DataParallel): # If we are not using multi-gpu
+                y = batch.y.view(-1, 1)
+            else:
+                y = torch.cat([data.y for data in batch]).view(-1, 1).to(pred.device)
+            
+            if self._bce_loss:
+                test_error += nn.BCELoss()(pred, y)
+            else:
+                loss = F.mse_loss(out, y)  # F.nll_loss(out, batch.y)
 
             pred_adjusted = (pred > 0.5).float()
-            truth = batch.y.view(-1, 1)
-            correct += (pred_adjusted == truth).sum().item()
+            
+            correct += (pred_adjusted == y).sum().item()
 
             all_pred = torch.cat([all_pred, pred_adjusted]) if all_pred is not None else pred_adjusted
-            all_truth = torch.cat([all_truth, truth]) if all_truth is not None else truth
+            all_truth = torch.cat([all_truth, y]) if all_truth is not None else y
 
         test_loss = test_error / len(self.test_loader)
         accuracy = correct / len(self.test_loader.dataset)

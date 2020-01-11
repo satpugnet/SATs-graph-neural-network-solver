@@ -19,10 +19,13 @@ data = Data(
     edge_index=torch.tensor([[0, 1, 1], [0, 1, 0]], dtype=torch.long), 
     edge_attr=torch.tensor([[4, 2], [3, 2], [1, 2]], dtype=torch.float)
 )
-dataset = [data] * 64
+dataset = [data] * 4
+print("dataset")
+print(dataset)
+
 loader = DataListLoader(dataset, batch_size=4, shuffle=True)
-#for test in loader:
-#    print(test)
+for test in loader:
+    print(test)
 
 class Net(torch.nn.Module):
     def __init__(self):
@@ -35,6 +38,8 @@ class Net(torch.nn.Module):
     def forward(self, data):
         print('Inside Model:  num graphs: {}, device: {}'.format(
             data.num_graphs, data.batch.device))
+        
+        print(type(data))
         x, edge_index, edge_attr = data.x, data.edge_index, data.edge_attr
         x = F.elu(self.conv1(x, edge_index, edge_attr))
         x = F.elu(self.conv2(x, edge_index, edge_attr))

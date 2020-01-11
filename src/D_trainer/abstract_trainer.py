@@ -5,6 +5,9 @@ from torch import nn
 from utils import logger
 from utils.abstract_repr import AbstractRepr
 import torch.nn.functional as F
+from torch_geometric.data import Data, Batch
+from torch_geometric.nn import DataParallel
+
 
 try:
     from apex import amp, optimizers
@@ -78,20 +81,25 @@ class AbstractTrainer(ABC, AbstractRepr):
 
         progress = 0
         for batch in train_loader:
-            print(type(batch))
             progress += 1
             logger.get().debug("Training at: {:.1f}%\r".format(progress/len(train_loader) * 100))
-
-            #gpu_batch = batch.to(self._device)
+            
+            if not isinstance(model, DataParallel): # If we are not using multi-gpu
+                batch = batch.to(self._device)
 
             optimizer.zero_grad()
 
             out = model(batch)
 
-            if self._bce_loss:
-                loss = nn.BCELoss()(out, batch.y.view(-1, 1))
+            if not isinstance(model, DataParallel): # If we are not using multi-gpu
+                y = batch.y.view(-1, 1)
             else:
-                loss = F.mse_loss(out, batch.y.view(-1, 1))  # F.nll_loss(out, batch.y)
+                y = torch.cat([data.y for data in batch]).view(-1, 1).to(out.device)
+
+            if self._bce_loss:
+                loss = nn.BCELoss()(out, y)
+            else:
+                loss = F.mse_loss(out, y)  # F.nll_loss(out, batch.y)
             train_error += loss
 
             if self._activate_amp:
