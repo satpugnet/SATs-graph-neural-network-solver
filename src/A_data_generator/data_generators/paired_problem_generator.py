@@ -30,5 +30,8 @@ class PairedProblemGenerator(AbstractDataGenerator):
                 clauses.append(current_lits)
                 is_sat = self._is_satisfiable(clauses)
 
-        return [clauses, clauses[0:-1]]
+        sat_clause = clauses[0:-1] + [[-lit for lit in clauses[-1]]]
+        print(sat_clause)
+        print(clauses)
+        return [clauses, sat_clause]
 
