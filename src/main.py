@@ -94,7 +94,7 @@ exp_configs["gnn"].initialise_channels(
 #  logger.get().info("Using " + str(torch.cuda.device_count()) + " GPUs")
 #  exp_configs["gnn"] = nn.DataParallel(exp_configs["gnn"])
 
-model = exp_configs["gnn"].to(other_configs["device"])
+exp_configs["gnn"].to(other_configs["device"])
 
 
 #################################################
@@ -109,7 +109,7 @@ logger.get().info("TRAINING")
 exp_configs["evaluator"].test_loader = test_loader
 train_loss, test_loss, accuracy, final_time, exp_configs["number_of_epochs"] = exp_configs["trainer"].train(
     exp_configs["number_of_epochs"],
-    model,
+    exp_configs["gnn"],
     train_loader,
     exp_configs["evaluator"]
 )
@@ -124,9 +124,9 @@ train_loss, test_loss, accuracy, final_time, exp_configs["number_of_epochs"] = e
 logger.skip_line()
 logger.get().info("EVALUATING")
 
-model.eval()
+exp_configs["gnn"].eval()
 with torch.no_grad():
-    final_test_loss, final_accuracy, final_confusion_matrix = exp_configs["evaluator"].eval(model, do_print=True)
+    final_test_loss, final_accuracy, final_confusion_matrix = exp_configs["evaluator"].eval(exp_configs["gnn"], do_print=True)
 
 
 #################################################
