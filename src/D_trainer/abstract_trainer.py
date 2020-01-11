@@ -8,7 +8,6 @@ import torch.nn.functional as F
 from torch_geometric.data import Data, Batch
 from torch_geometric.nn import DataParallel
 
-
 try:
     from apex import amp, optimizers
 except ImportError:
@@ -91,10 +90,10 @@ class AbstractTrainer(ABC, AbstractRepr):
 
             out = model(batch)
 
-            if not isinstance(model, DataParallel): # If we are not using multi-gpu
-                y = batch.y.view(-1, 1)
-            else:
+            if isinstance(model, DataParallel): # If we are not using multi-gpu
                 y = torch.cat([data.y for data in batch]).view(-1, 1).to(out.device)
+            else:
+                y = batch.y.view(-1, 1)
 
             if self._bce_loss:
                 loss = nn.BCELoss()(out, y)

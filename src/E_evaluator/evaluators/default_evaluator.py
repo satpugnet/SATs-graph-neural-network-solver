@@ -6,6 +6,7 @@ from E_evaluator.abstract_evaluator import AbstractEvaluator
 from utils import logger
 from torch_geometric.nn import DataParallel
 
+
 class DefaultEvaluator(AbstractEvaluator):
 
     def __init__(self, device, bce_loss):
@@ -53,15 +54,15 @@ class DefaultEvaluator(AbstractEvaluator):
             
             pred = model(batch)
             
-            if not isinstance(model, DataParallel): # If we are not using multi-gpu
-                y = batch.y.view(-1, 1)
-            else:
+            if isinstance(model, DataParallel): # If we are not using multi-gpu
                 y = torch.cat([data.y for data in batch]).view(-1, 1).to(pred.device)
+            else:
+                y = batch.y.view(-1, 1)
             
             if self._bce_loss:
                 test_error += nn.BCELoss()(pred, y)
             else:
-                loss = F.mse_loss(out, y)  # F.nll_loss(out, batch.y)
+                loss = F.mse_loss(pred, y)  # F.nll_loss(out, batch.y)
 
             pred_adjusted = (pred > 0.5).float()
             

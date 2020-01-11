@@ -15,6 +15,7 @@ from torch_geometric.data import DataLoader
 # GENERATE SATS DATA
 #
 #################################################
+from utils.multi_gpu import MultiGpu
 from utils.user_input_querier import UserInputQuerier
 
 logger.skip_line()
@@ -62,7 +63,10 @@ logger.get().info("Converting test data to graph data")
 test_dataset = exp_configs["SAT_to_graph_converter"].convert_all(test_SAT_problems)
 
 logger.get().info("Loading the training data")
-Loader = DataListLoader if torch.cuda.device_count() > 1 and other_configs["multi_gpu"] else DataLoader
+Loader = DataListLoader if MultiGpu.is_enabled() else DataLoader
+
+if exp_configs["test_batch_size"] >= len(test_dataset) or exp_configs["train_batch_size"] >= len(train_dataset):
+    raise Exception("The batch size should be larger than the size of the dataset for testing and training set")
 
 train_loader = Loader(
     train_dataset,
@@ -87,12 +91,12 @@ logger.skip_line()
 logger.get().info("CREATING GRAPH NEURAL NETWORK STRUCTURE")
 
 exp_configs["gnn"].initialise_channels(
-    next(iter(train_loader))[0].num_node_features if torch.cuda.device_count() and other_configs["multi_gpu"] else next(iter(train_loader)).num_node_features,
-    len(next(iter(train_loader))[0].y) if torch.cuda.device_count() and other_configs["multi_gpu"] else int(len(next(iter(train_loader)).y) / exp_configs["train_batch_size"]),
-    next(iter(train_loader))[0].num_edge_features if torch.cuda.device_count() and other_configs["multi_gpu"] else next(iter(train_loader)).num_edge_features
+    next(iter(train_loader))[0].num_node_features if MultiGpu.is_enabled() else next(iter(train_loader)).num_node_features,
+    len(next(iter(train_loader))[0].y) if MultiGpu.is_enabled() else int(len(next(iter(train_loader)).y) / exp_configs["train_batch_size"]),
+    next(iter(train_loader))[0].num_edge_features if MultiGpu.is_enabled() else next(iter(train_loader)).num_edge_features
 )
 
-if torch.cuda.device_count() > 1 and other_configs["multi_gpu"]:
+if MultiGpu.is_enabled():
   logger.get().info("Using " + str(torch.cuda.device_count()) + " GPUs")
   exp_configs["gnn"] = DataParallel(exp_configs["gnn"])
 
