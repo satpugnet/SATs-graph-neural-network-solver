@@ -8,6 +8,7 @@
 import torch
 
 from A_data_generator.data_generators.paired_problem_generator import PairedProblemGenerator
+from B_SAT_to_graph_converter.SAT_to_graph_converters.clause_variable_graph_converter.variable_to_variable_graph import VariableToVariableGraph
 from C_GNN.gnns.edge_attr_gnns.repeating_nnconv_gnn import RepeatingNNConvGNN
 from B_SAT_to_graph_converter.SAT_to_graph_converters.clause_variable_graph_converter.variable_to_variable_graph import VariableToVariableGraph
 
