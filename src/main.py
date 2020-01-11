@@ -90,9 +90,9 @@ exp_configs["gnn"].initialise_channels(
     next(iter(train_loader)).num_edge_features
 )
 
-if torch.cuda.device_count() > 1:
-  logger.get().info("Using " + str(torch.cuda.device_count()) + " GPUs")
-  exp_configs["gnn"] = nn.DataParallel(exp_configs["gnn"])
+#if torch.cuda.device_count() > 1:
+#  logger.get().info("Using " + str(torch.cuda.device_count()) + " GPUs")
+#  exp_configs["gnn"] = nn.DataParallel(exp_configs["gnn"])
 
 model = exp_configs["gnn"].to(other_configs["device"])
 
