@@ -9,6 +9,7 @@ import torch
 
 from A_data_generator.data_generators.paired_problem_generator import PairedProblemGenerator
 from C_GNN.gnns.edge_attr_gnns.repeating_nnconv_gnn import RepeatingNNConvGNN
+from B_SAT_to_graph_converter.SAT_to_graph_converters.clause_variable_graph_converter.variable_to_variable_graph import VariableToVariableGraph
 
 from A_data_generator.data_generators.distr_based_generator import DistrBasedGenerator
 from A_data_generator.data_generators.distr_based_generators.distr_based_generator_enum import Distribution
@@ -21,6 +22,7 @@ from C_GNN.gnns.gcn_2_layer_linear_1_layer_gnn import GCN2LayerLinear1LayerGNN
 from C_GNN.poolings.add_pooling import AddPooling
 from C_GNN.poolings.global_attention_pooling import GlobalAttentionPooling
 from C_GNN.poolings.mean_pooling import MeanPooling
+from C_GNN.poolings.max_pooling import MaxPooling
 from C_GNN.poolings.set_to_set_pooling import SetToSetPooling
 from C_GNN.poolings.sort_pooling import SortPooling
 from D_trainer.trainers.adam_trainer import AdamTrainer
@@ -72,7 +74,7 @@ exp_configs = {
     # ),
     "generator": PairedProblemGenerator(
         seed=None,  # The seed used if any
-        min_max_n_vars=(2, 2),  # The min and max number of variable in the problems
+        min_max_n_vars=(3, 3),  # The min and max number of variable in the problems
     ),
      #"test_generator": DistrBasedGenerator(  # (optional) The generator to use for the testing data, optional, if not set, the same distribution is used than the one for training
      #    percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
@@ -89,19 +91,19 @@ exp_configs = {
      #),
     "test_generator": PairedProblemGenerator(
         seed=None,  # The seed used if any
-        min_max_n_vars=(2, 2),  # The min and max number of variable in the problems
+        min_max_n_vars=(3, 3),  # The min and max number of variable in the problems
     ),
-    "num_gen_data": 3000,  # The amount of data to generate in total
+    "num_gen_data": 20000,  # The amount of data to generate in total
     "percentage_training_set": 0.75,  # The percentage of training data in total compare to testing
 
 
     # LOAD SATS AND CONVERT TO GRAPH DATA
-    # "SAT_to_graph_converter": VariableToVariableGraph(
-    #     max_clause_length=65
-    # ),
-    "SAT_to_graph_converter": ClauseToVariableGraph(),  # The algorithm used to convert from SAT problems to graph problems
-    "train_batch_size": 256,  # The size of the train batch
-    "test_batch_size": 256,  # The size of the test batch
+     "SAT_to_graph_converter": VariableToVariableGraph(
+         max_clause_length=90
+     ),
+    #"SAT_to_graph_converter": ClauseToVariableGraph(),  # The algorithm used to convert from SAT problems to graph problems
+    "train_batch_size": 1024,  # The size of the train batch
+    "test_batch_size": 1024,  # The size of the test batch
 
 
     # GRAPH NEURAL NETWORK STRUCTURE
@@ -136,8 +138,8 @@ exp_configs = {
          pooling=GlobalAttentionPooling(128, True),
          deep_nn=True,
          num_hidden_neurons=64,
-         conv_min_max_rep=(15, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
-         ratio_test_train_rep=3,
+         conv_min_max_rep=(10, 25),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
+         ratio_test_train_rep=2,
          aggr=Aggr.ADD,
          num_layers_per_rep=4
      ),
@@ -145,14 +147,14 @@ exp_configs = {
 
     # TRAIN
     "trainer": AdamTrainer(  # The trainer to use
-        learning_rate=0.0005,  # The learning rate
-        weight_decay=5e-4,  # The weight decay
+        learning_rate=0.005,  # The learning rate
+        weight_decay=5e-5,  # The weight decay
         device=device,  # The device used
-        num_epoch_before_halving_lr=33,  # The number of epoch between each halving of the learning rate
+        num_epoch_before_halving_lr=100,  # The number of epoch between each halving of the learning rate
         activate_amp=False,
         bce_loss=True
     ),
-    "number_of_epochs": 20,
+    "number_of_epochs": 2000,
 
 
     # EVAL
@@ -172,7 +174,7 @@ exp_configs = {
 # These configs will be saved to a file when saving the experiment configurations, put unimportant configs here
 other_configs = {
     "device": device,
-    "multi_gpu": False,
+    "multi_gpu": True,
 
     # GENERATE SATS DATA
     "data_generated_train_folder_location": "../data_generated/train",  # Where to store the training data
