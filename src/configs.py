@@ -148,7 +148,7 @@ exp_configs = {
 
     # TRAIN
     "trainer": AdamTrainer(  # The trainer to use
-        learning_rate=0.001,  # The learning rate
+        learning_rate=0.005,  # The learning rate
         weight_decay=5e-5,  # The weight decay
         device=device,  # The device used
         num_epoch_before_halving_lr=100,  # The number of epoch between each halving of the learning rate
