@@ -74,7 +74,7 @@ exp_configs = {
     # ),
     "generator": PairedProblemGenerator(
         seed=None,  # The seed used if any
-        min_max_n_vars=(3, 3),  # The min and max number of variable in the problems
+        min_max_n_vars=(4, 4),  # The min and max number of variable in the problems
     ),
      #"test_generator": DistrBasedGenerator(  # (optional) The generator to use for the testing data, optional, if not set, the same distribution is used than the one for training
      #    percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
@@ -91,15 +91,15 @@ exp_configs = {
      #),
     "test_generator": PairedProblemGenerator(
         seed=None,  # The seed used if any
-        min_max_n_vars=(3, 3),  # The min and max number of variable in the problems
+        min_max_n_vars=(4, 4),  # The min and max number of variable in the problems
     ),
-    "num_gen_data": 20000,  # The amount of data to generate in total
+    "num_gen_data": 200000,  # The amount of data to generate in total
     "percentage_training_set": 0.75,  # The percentage of training data in total compare to testing
 
 
     # LOAD SATS AND CONVERT TO GRAPH DATA
      "SAT_to_graph_converter": VariableToVariableGraph(
-         max_clause_length=90
+         max_clause_length=110
      ),
     #"SAT_to_graph_converter": ClauseToVariableGraph(),  # The algorithm used to convert from SAT problems to graph problems
     "train_batch_size": 1024,  # The size of the train batch
@@ -138,7 +138,7 @@ exp_configs = {
          pooling=GlobalAttentionPooling(128, True),
          deep_nn=True,
          num_hidden_neurons=64,
-         conv_min_max_rep=(10, 25),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
+         conv_min_max_rep=(10, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
          ratio_test_train_rep=2,
          aggr=Aggr.ADD,
          num_layers_per_rep=4
@@ -147,7 +147,7 @@ exp_configs = {
 
     # TRAIN
     "trainer": AdamTrainer(  # The trainer to use
-        learning_rate=0.005,  # The learning rate
+        learning_rate=0.001,  # The learning rate
         weight_decay=5e-5,  # The weight decay
         device=device,  # The device used
         num_epoch_before_halving_lr=100,  # The number of epoch between each halving of the learning rate
