@@ -1,3 +1,4 @@
+import time
 from abc import ABC, abstractmethod
 
 import torch
@@ -67,4 +68,5 @@ class AbstractSATToGraphConverter(ABC, AbstractRepr):
     def _add_undirected_edge_to_dict(self, edge_dict, edge_end1, edge_end2, value):
         edge_dict[(edge_end1, edge_end2)] = value
         edge_dict[(edge_end2, edge_end1)] = value
+
         return edge_dict

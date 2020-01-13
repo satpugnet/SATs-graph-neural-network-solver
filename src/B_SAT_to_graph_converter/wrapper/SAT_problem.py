@@ -11,9 +11,8 @@ class SATProblem:
 
         self.is_sat = is_sat
 
-        self.lits_present = self.__compute_present_lit(clauses)
+        self.lits_present = self.__compute_present_lit(self.n_vars)
 
-    def __compute_present_lit(self, clauses):
-        flat_list = [item for sublist in clauses for item in sublist]
-        return list(set(flat_list))
+    def __compute_present_lit(self, n_vars):
+        return list(range(1, n_vars + 1)) + list(range(-n_vars, 0))
 

@@ -1,4 +1,7 @@
+from abc import abstractmethod
+
 from C_GNN.abstract_gnn import AbstractGNN
+from utils import logger
 
 
 class AbstractEdgeAttrGNN(AbstractGNN):

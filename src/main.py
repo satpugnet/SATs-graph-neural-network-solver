@@ -1,9 +1,9 @@
 import time
 
 import torch
-from torch import nn
-from torch_geometric.nn import SplineConv, global_mean_pool, DataParallel
 from torch_geometric.data import DataListLoader
+
+from C_GNN.data_parallel_wrapper import DataParallelWrapper
 from configs import exp_configs, other_configs
 from utils import logger
 from utils.dimac_loader import DimacLoader
@@ -66,7 +66,7 @@ logger.get().info("Loading the training data")
 Loader = DataListLoader if MultiGpu.is_enabled() else DataLoader
 
 if exp_configs["test_batch_size"] >= len(test_dataset) or exp_configs["train_batch_size"] >= len(train_dataset):
-    raise Exception("The batch size should be larger than the size of the dataset for testing and training set")
+    raise Exception("The batch size should not be larger than the size of the dataset for testing and training set")
 
 train_loader = Loader(
     train_dataset,
@@ -98,7 +98,7 @@ exp_configs["gnn"].initialise_channels(
 
 if MultiGpu.is_enabled():
   logger.get().info("Using " + str(torch.cuda.device_count()) + " GPUs")
-  exp_configs["gnn"] = DataParallel(exp_configs["gnn"])
+  exp_configs["gnn"] = DataParallelWrapper(exp_configs["gnn"])
 
 exp_configs["gnn"] = exp_configs["gnn"].to(other_configs["device"])
 
