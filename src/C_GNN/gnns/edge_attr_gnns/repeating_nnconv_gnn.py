@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-from torch_geometric.nn import NNConv, GCNConv
+from torch_geometric.nn import NNConv, GCNConv, GraphConv
 import torch.nn.functional as F
 
 from C_GNN.gnns.abstract_edge_attr_gnn import AbstractEdgeAttrGNN
@@ -55,6 +55,10 @@ class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
             self.__uses_edge_attr = False
             self.__initialise_nn(self.__create_GCNConv, in_channels, num_edge_features)
 
+        elif self._nn_type == NNTypes.GraphConv:
+            self.__uses_edge_attr = False
+            self.__initialise_nn(self.__create_GraphConv, in_channels, num_edge_features)
+
         self._fc1 = torch.nn.Linear(self._post_pulling_num_neurons, self._num_hidden_neurons)
         self._fc2 = torch.nn.Linear(self._num_hidden_neurons, out_channels)
 
@@ -79,6 +83,9 @@ class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
 
     def __create_GCNConv(self, in_channels, out_channels):
         return GCNConv(in_channels, out_channels, improved=True)
+
+    def __create_GraphConv(self, in_channels, out_channels):
+        return GraphConv(in_channels, out_channels, aggr='add')
 
     def _perform_pre_pooling(self, x, edge_index, edge_attr):
         x = F.leaky_relu(self._conv0(x, edge_index, edge_attr) if self.__uses_edge_attr else self._conv0(x, edge_index))

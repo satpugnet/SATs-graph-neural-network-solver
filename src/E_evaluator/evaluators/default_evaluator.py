@@ -63,7 +63,7 @@ class DefaultEvaluator(AbstractEvaluator):
             if self._bce_loss:
                 test_error += nn.BCELoss()(pred, y)
             else:
-                loss = F.mse_loss(pred, y)  # F.nll_loss(out, batch.y)
+                test_error = F.mse_loss(pred, y)  # F.nll_loss(out, batch.y)
 
             pred_adjusted = (pred > 0.5).float()
             correct += (pred_adjusted == y).sum().item()
