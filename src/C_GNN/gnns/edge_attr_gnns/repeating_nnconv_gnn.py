@@ -84,7 +84,7 @@ class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
     def __create_GCNConv(self, in_channels, out_channels, num_edge_features=None):
         return GCNConv(in_channels, out_channels, improved=True)
 
-    def __create_GraphConv(self, in_channels, out_channels):
+    def __create_GraphConv(self, in_channels, out_channels, num_edge_features=None):
         return GraphConv(in_channels, out_channels, aggr=self._aggr.value)
 
     def _perform_pre_pooling(self, x, edge_index, edge_attr):
