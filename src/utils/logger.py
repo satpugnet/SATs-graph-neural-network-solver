@@ -81,7 +81,7 @@ class CustomFormatter(logging.Formatter):
         if self._previous_carriage_returned:
             prefix = "\r"
             # Suffix to write over the previous line when doing inplace writing
-            suffix = " " * 30
+            suffix = " " * 10
 
         if record.levelno == logging.DEBUG and record.msg == "":
             message = ""
