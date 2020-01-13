@@ -10,7 +10,7 @@ from C_GNN.gnns.enums.nn_types import NNTypes
 
 class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
     def __init__(self, sigmoid_output, dropout_prob, pooling, num_hidden_neurons, deep_nn, conv_repetition,
-                 ratio_test_train_rep, aggr, num_layers_per_rep, nn_type):
+                 ratio_test_train_rep, aggr, num_layers_per_rep, nn_type, rep_layer_in_out_num_neurons=None):
         '''
         Defines a GNN architecture which uses NNConv and repeat a fixed number of time in the feedforward phase for training.
         :param sigmoid_output: Whether to output a sigmoid.
@@ -25,6 +25,7 @@ class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
         self._conv_repetition = conv_repetition
         self._num_layers_per_rep = num_layers_per_rep
         self._nn_type = nn_type
+        self._rep_layer_in_out_num_neurons = rep_layer_in_out_num_neurons
 
     def _get_fields_for_repr(self):
         return {**super()._get_fields_for_repr(),
@@ -42,64 +43,46 @@ class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
 
     def initialise_channels(self, in_channels, out_channels, num_edge_features=None):
         super().initialise_channels(in_channels, out_channels, num_edge_features)
+        
+        if self._rep_layer_in_out_num_neurons is None:
+            self._rep_layer_in_out_num_neurons = in_channels
 
         if self._nn_type == NNTypes.GNN:
-            self.__initialise_gnn(in_channels, num_edge_features)
+            self.__uses_edge_attr = True
+            self.__initialise_nn(self.__create_NNConv, in_channels, num_edge_features)
 
         elif self._nn_type == NNTypes.GCN:
-            self.__initialise_gcn(in_channels)
+            self.__uses_edge_attr = False
+            self.__initialise_nn(self.__create_GCNConv, in_channels, num_edge_features)
 
         self._fc1 = torch.nn.Linear(self._post_pulling_num_neurons, self._num_hidden_neurons)
         self._fc2 = torch.nn.Linear(self._num_hidden_neurons, out_channels)
 
-    def __initialise_gnn(self, in_channels, num_edge_features=None):
-        self.__uses_edge_attr = True
+    def __initialise_nn(self, conv_init_func, in_channels, num_edge_features=None):
+        self._conv0 = conv_init_func(in_channels, self._rep_layer_in_out_num_neurons, num_edge_features)
 
-        if self._deep_nn:
-            self._nn1 = nn.Sequential(nn.Linear(num_edge_features, int(self._num_hidden_neurons / 4)), nn.LeakyReLU(), nn.Linear(int(self._num_hidden_neurons / 4), in_channels * self._num_hidden_neurons))
-        else:
-            self._nn1 = nn.Linear(num_edge_features, in_channels * self._num_hidden_neurons)
-        self._conv1 = NNConv(in_channels, self._num_hidden_neurons, self._nn1, aggr=self._aggr.value)
-
+        self._conv1 = conv_init_func(self._rep_layer_in_out_num_neurons, self._num_hidden_neurons, num_edge_features)
         convs = []
         for _ in range(self._num_layers_per_rep):
-            if self._deep_nn:
-                self._nn2 = nn.Sequential(nn.Linear(num_edge_features, int(self._num_hidden_neurons / 4)), nn.LeakyReLU(), nn.Linear(int(self._num_hidden_neurons / 4), self._num_hidden_neurons * self._num_hidden_neurons))
-            else:
-                self._nn2 = nn.Linear(num_edge_features, self._num_hidden_neurons * self._num_hidden_neurons)
-            convs.append(NNConv(self._num_hidden_neurons, self._num_hidden_neurons, self._nn2, aggr=self._aggr.value))
-
-        if self._deep_nn:
-            self._nn1 = nn.Sequential(nn.Linear(num_edge_features, int(self._num_hidden_neurons / 4)), nn.LeakyReLU(), nn.Linear(int(self._num_hidden_neurons / 4), in_channels * self._num_hidden_neurons))
-        else:
-            self._nn1 = nn.Linear(num_edge_features, in_channels * self._num_hidden_neurons)
+            convs.append(conv_init_func(self._num_hidden_neurons, self._num_hidden_neurons, num_edge_features))
         self._convs = nn.ModuleList(convs)
+        self._conv3 = conv_init_func(self._num_hidden_neurons, self._rep_layer_in_out_num_neurons, num_edge_features)
 
-        self._conv3 = NNConv(self._num_hidden_neurons, in_channels, self._nn1, aggr=self._aggr.value)
-
+        self._conv4 = conv_init_func(self.self._rep_layer_in_out_num_neurons, self._num_hidden_neurons, num_edge_features)
+    
+    def __create_NNConv(self, in_channels, out_channels, num_edge_features=None):
         if self._deep_nn:
-            self._nn1 = nn.Sequential(nn.Linear(num_edge_features, int(self._num_hidden_neurons / 4)), nn.LeakyReLU(), nn.Linear(int(self._num_hidden_neurons / 4), in_channels * self._num_hidden_neurons))
+            nn_value = nn.Sequential(nn.Linear(num_edge_features, int(out_channels / 4)), nn.LeakyReLU(), nn.Linear(int(out_channels / 4), in_channels * out_channels))
         else:
-            self._nn1 = nn.Linear(num_edge_features, in_channels * self._num_hidden_neurons)
-        self._conv4 = NNConv(in_channels, self._num_hidden_neurons, self._nn1, aggr=self._aggr.value)
+            nn_value = nn.Linear(num_edge_features, in_channels * out_channels)
+        return NNConv(in_channels, out_channels, nn_value, aggr=self._aggr.value)
 
-    def __initialise_gcn(self, in_channels):
-        self.__uses_edge_attr = False
-
-        self._conv1 = GCNConv(in_channels, self._num_hidden_neurons, improved=True)
-
-        convs = []
-        for _ in range(self._num_layers_per_rep):
-            convs.append(GCNConv(self._num_hidden_neurons, self._num_hidden_neurons, improved=True))
-
-        self._convs = nn.ModuleList(convs)
-
-        self._conv3 = GCNConv(self._num_hidden_neurons, in_channels, improved=True)
-
-        self._conv4 = GCNConv(in_channels, self._num_hidden_neurons, improved=True)
-
+    def __create_GCNConv(self, in_channels, out_channels):
+        return GCNConv(in_channels, out_channels, improved=True)
 
     def _perform_pre_pooling(self, x, edge_index, edge_attr):
+        x = F.leaky_relu(self._conv0(x, edge_index, edge_attr) if self.__uses_edge_attr else self._conv0(x, edge_index))
+
         x = self._iterate_nnconv(x, edge_index, edge_attr)
 
         x = F.leaky_relu(self._conv4(x, edge_index, edge_attr) if self.__uses_edge_attr else self._conv4(x, edge_index))
