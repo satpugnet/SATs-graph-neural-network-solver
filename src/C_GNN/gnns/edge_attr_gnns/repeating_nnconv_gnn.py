@@ -34,6 +34,7 @@ class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
                     "ratio_test_train_rep": self._ratio_test_train_rep,
                     "convs": self._convs,
                     "conv3": self._conv3,
+                    "conv4": self._conv4,
                     "fc1": self._fc1,
                     "fc2": self._fc2,
                     "nn_type": self._nn_type
@@ -76,6 +77,11 @@ class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
 
         self._conv3 = NNConv(self._num_hidden_neurons, in_channels, self._nn1, aggr=self._aggr.value)
 
+        if self._deep_nn:
+            self._nn1 = nn.Sequential(nn.Linear(num_edge_features, int(self._num_hidden_neurons / 4)), nn.LeakyReLU(), nn.Linear(int(self._num_hidden_neurons / 4), in_channels * self._num_hidden_neurons))
+        else:
+            self._nn1 = nn.Linear(num_edge_features, in_channels * self._num_hidden_neurons)
+        self._conv4 = NNConv(in_channels, self._num_hidden_neurons, self._nn1, aggr=self._aggr.value)
 
     def __initialise_gcn(self, in_channels):
         self.__uses_edge_attr = False
@@ -90,9 +96,13 @@ class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
 
         self._conv3 = GCNConv(self._num_hidden_neurons, in_channels, improved=True)
 
+        self._conv4 = GCNConv(in_channels, self._num_hidden_neurons, improved=True)
+
 
     def _perform_pre_pooling(self, x, edge_index, edge_attr):
         self._iterate_nnconv(x, edge_index, edge_attr)
+
+        x = F.leaky_relu(self._conv4(x, edge_index, edge_attr) if self.__uses_edge_attr else self._conv4(x, edge_index))
 
         return x
 
