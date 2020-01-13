@@ -117,7 +117,7 @@ class AbstractTrainer(ABC, AbstractRepr):
         return train_error / len(train_loader), all_pred, all_truth
 
     @abstractmethod
-    def _testing_step(self, model_evaluator, current_train_loss, time, model, epoch):
+    def _testing_step(self, model_evaluator, current_train_loss, time, model, epoch, all_pred, all_truth):
         with torch.no_grad():
             return model_evaluator.eval(model, current_train_loss, do_print=True, time=time, epoch=epoch)
 
