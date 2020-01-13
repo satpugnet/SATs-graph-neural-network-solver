@@ -67,7 +67,7 @@ test_dataset = exp_configs["SAT_to_graph_converter"].convert_all(test_SAT_proble
 Loader = DataListLoader if MultiGpu.is_enabled() else DataLoader
 
 if exp_configs["test_batch_size"] >= len(test_dataset) or exp_configs["train_batch_size"] >= len(train_dataset):
-    raise Exception("The batch size should not be larger than the size of the dataset for testing and training set")
+    raise Exception("The batch size ({}) should not be larger than the size of the dataset for testing ({}) and training set ({})".format(len(test_dataset), exp_configs["test_batch_size"], exp_configs["train_batch_size"]))
 
 logger.get().info("Putting the training data in the loader")
 train_loader = Loader(

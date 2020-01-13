@@ -55,19 +55,19 @@ logger.get().warning("Running the experiment on " + ('GPU' if torch.cuda.is_avai
 # These configs will be saved to a file when saving the experiment configurations, put important configs here
 exp_configs = {
     # GENERATE SATS DATA
-    # "generator": DistrBasedGenerator(  # The algorithm use to generate the SATs data
-    #     percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
-    #     seed=None,  # The seed used if any
-    #     min_max_n_vars=(2, 3),  # The min and max number of variable in the problems
-    #     min_max_n_clauses=(2, 5),  # The min and max number of clauses in the problems
-    #     var_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of variable in a problem
-    #     var_num_distr_params=[],  # The distribution parameters
-    #     clause_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
-    #     clause_num_distr_params=[],  # The distribution parameters
-    #     lit_in_clause_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
-    #     lit_in_clause_distr_params=[],  # The distribution parameters
-    #     include_trivial_clause=False  # Whether to include clause containing a variable and its opposite such as (x and not x)
-    # ),
+     "generator": DistrBasedGenerator(  # The algorithm use to generate the SATs data
+         percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
+         seed=None,  # The seed used if any
+         min_max_n_vars=(10, 20),  # The min and max number of variable in the problems
+         min_max_n_clauses=(20, 50),  # The min and max number of clauses in the problems
+         var_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of variable in a problem
+         var_num_distr_params=[],  # The distribution parameters
+         clause_num_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
+         clause_num_distr_params=[],  # The distribution parameters
+         lit_in_clause_distr=Distribution.UNIFORM,  # The distribution used to generate the number of clauses in a problem
+         lit_in_clause_distr_params=[],  # The distribution parameters
+         include_trivial_clause=False  # Whether to include clause containing a variable and its opposite such as (x and not x)
+     ),
     # "generator": PigeonHolePrincipleGenerator(
     #     percentage_sat=0.5,
     #     seed=None,
@@ -76,10 +76,10 @@ exp_configs = {
     #     min_max_n_pigeons=(1, 10),  # The min and max number of pigeons
     #     min_max_n_holes=(1, 10),  # The min and max number of holes
     # ),
-    "generator": PairedProblemGenerator(
-        seed=None,  # The seed used if any
-        min_max_n_vars=(4, 4),  # The min and max number of variable in the problems
-    ),
+    #"generator": PairedProblemGenerator(
+    #    seed=None,  # The seed used if any
+    #    min_max_n_vars=(4, 4),  # The min and max number of variable in the problems
+    #),
      #"test_generator": DistrBasedGenerator(  # (optional) The generator to use for the testing data, optional, if not set, the same distribution is used than the one for training
      #    percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
      #    seed=None,  # The seed used if any
@@ -97,7 +97,7 @@ exp_configs = {
     #     seed=None,  # The seed used if any
     #     min_max_n_vars=(4, 4),  # The min and max number of variable in the problems
     # ),
-    "num_gen_data": 1000,  # The amount of data to generate in total
+    "num_gen_data": 2000,  # The amount of data to generate in total
     "percentage_training_set": 0.75,  # The percentage of training data in total compare to testing
 
 
@@ -105,14 +105,14 @@ exp_configs = {
     #  "SAT_to_graph_converter": VariableToVariableGraph(
     #      max_num_clauses=110
     #  ),
-    # "SAT_to_graph_converter": ClauseToVariableGraph(
-    #     represent_opposite_lits_in_edge=False
-    # ),  # The algorithm used to convert from SAT problems to graph problems
-    "SAT_to_graph_converter": ClauseToClauseGraph(
-        max_num_vars=4
-    ),
-    "train_batch_size": 256,  # The size of the train batch
-    "test_batch_size": 256,  # The size of the test batch
+     "SAT_to_graph_converter": ClauseToVariableGraph(
+         represent_opposite_lits_in_edge=False
+     ),  # The algorithm used to convert from SAT problems to graph problems
+    #"SAT_to_graph_converter": ClauseToClauseGraph(
+    #    max_num_vars=4
+    #),
+    "train_batch_size": 64,  # The size of the train batch
+    "test_batch_size": 64,  # The size of the test batch
 
 
     # GRAPH NEURAL NETWORK STRUCTURE
@@ -130,38 +130,38 @@ exp_configs = {
     #     num_hidden_neurons=8,  # The number of hidden neurons in the hidden layers
     #     aggr=Aggr.ADD
     # ),
-    "gnn": RepeatingNNConvGNN(
-        sigmoid_output=True,
-        dropout_prob=0,
-        pooling=GlobalAttentionPooling(64, True),
-        deep_nn=True,
-        num_hidden_neurons=64,
-        conv_repetition=10,  # The number of repetition of the NN
-        ratio_test_train_rep=2,  # The ratio of the number of repetition of the ConvGNN for the testing and training
-        aggr=Aggr.ADD,
-        num_layers_per_rep=3,
-        nn_type=NNTypes.GCN,
-        rep_layer_in_out_num_neurons=None
-    ),
-     # "gnn": VariableRepeatingNNConvGNN(
-     #     sigmoid_output=True,
-     #     dropout_prob=0,
-     #     pooling=GlobalAttentionPooling(128, True),
-     #     deep_nn=True,
-     #     num_hidden_neurons=64,
-     #     conv_min_max_rep=(10, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
-     #     ratio_test_train_rep=2,
-     #     aggr=Aggr.ADD,
-     #     num_layers_per_rep=4,
-     #     nn_type=NNTypes.GNN,
-     #     rep_layer_in_out_num_neurons=None
-     # ),
+    #"gnn": RepeatingNNConvGNN(
+    #    sigmoid_output=True,
+    #    dropout_prob=0,
+    #    pooling=GlobalAttentionPooling(64, True),
+    #    deep_nn=True,
+    #    num_hidden_neurons=64,
+    #    conv_repetition=1,  # The number of repetition of the NN
+    #    ratio_test_train_rep=2,  # The ratio of the number of repetition of the ConvGNN for the testing and training
+    #    aggr=Aggr.ADD,
+    #    num_layers_per_rep=10,
+    #    nn_type=NNTypes.GNN,
+    #    rep_layer_in_out_num_neurons=64
+    #),
+      "gnn": VariableRepeatingNNConvGNN(
+          sigmoid_output=True,
+          dropout_prob=0,
+          pooling=GlobalAttentionPooling(64, True),
+          deep_nn=True,
+          num_hidden_neurons=32,
+          conv_min_max_rep=(10, 20),  # The range in which to uniformly pick for the number of repetition of the ConvGNN
+          ratio_test_train_rep=2,
+          aggr=Aggr.ADD,
+          num_layers_per_rep=3,
+          nn_type=NNTypes.GNN,
+          rep_layer_in_out_num_neurons=32
+      ),
 
 
     # TRAIN
     "trainer": AdamTrainer(  # The trainer to use
-        learning_rate=0.002,  # The learning rate
-        weight_decay=5e-7,  # The weight decay
+        learning_rate=0.005,  # The learning rate
+        weight_decay=5e-6,  # The weight decay
         device=device,  # The device used
         num_epoch_before_halving_lr=300,  # The number of epoch between each halving of the learning rate
         activate_amp=False,
