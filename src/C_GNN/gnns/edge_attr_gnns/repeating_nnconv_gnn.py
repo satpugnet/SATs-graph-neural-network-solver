@@ -85,7 +85,7 @@ class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
         return GCNConv(in_channels, out_channels, improved=True)
 
     def __create_GraphConv(self, in_channels, out_channels):
-        return GraphConv(in_channels, out_channels, aggr='add')
+        return GraphConv(in_channels, out_channels, aggr=self._aggr.value)
 
     def _perform_pre_pooling(self, x, edge_index, edge_attr):
         x = F.leaky_relu(self._conv0(x, edge_index, edge_attr) if self.__uses_edge_attr else self._conv0(x, edge_index))
