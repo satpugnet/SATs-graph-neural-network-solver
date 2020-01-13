@@ -58,11 +58,11 @@ class AbstractTrainer(ABC, AbstractRepr):
 
                 self._set_learning_rate(epoch, self._learning_rate, optimizer)
 
-                current_train_loss = self._training_step(model, train_loader, optimizer)
+                current_train_loss, all_pred, all_truth = self._training_step(model, train_loader, optimizer)
 
                 model.eval()
                 current_test_loss, current_accuracy, _ = self._testing_step(model_evaluator, current_train_loss,
-                                                                         time.time() - start_time, model, epoch)
+                                                                         time.time() - start_time, model, epoch, all_pred, all_truth)
 
                 train_loss.append(current_train_loss)
                 test_loss.append(current_test_loss)
@@ -76,6 +76,8 @@ class AbstractTrainer(ABC, AbstractRepr):
 
     @abstractmethod
     def _training_step(self, model, train_loader, optimizer):
+        all_pred = torch.tensor([]).to(self._device)
+        all_truth = torch.tensor([]).to(self._device)
         train_error = 0
 
         progress = 0
@@ -88,17 +90,17 @@ class AbstractTrainer(ABC, AbstractRepr):
 
             optimizer.zero_grad()
 
-            out = model(batch)
+            pred = model(batch)
 
             if isinstance(model, DataParallel): # If we are not using multi-gpu
-                y = torch.cat([data.y for data in batch]).view(-1, 1).to(out.device)
+                y = torch.cat([data.y for data in batch]).view(-1, 1).to(pred.device)
             else:
                 y = batch.y.view(-1, 1)
 
             if self._bce_loss:
-                loss = nn.BCELoss()(out, y)
+                loss = nn.BCELoss()(pred, y)
             else:
-                loss = F.mse_loss(out, y)  # F.nll_loss(out, batch.y)
+                loss = F.mse_loss(pred, y)  # F.nll_loss(pred, batch.y)
             train_error += loss
 
             if self._activate_amp:
@@ -108,7 +110,11 @@ class AbstractTrainer(ABC, AbstractRepr):
                 loss.backward()
             optimizer.step()
 
-        return train_error / len(train_loader)
+            pred_adjusted = (pred > 0.5).float()
+            all_pred = torch.cat([all_pred, pred_adjusted]) if all_pred is not None else pred_adjusted
+            all_truth = torch.cat([all_truth, y]) if all_truth is not None else y
+
+        return train_error / len(train_loader), all_pred, all_truth
 
     @abstractmethod
     def _testing_step(self, model_evaluator, current_train_loss, time, model, epoch):

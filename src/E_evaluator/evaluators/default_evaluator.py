@@ -28,12 +28,13 @@ class DefaultEvaluator(AbstractEvaluator):
     def test_loader(self, new_test_loader):
         self._test_loader = new_test_loader
 
-    def eval(self, model, train_loss=None, do_print=True, time=None, epoch=None):
+    def eval(self, model, train_loss=None, do_print=True, time=None, epoch=None, training_pred=None, training_truth=None):
         all_pred, all_truth, accuracy, test_loss = self.__eval_model(model)
         confusion_matrix = self.__confusion_matrix(all_pred, all_truth)
+        training_confusion_matrix = self.__confusion_matrix(training_pred, training_truth)
 
         if do_print:
-            self.__perform_printing(accuracy, test_loss, train_loss, confusion_matrix, time, epoch)
+            self.__perform_printing(accuracy, test_loss, train_loss, confusion_matrix, time, epoch, training_confusion_matrix)
 
         return test_loss, accuracy, confusion_matrix
     
@@ -65,7 +66,6 @@ class DefaultEvaluator(AbstractEvaluator):
                 loss = F.mse_loss(pred, y)  # F.nll_loss(out, batch.y)
 
             pred_adjusted = (pred > 0.5).float()
-            
             correct += (pred_adjusted == y).sum().item()
 
             all_pred = torch.cat([all_pred, pred_adjusted]) if all_pred is not None else pred_adjusted
@@ -86,12 +86,13 @@ class DefaultEvaluator(AbstractEvaluator):
 
         return true_positives, false_positives, true_negatives, false_negatives
 
-    def __perform_printing(self, accuracy, test_loss, train_loss, confusion_matrix, time, epoch):
+    def __perform_printing(self, accuracy, test_loss, train_loss, confusion_matrix, time, epoch, training_confusion_matrix):
         epoch_text = "epoch: {}, ".format(epoch) if epoch is not None else ""
         time_text = 'time: {:.1f}, '.format(time) if time is not None else ""
         train_loss_text = 'train loss: {:.4f}, '.format(train_loss) if train_loss is not None else ""
 
         text = epoch_text + time_text + train_loss_text + 'test loss: {:.4f}, '.format(test_loss) + \
-               'accuracy: {:.4f}'.format(accuracy) + ", confusion matrix (TP, FP, TN, FN): " + str(confusion_matrix)
+               'accuracy: {:.4f}'.format(accuracy) + ", confusion matrix (TP, FP, TN, FN): train " + str(confusion_matrix) + \
+               ", test " + str(confusion_matrix)
 
         logger.get().info(text)
