@@ -114,8 +114,7 @@ class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
             x = F.leaky_relu(self._conv1(x, edge_index, edge_attr) if self.__uses_edge_attr else self._conv1(x, edge_index))
 
             for conv in self._convs:
-                if self.__uses_edge_attr:
-                    x = F.leaky_relu(conv(x, edge_index, edge_attr) if self.__uses_edge_attr else conv(x, edge_index))
+                x = F.leaky_relu(conv(x, edge_index, edge_attr) if self.__uses_edge_attr else conv(x, edge_index))
 
             x = F.leaky_relu(self._conv3(x, edge_index, edge_attr) if self.__uses_edge_attr else self._conv3(x, edge_index))
 
