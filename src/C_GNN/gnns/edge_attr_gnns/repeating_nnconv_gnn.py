@@ -33,6 +33,7 @@ class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
                     "conv_repetition": self._conv_repetition,
                     "ratio_test_train_rep": self._ratio_test_train_rep,
                     "convs": self._convs,
+                    "conv3": self._conv3,
                     "fc1": self._fc1,
                     "fc2": self._fc2,
                     "nn_type": self._nn_type
@@ -67,7 +68,14 @@ class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
                 self._nn2 = nn.Linear(num_edge_features, self._num_hidden_neurons * self._num_hidden_neurons)
             convs.append(NNConv(self._num_hidden_neurons, self._num_hidden_neurons, self._nn2, aggr=self._aggr.value))
 
+        if self._deep_nn:
+            self._nn1 = nn.Sequential(nn.Linear(num_edge_features, int(self._num_hidden_neurons / 4)), nn.LeakyReLU(), nn.Linear(int(self._num_hidden_neurons / 4), in_channels * self._num_hidden_neurons))
+        else:
+            self._nn1 = nn.Linear(num_edge_features, in_channels * self._num_hidden_neurons)
         self._convs = nn.ModuleList(convs)
+
+        self._conv3 = NNConv(self._num_hidden_neurons, in_channels, self._nn1, aggr=self._aggr.value)
+
 
     def __initialise_gcn(self, in_channels):
         self.__uses_edge_attr = False
@@ -80,9 +88,10 @@ class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
 
         self._convs = nn.ModuleList(convs)
 
-    def _perform_pre_pooling(self, x, edge_index, edge_attr):
-        x = F.leaky_relu(self._conv1(x, edge_index, edge_attr) if self.__uses_edge_attr else self._conv1(x, edge_index))
+        self._conv3 = GCNConv(self._num_hidden_neurons, in_channels, improved=True)
 
+
+    def _perform_pre_pooling(self, x, edge_index, edge_attr):
         self._iterate_nnconv(x, edge_index, edge_attr)
 
         return x
@@ -92,9 +101,13 @@ class RepeatingNNConvGNN(AbstractEdgeAttrGNN):
 
         for i in range(num_iterations):
             x = F.dropout(x, p=self._dropout_prob, training=self.training)
+            x = F.leaky_relu(self._conv1(x, edge_index, edge_attr) if self.__uses_edge_attr else self._conv1(x, edge_index))
+
             for conv in self._convs:
                 if self.__uses_edge_attr:
                     x = F.leaky_relu(conv(x, edge_index, edge_attr) if self.__uses_edge_attr else conv(x, edge_index))
+
+            x = F.leaky_relu(self._conv3(x, edge_index, edge_attr) if self.__uses_edge_attr else self._conv1(x, edge_index))
 
     def _compute_num_iterations(self):
         return self._conv_repetition if self.training else self._conv_repetition * self._ratio_test_train_rep

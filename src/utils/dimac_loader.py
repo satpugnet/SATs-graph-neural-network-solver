@@ -13,7 +13,6 @@ class DimacLoader:
         self.dir_path = os.getcwd() + "/" + dir_path
 
     def load_sat_problems(self):
-        logger.get().info("Loading sat problems...")
 
         SAT_problems = []
         for (dirpath, dirnames, filenames) in os.walk(self.dir_path):
@@ -22,7 +21,6 @@ class DimacLoader:
                 file_path = os.path.join(self.dir_path, filenames[i])
                 SAT_problems.append(self.__load_dimac(file_path))
 
-        logger.get().info("Loading of sat problems completed")
         return SAT_problems
 
     def __load_dimac(self, file_path):

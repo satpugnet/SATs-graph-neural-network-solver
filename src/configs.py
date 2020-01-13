@@ -78,7 +78,7 @@ exp_configs = {
     # ),
     "generator": PairedProblemGenerator(
         seed=None,  # The seed used if any
-        min_max_n_vars=(2, 2),  # The min and max number of variable in the problems
+        min_max_n_vars=(4, 4),  # The min and max number of variable in the problems
     ),
      #"test_generator": DistrBasedGenerator(  # (optional) The generator to use for the testing data, optional, if not set, the same distribution is used than the one for training
      #    percentage_sat=0.5,  # The percentage of SAT to UNSAT problems
@@ -93,11 +93,11 @@ exp_configs = {
      #    lit_in_clause_distr_params=[],  # The distribution parameters
      #    include_trivial_clause=False  # Whether to include clause containing a variable and its opposite such as (x and not x)
      #),
-    "test_generator": PairedProblemGenerator(
-        seed=None,  # The seed used if any
-        min_max_n_vars=(2, 2),  # The min and max number of variable in the problems
-    ),
-    "num_gen_data": 200000,  # The amount of data to generate in total
+    # "test_generator": PairedProblemGenerator(
+    #     seed=None,  # The seed used if any
+    #     min_max_n_vars=(4, 4),  # The min and max number of variable in the problems
+    # ),
+    "num_gen_data": 1000,  # The amount of data to generate in total
     "percentage_training_set": 0.75,  # The percentage of training data in total compare to testing
 
 
@@ -109,10 +109,10 @@ exp_configs = {
     #     represent_opposite_lits_in_edge=False
     # ),  # The algorithm used to convert from SAT problems to graph problems
     "SAT_to_graph_converter": ClauseToClauseGraph(
-        max_num_vars=3
+        max_num_vars=4
     ),
-    "train_batch_size": 1024,  # The size of the train batch
-    "test_batch_size": 1024,  # The size of the test batch
+    "train_batch_size": 256,  # The size of the train batch
+    "test_batch_size": 256,  # The size of the test batch
 
 
     # GRAPH NEURAL NETWORK STRUCTURE
@@ -135,8 +135,8 @@ exp_configs = {
         dropout_prob=0,
         pooling=GlobalAttentionPooling(64, True),
         deep_nn=True,
-        num_hidden_neurons=32,
-        conv_repetition=20,  # The number of repetition of the NN
+        num_hidden_neurons=64,
+        conv_repetition=10,  # The number of repetition of the NN
         ratio_test_train_rep=2,  # The ratio of the number of repetition of the ConvGNN for the testing and training
         aggr=Aggr.ADD,
         num_layers_per_rep=3,
@@ -158,10 +158,10 @@ exp_configs = {
 
     # TRAIN
     "trainer": AdamTrainer(  # The trainer to use
-        learning_rate=0.0005,  # The learning rate
-        weight_decay=5e-5,  # The weight decay
+        learning_rate=0.002,  # The learning rate
+        weight_decay=5e-7,  # The weight decay
         device=device,  # The device used
-        num_epoch_before_halving_lr=100,  # The number of epoch between each halving of the learning rate
+        num_epoch_before_halving_lr=300,  # The number of epoch between each halving of the learning rate
         activate_amp=False,
         bce_loss=True
     ),

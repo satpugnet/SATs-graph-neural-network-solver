@@ -54,7 +54,9 @@ logger.get().info("The generation of the data took a total of {:.1f}s ({:.1f}s f
 logger.skip_line()
 logger.get().info("LOADING SATS AND CONVERTING TO GRAPH DATA")
 
+logger.get().info("Loading training data")
 train_SAT_problems = DimacLoader(other_configs["data_generated_train_folder_location"]).load_sat_problems()
+logger.get().info("Loading testing data")
 test_SAT_problems = DimacLoader(other_configs["data_generated_test_folder_location"]).load_sat_problems()
 
 logger.get().info("Converting train data to graph data")
