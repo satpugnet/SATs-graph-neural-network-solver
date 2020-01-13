@@ -140,7 +140,8 @@ exp_configs = {
         ratio_test_train_rep=2,  # The ratio of the number of repetition of the ConvGNN for the testing and training
         aggr=Aggr.ADD,
         num_layers_per_rep=3,
-        nn_type=NNTypes.GCN
+        nn_type=NNTypes.GCN,
+        rep_layer_in_out_num_neurons=None
     ),
      # "gnn": VariableRepeatingNNConvGNN(
      #     sigmoid_output=True,
@@ -152,7 +153,8 @@ exp_configs = {
      #     ratio_test_train_rep=2,
      #     aggr=Aggr.ADD,
      #     num_layers_per_rep=4,
-     #     nn_type=NNTypes.GNN
+     #     nn_type=NNTypes.GNN,
+     #     rep_layer_in_out_num_neurons=None
      # ),
 
 
