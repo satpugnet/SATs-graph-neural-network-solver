@@ -31,7 +31,9 @@ class DefaultEvaluator(AbstractEvaluator):
     def eval(self, model, train_loss=None, do_print=True, time=None, epoch=None, training_pred=None, training_truth=None):
         all_pred, all_truth, accuracy, test_loss = self.__eval_model(model)
         confusion_matrix = self.__confusion_matrix(all_pred, all_truth)
-        training_confusion_matrix = self.__confusion_matrix(training_pred, training_truth)
+        training_confusion_matrix = ""
+        if training_pred is not None:
+            training_confusion_matrix = self.__confusion_matrix(training_pred, training_truth)
 
         if do_print:
             self.__perform_printing(accuracy, test_loss, train_loss, confusion_matrix, time, epoch, training_confusion_matrix)
